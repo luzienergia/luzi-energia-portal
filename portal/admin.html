@@ -6,6 +6,7 @@
 <title>Admin — Luzi Energia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
   --bg:#080f1e; --bg2:#0d1830; --bg3:#111f3a; --border:#1a2d50;
@@ -192,6 +193,50 @@ a{color:inherit;text-decoration:none}
 .btn-act-ghost{background:none;border:1px solid var(--border);color:var(--muted)}
 .btn-act-ghost:hover{border-color:var(--muted);color:#fff}
 
+/* ── COBRANÇAS */
+.cob-subtabs{display:flex;gap:4px;margin-bottom:20px;flex-wrap:wrap}
+.cob-stab{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;padding:8px 18px;border-radius:6px;
+  background:var(--bg2);border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;transition:all .2s}
+.cob-stab.active{background:rgba(78,205,228,.1);border-color:rgba(78,205,228,.3);color:var(--teal)}
+.cob-stab:hover:not(.active){color:#fff;border-color:rgba(255,255,255,.15)}
+.cob-row{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:8px;
+  flex-wrap:wrap;transition:border-color .2s}
+.cob-row:hover{border-color:rgba(78,205,228,.2)}
+.cob-ico{font-size:22px;flex-shrink:0}
+.cob-info{flex:1;min-width:160px}
+.cob-type{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.cob-client{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px}
+.cob-doc{font-size:11px;color:var(--muted);font-family:monospace;margin-top:2px}
+.cob-mes{font-size:11px;color:var(--muted);margin-top:2px}
+.cob-venc{font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
+.cob-valor{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--gold);white-space:nowrap}
+.cob-badge{font-size:10px;font-weight:700;padding:4px 12px;border-radius:20px;
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px;white-space:nowrap}
+.cb-pago{background:rgba(34,197,94,.12);color:var(--green)}
+.cb-aberto{background:rgba(234,179,8,.12);color:var(--yellow)}
+.cb-vencido{background:rgba(239,68,68,.12);color:var(--red)}
+.cob-empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:14px}
+.cob-group-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;
+  padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* ── EXPAND CLIENTE */
+.cl-card.expanded{border-color:var(--teal);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.cl-expand{background:var(--bg3);border:1px solid var(--teal);border-top:none;
+  border-radius:0 0 12px 12px;overflow:hidden;margin-bottom:14px}
+.cl-expand-inner{padding:20px}
+.fat-row-adm{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--bg2);border-radius:8px;margin-bottom:6px;flex-wrap:wrap}
+.fat-mes-adm{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;width:60px}
+.fat-status-adm{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;
+  font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+.fat-valor-adm{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;margin-left:auto}
+.fat-venc-adm{font-size:11px;color:var(--muted);white-space:nowrap}
+.chart-wrap-adm{height:180px;margin-bottom:16px}
+
 /* ── USINAS E RATEIO */
 .usina-blk{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
 .usina-hdr{background:var(--bg3);padding:16px 20px;border-bottom:1px solid var(--border);
@@ -367,23 +412,29 @@ a{color:inherit;text-decoration:none}
 <!-- DASHBOARD -->
 <div id="v-dash" class="hidden">
   <nav class="dash-nav">
-    <button class="dtab active" onclick="setTab('vg')">📊 Visão Geral</button>
+    <button class="dtab active" onclick="setTab('vg')">📋 Cobranças</button>
     <button class="dtab" onclick="setTab('usinas')">⚡ Usinas &amp; Rateios</button>
     <button class="dtab" onclick="setTab('clientes')">👥 Gestão de Clientes</button>
     <button class="dtab" onclick="setTab('producao')">🏭 Produção</button>
   </nav>
 
-  <!-- VISÃO GERAL -->
+  <!-- COBRANÇAS -->
   <div id="tab-vg" class="tpane active">
-    <div class="vg-refresh">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px">
       <div>
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px">Status das UCs</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px">Cobranças</div>
         <div class="vg-timestamp" id="vg-ts">Carregando...</div>
       </div>
+      <div class="sum-row" id="sum-row" style="margin-bottom:0"></div>
     </div>
-    <div class="sum-row" id="sum-row"></div>
-    <div class="sec-hdr"><div class="sec-ttl">UCs ativas</div><div class="sec-ln"></div></div>
-    <div class="uc-list" id="uc-list"></div>
+    <div class="cob-subtabs">
+      <button class="cob-stab active" onclick="filtrarCobrancas('todos',this)">Todos</button>
+      <button class="cob-stab" onclick="filtrarCobrancas('aberto',this)">Em aberto</button>
+      <button class="cob-stab" onclick="filtrarCobrancas('pago',this)">Pago</button>
+      <button class="cob-stab" onclick="filtrarCobrancas('vencido',this)">Vencido</button>
+      <button class="cob-stab" onclick="filtrarCobrancas('cancelado',this)">Cancelado</button>
+    </div>
+    <div id="cob-list"></div>
   </div>
 
   <!-- USINAS & RATEIOS -->
@@ -684,6 +735,35 @@ const DATA_BASE = {
   status_ucs: {}
 };
 
+// Histórico de faturas por cliente (espelho do CLIENTES_DB do cliente.html)
+const FATURAS_DB = {
+  '02790574000136': { nome:'Cartório 2º Ofício', uc:'70296501229', doc:'02790574000136', desconto:15, faturas:[
+    {mes:'06/2026',ref:'jun/26',semDesc:1212.44,comDesc:1030.57,venc:'2026-07-10',status:'vencer'},
+    {mes:'05/2026',ref:'mai/26',semDesc:1087.20,comDesc:924.12, venc:'2026-06-10',status:'pago'},
+    {mes:'04/2026',ref:'abr/26',semDesc:1120.80,comDesc:952.68, venc:'2026-05-10',status:'pago'},
+    {mes:'03/2026',ref:'mar/26',semDesc:980.50, comDesc:833.43, venc:'2026-04-10',status:'pago'},
+  ]},
+  '80372422187': { nome:'Leandro Ribeiro', uc:'365716101232', doc:'80372422187', desconto:20, faturas:[
+    {mes:'07/2026',ref:'jul/26',semDesc:1336.56,comDesc:1069.25,venc:'2026-07-23',status:'vencer'},
+    {mes:'06/2026',ref:'jun/26',semDesc:1180.00,comDesc:944.00, venc:'2026-06-23',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:1090.00,comDesc:872.00, venc:'2026-05-23',status:'pago'},
+  ]},
+  '02109687100': { nome:'Wagner Neto', uc:'77762501286', doc:'02109687100', desconto:20, faturas:[
+    {mes:'06/2026',ref:'jun/26',semDesc:636.30,comDesc:509.04,venc:'2026-07-13',status:'vencer'},
+    {mes:'05/2026',ref:'mai/26',semDesc:590.00,comDesc:472.00,venc:'2026-06-13',status:'pago'},
+    {mes:'04/2026',ref:'abr/26',semDesc:620.00,comDesc:496.00,venc:'2026-05-13',status:'pago'},
+  ]},
+  '50802328000108': { nome:'Escola Mendes e Flor', uc:'73940201205', doc:'50802328000108', desconto:20, faturas:[
+    {mes:'06/2026',ref:'jun/26',semDesc:835.48,comDesc:668.38,venc:'2026-07-13',status:'vencer'},
+    {mes:'05/2026',ref:'mai/26',semDesc:760.00,comDesc:608.00,venc:'2026-06-13',status:'pago'},
+    {mes:'04/2026',ref:'abr/26',semDesc:810.00,comDesc:648.00,venc:'2026-05-13',status:'pago'},
+  ]},
+  'firma_marrula': { nome:'Firma Marrula', uc:'430857301280', doc:'70182543102', desconto:20, faturas:[
+    {mes:'06/2026',ref:'jun/26',semDesc:455.25,comDesc:364.20,venc:'2026-06-30',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:410.00,comDesc:328.00,venc:'2026-05-30',status:'pago'},
+  ]},
+};
+
 // ═══════════════════════════════════════════════════════
 // ESTADO
 // ═══════════════════════════════════════════════════════
@@ -820,24 +900,93 @@ function renderAll(){
   const ts=D.atualizado?new Date(D.atualizado).toLocaleString('pt-BR'):'—';
   document.getElementById('vg-ts').textContent='Última atualização: '+ts;
   renderSumario();
-  renderUCList();
+  renderCobrancas();
   renderUsinas();
   renderClientes();
   renderProducao();
 }
 
-// ── Sumário
+// ── Sumário (compacto no topo de Cobranças)
 function renderSumario(){
-  const ativos=D.clientes.filter(c=>c.tipo==='cliente_ativo');
-  const pagos=Object.values(D.status_ucs).filter(s=>s.pago).length;
-  const alertas=D.clientes.filter(c=>{const u=getUCStatus(c);return u.icone==='🔴'||u.icone==='🟠';}).length;
+  const all=Object.values(FATURAS_DB).flatMap(c=>c.faturas);
+  const emAberto=all.filter(f=>f.status==='vencer').length;
+  const pagos=all.filter(f=>f.status==='pago').length;
+  const vencidos=all.filter(f=>f.status==='vencido').length;
+  const totalAberto=Object.values(FATURAS_DB).flatMap(c=>c.faturas).filter(f=>f.status==='vencer').reduce((s,f)=>s+f.comDesc,0);
   document.getElementById('sum-row').innerHTML=`
-    <div class="sc"><div class="sc-lbl">Total de UCs</div><div class="sc-val">${D.clientes.length}</div></div>
-    <div class="sc"><div class="sc-lbl">Clientes ativos</div><div class="sc-val c-teal">${ativos.length}</div></div>
-    <div class="sc"><div class="sc-lbl">Faturas pagas</div><div class="sc-val c-green">${pagos}</div></div>
-    <div class="sc"><div class="sc-lbl">Alertas</div><div class="sc-val ${alertas>0?'c-red':'c-green'}">${alertas}</div></div>
-    <div class="sc"><div class="sc-lbl">Usinas</div><div class="sc-val">${D.usinas.filter(u=>u.status==='operando').length}</div></div>
+    <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Em aberto</div><div class="sc-val c-yellow" style="font-size:22px">${emAberto}</div><div style="font-size:10px;color:var(--muted)">${R$(totalAberto)}</div></div>
+    <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Pagos</div><div class="sc-val c-green" style="font-size:22px">${pagos}</div></div>
+    <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Vencidos</div><div class="sc-val ${vencidos>0?'c-red':'c-green'}" style="font-size:22px">${vencidos}</div></div>
+    <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Usinas</div><div class="sc-val" style="font-size:22px">${D.usinas.filter(u=>u.status==='operando').length}</div></div>
   `;
+}
+
+// ── Cobranças
+let cobFiltro='todos';
+
+function renderCobrancas(filtro){
+  if(filtro!==undefined) cobFiltro=filtro;
+  let all=[];
+  Object.values(FATURAS_DB).forEach(cli=>{
+    cli.faturas.forEach(f=>{
+      all.push({...f, clienteNome:cli.nome, clienteDoc:cli.doc, clienteUC:cli.uc});
+    });
+  });
+  if(cobFiltro==='aberto')   all=all.filter(f=>f.status==='vencer');
+  else if(cobFiltro==='pago')    all=all.filter(f=>f.status==='pago');
+  else if(cobFiltro==='vencido') all=all.filter(f=>f.status==='vencido');
+  else if(cobFiltro==='cancelado') all=[];
+
+  all.sort((a,b)=>b.venc.localeCompare(a.venc));
+
+  if(all.length===0){
+    document.getElementById('cob-list').innerHTML=`<div class="cob-empty">Nenhuma cobrança nesta categoria.</div>`;
+    return;
+  }
+
+  // Agrupa por mês de vencimento
+  const groups={};
+  all.forEach(f=>{
+    const k=f.venc.substring(0,7);
+    if(!groups[k]) groups[k]=[];
+    groups[k].push(f);
+  });
+  const meses=['','Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  let html='';
+  Object.keys(groups).sort().reverse().forEach(k=>{
+    const [y,m]=k.split('-');
+    html+=`<div class="cob-group-hdr">${meses[+m]} ${y}</div>`;
+    groups[k].forEach(f=>{
+      const sLabel=f.status==='pago'?'Pago':f.status==='vencer'?'Em aberto':'Vencido';
+      const sCls=f.status==='pago'?'cb-pago':f.status==='vencer'?'cb-aberto':'cb-vencido';
+      html+=`<div class="cob-row">
+        <div class="cob-ico">📄</div>
+        <div class="cob-info">
+          <div class="cob-type">Boleto · ${f.mes}</div>
+          <div class="cob-client">${f.clienteNome}</div>
+          <div class="cob-doc">${fmtDoc(f.clienteDoc)}</div>
+        </div>
+        <div class="cob-venc">Vencimento<br><strong>${dtBR(f.venc)}</strong></div>
+        <div class="cob-valor">${R$(f.comDesc)}</div>
+        <span class="cob-badge ${sCls}">${sLabel}</span>
+      </div>`;
+    });
+  });
+  document.getElementById('cob-list').innerHTML=html;
+}
+
+function filtrarCobrancas(filtro,btn){
+  document.querySelectorAll('.cob-stab').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderCobrancas(filtro);
+}
+
+function fmtDoc(doc){
+  if(!doc) return '—';
+  const d=doc.replace(/\D/g,'');
+  if(d.length===11) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/,'$1.$2.$3-$4');
+  return d.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,'$1.$2.$3/$4-$5');
 }
 
 // ── Lista de UCs
@@ -1140,21 +1289,106 @@ function salvarRateio(usina_id){
 }
 
 // ── Gestão de Clientes
+let expandedCliente = null;
+const chartsAdm = {};
+
 function renderClientes(){
-  document.getElementById('cl-grid').innerHTML=D.clientes.map((c,i)=>`
-    <div class="cl-card">
-      <div class="cl-card-nome">${c.nome}</div>
-      <div class="cl-card-uc">UC ${c.uc}</div>
-      <div class="cl-card-row"><span>Cliente</span><strong>${c.cliente}</strong></div>
-      <div class="cl-card-row"><span>Tipo</span><strong>${c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio'}</strong></div>
-      <div class="cl-card-row"><span>Desconto</span><strong class="c-teal">${c.desc!=null?c.desc+'%':'—'}</strong></div>
-      <div class="cl-card-row"><span>Usina</span><strong>${c.usina||'—'}</strong></div>
-      <div class="cl-card-row"><span>Contrato</span><strong>${c.contrato?'✅ Vinculado':'—'}</strong></div>
-      <div class="cl-card-actions">
-        <button class="btn-editar" onclick="abrirModal(${i})">✏️ Editar</button>
-        <button class="btn-remover" onclick="removerCliente(${i})">✕</button>
+  const grid = document.getElementById('cl-grid');
+  grid.innerHTML='';
+  D.clientes.forEach((c,i)=>{
+    const wrapper=document.createElement('div');
+    wrapper.id=`cl-wrap-${i}`;
+    wrapper.innerHTML=`
+      <div class="cl-card${expandedCliente===i?' expanded':''}" id="cl-card-${i}">
+        <div class="cl-card-nome">${c.nome}</div>
+        <div class="cl-card-uc">UC ${c.uc}</div>
+        <div class="cl-card-row"><span>Cliente</span><strong>${c.cliente}</strong></div>
+        <div class="cl-card-row"><span>Tipo</span><strong>${c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio'}</strong></div>
+        <div class="cl-card-row"><span>Desconto</span><strong class="c-teal">${c.desc!=null?c.desc+'%':'—'}</strong></div>
+        <div class="cl-card-row"><span>Usina</span><strong>${c.usina||'—'}</strong></div>
+        <div class="cl-card-row"><span>Contrato</span><strong>${c.contrato?'✅ Vinculado':'—'}</strong></div>
+        <div class="cl-card-actions">
+          <button class="btn-editar" onclick="toggleClienteExpand(${i})">📊 Histórico</button>
+          <button class="btn-editar" onclick="abrirModal(${i})" style="flex:0;padding:6px 10px">✏️</button>
+          <button class="btn-remover" onclick="removerCliente(${i})">✕</button>
+        </div>
       </div>
-    </div>`).join('');
+      ${expandedCliente===i?renderClienteExpand(c,i):''}`;
+    grid.appendChild(wrapper);
+    if(expandedCliente===i) renderChartAdm(c,i);
+  });
+}
+
+function toggleClienteExpand(i){
+  expandedCliente = expandedCliente===i ? null : i;
+  if(chartsAdm[i]){chartsAdm[i].destroy();delete chartsAdm[i];}
+  renderClientes();
+}
+
+function renderClienteExpand(c,i){
+  // Encontra faturas pelo UC ou doc
+  const fdb = Object.values(FATURAS_DB).find(f=>f.uc===c.uc||f.doc===c.doc);
+  if(!fdb||!fdb.faturas||fdb.faturas.length===0){
+    return `<div class="cl-expand"><div class="cl-expand-inner" style="color:var(--muted);font-size:13px;text-align:center;padding:24px">
+      Nenhuma fatura registrada para esta UC ainda.
+    </div></div>`;
+  }
+  const faturas=fdb.faturas;
+  const totalSem=faturas.reduce((s,f)=>s+f.semDesc,0);
+  const totalCom=faturas.reduce((s,f)=>s+f.comDesc,0);
+  const eco=totalSem-totalCom;
+  const fatRows=faturas.map(f=>{
+    const sCls=f.status==='pago'?'cb-pago':f.status==='vencer'?'cb-aberto':'cb-vencido';
+    const sLbl=f.status==='pago'?'Pago':f.status==='vencer'?'Em aberto':'Vencido';
+    return `<div class="fat-row-adm">
+      <span class="fat-mes-adm">${f.mes}</span>
+      <span class="fat-status-adm ${sCls}">${sLbl}</span>
+      <span style="font-size:11px;color:var(--muted);margin-left:4px">venc. ${dtBR(f.venc)}</span>
+      <span class="fat-valor-adm c-teal">${R$(f.comDesc)}</span>
+      <span style="font-size:10px;color:var(--muted);margin-left:4px">c/ desc.</span>
+    </div>`;
+  }).join('');
+  return `<div class="cl-expand">
+    <div class="cl-expand-inner">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Economia total</div><div class="sc-val c-green" style="font-size:20px">${R$(eco)}</div></div>
+        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Total pago Luzi</div><div class="sc-val c-teal" style="font-size:20px">${R$(totalCom)}</div></div>
+        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Sem desconto seria</div><div class="sc-val" style="font-size:20px;color:var(--muted)">${R$(totalSem)}</div></div>
+      </div>
+      <div class="chart-wrap-adm"><canvas id="chart-adm-${i}"></canvas></div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Histórico de faturas</div>
+      ${fatRows}
+    </div>
+  </div>`;
+}
+
+function renderChartAdm(c,i){
+  const fdb=Object.values(FATURAS_DB).find(f=>f.uc===c.uc||f.doc===c.doc);
+  if(!fdb||!fdb.faturas||fdb.faturas.length===0) return;
+  const sorted=[...fdb.faturas].reverse();
+  const ctx=document.getElementById(`chart-adm-${i}`);
+  if(!ctx) return;
+  if(chartsAdm[i]) chartsAdm[i].destroy();
+  chartsAdm[i]=new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:sorted.map(f=>f.ref),
+      datasets:[
+        {label:'Sem desconto',data:sorted.map(f=>f.semDesc),backgroundColor:'rgba(245,158,11,.2)',borderColor:'#f59e0b',borderWidth:1.5,borderRadius:3},
+        {label:'Com desconto',data:sorted.map(f=>f.comDesc),backgroundColor:'rgba(78,205,228,.2)',borderColor:'#4ecde4',borderWidth:1.5,borderRadius:3},
+        {label:'Economia',data:sorted.map(f=>+(f.semDesc-f.comDesc).toFixed(2)),type:'line',borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.07)',borderWidth:2,tension:.3,pointBackgroundColor:'#22c55e',fill:true,yAxisID:'y2'},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(26,45,80,.5)'},ticks:{color:'#7a9bb5',font:{size:10}}},
+        y:{grid:{color:'rgba(26,45,80,.5)'},ticks:{color:'#7a9bb5',font:{size:10},callback:v=>'R$'+v.toLocaleString('pt-BR')},beginAtZero:true},
+        y2:{display:false,beginAtZero:true}
+      }
+    }
+  });
 }
 
 // ── Produção

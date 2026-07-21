@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Luzi Energia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080f1e; --bg2:#0d1830; --bg3:#111f3a; --border:#1a2d50;
+  --teal:#4ecde4; --green:#22c55e; --gold:#f59e0b; --red:#ef4444;
+  --yellow:#eab308; --text:#fff; --muted:#7a9bb5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.hidden{display:none!important}
+a{color:inherit;text-decoration:none}
+
+/* ── TOPBAR */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  background:rgba(8,15,30,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;height:62px;gap:12px;
+}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:21px;letter-spacing:1px}
+.logo span{color:var(--teal)}
+.nav-links{display:flex;gap:6px}
+.nav-link{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;color:var(--muted);
+  padding:7px 12px;border-radius:6px;transition:all .2s;cursor:pointer;
+  background:none;border:none;}
+.nav-link:hover{color:#fff;background:var(--bg3)}
+.nav-link.active{color:var(--teal)}
+.topbar-r{display:flex;align-items:center;gap:10px}
+.badge-adm{font-size:11px;color:var(--teal);border:1px solid rgba(78,205,228,.3);
+  padding:4px 12px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px}
+.save-status{font-size:10px;display:flex;align-items:center;gap:5px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;
+  transition:color .3s}
+.save-status.ok{color:var(--green)}
+.save-status.saving{color:var(--yellow)}
+.save-status.err{color:var(--red)}
+.save-status.offline{color:var(--muted)}
+.btn-sair{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;background:none;
+  border:1px solid var(--border);color:var(--muted);padding:6px 12px;
+  border-radius:6px;cursor:pointer;transition:all .2s}
+.btn-sair:hover{border-color:var(--red);color:var(--red)}
+
+/* ── LOGIN */
+#v-login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:80px 24px 40px}
+.login-card{width:100%;max-width:400px;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:40px}
+.ey{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.lt{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;margin-bottom:6px}
+.ls{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.fl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:13px 15px;font-size:14px;font-family:'Barlow',sans-serif;color:#fff;
+  outline:none;margin-bottom:18px;transition:border-color .2s}
+.fi:focus{border-color:var(--teal)}
+.rem-row{display:flex;align-items:center;gap:8px;margin-bottom:22px;cursor:pointer}
+.rem-row input{accent-color:var(--teal);width:15px;height:15px;cursor:pointer}
+.rem-row span{font-size:12px;color:var(--muted)}
+.btn-in{width:100%;padding:15px;background:var(--teal);color:var(--bg);border:none;
+  border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-weight:800;
+  font-size:15px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  transition:opacity .2s;margin-bottom:10px}
+.btn-in:hover{opacity:.85}
+.btn-ghost{width:100%;padding:10px;background:none;border:none;color:var(--muted);
+  font-size:12px;cursor:pointer;font-family:'Barlow',sans-serif;transition:color .2s}
+.btn-ghost:hover{color:#fff}
+.login-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+  border-radius:7px;padding:9px 13px;font-size:12px;color:var(--red);margin-bottom:14px;display:none}
+
+/* ── DASH */
+#v-dash{padding-top:62px}
+.dash-nav{background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;padding:0 28px;gap:2px;overflow-x:auto}
+.dtab{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:13px 16px;
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;
+  background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+.dtab:hover{color:#fff}
+.dtab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tpane{display:none;padding:26px 28px;max-width:1400px;margin:0 auto}
+.tpane.active{display:block}
+
+/* ── VISAO GERAL */
+.vg-refresh{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.vg-timestamp{font-size:11px;color:var(--muted)}
+.btn-refresh{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;background:none;
+  border:1px solid var(--border);color:var(--muted);padding:7px 14px;
+  border-radius:6px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-refresh:hover{border-color:var(--teal);color:var(--teal)}
+.btn-refresh.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Cartões de sumário */
+.sum-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px}
+.sc-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.sc-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:30px;margin-top:5px}
+
+/* Lista de UCs */
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-ln{flex:1;height:1px;background:var(--border)}
+.sec-ttl{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+
+.uc-list{display:flex;flex-direction:column;gap:6px}
+.uc-row{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:14px 18px;display:flex;align-items:center;gap:14px;
+  cursor:pointer;transition:all .2s;flex-wrap:wrap;
+}
+.uc-row:hover{background:var(--bg3);border-color:rgba(78,205,228,.2)}
+.uc-row.expanded{border-color:var(--teal);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.uc-status-icon{font-size:18px;flex-shrink:0;width:26px;text-align:center}
+.uc-nome{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;flex:1;min-width:120px}
+.uc-num{font-family:monospace;font-size:10px;color:var(--muted)}
+.uc-tipo-badge{font-size:10px;padding:2px 8px;border-radius:20px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.tb-ativo{background:rgba(78,205,228,.1);color:var(--teal)}
+.tb-prop{background:rgba(122,155,181,.1);color:var(--muted)}
+.tb-pass{background:rgba(234,179,8,.1);color:var(--yellow)}
+.uc-pipeline{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-left:auto}
+.pip{font-size:11px;padding:3px 9px;border-radius:20px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;white-space:nowrap}
+.pip-ok{background:rgba(34,197,94,.12);color:var(--green)}
+.pip-no{background:rgba(26,45,80,.6);color:var(--muted)}
+.pip-err{background:rgba(239,68,68,.12);color:var(--red)}
+.pip-pend{background:rgba(234,179,8,.12);color:var(--yellow)}
+.uc-arrow{font-size:10px;color:var(--muted);flex-shrink:0;margin-left:4px}
+
+/* Detalhe da UC */
+.uc-detail{
+  background:var(--bg3);border:1px solid var(--teal);
+  border-top:none;border-radius:0 0 10px 10px;
+  overflow:hidden;margin-bottom:6px;
+}
+.detail-inner{padding:22px 20px}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:20px}
+.dg-item{background:var(--bg2);border-radius:8px;padding:12px 14px}
+.dg-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:4px}
+.dg-val{font-size:14px;font-weight:600}
+.dg-val-big{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;color:var(--gold)}
+
+/* Pipeline detalhada */
+.pipeline-steps{display:flex;gap:0;flex-wrap:wrap;margin-bottom:20px}
+.ps{flex:1;min-width:110px;background:var(--bg2);border:1px solid var(--border);
+  padding:12px;text-align:center;position:relative}
+.ps:first-child{border-radius:8px 0 0 8px}
+.ps:last-child{border-radius:0 8px 8px 0}
+.ps+.ps{border-left:none}
+.ps-icon{font-size:20px;display:block;margin-bottom:4px}
+.ps-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:3px}
+.ps-status{font-size:10px;font-weight:600}
+.ps.st-ok{border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04)}
+.ps.st-ok .ps-status{color:var(--green)}
+.ps.st-err{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.04)}
+.ps.st-err .ps-status{color:var(--red)}
+.ps.st-pend{border-color:rgba(234,179,8,.3);background:rgba(234,179,8,.04)}
+.ps.st-pend .ps-status{color:var(--yellow)}
+.ps.st-no{border-color:var(--border);background:rgba(26,45,80,.3)}
+.ps.st-no .ps-status{color:var(--muted)}
+
+/* Info do cliente */
+.cliente-info-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.ci{flex:1;min-width:140px;background:var(--bg2);border-radius:8px;padding:12px}
+
+/* Linha digitável */
+.linha-dig{background:var(--bg2);border:1px solid var(--border);border-radius:7px;
+  padding:9px 12px;font-family:monospace;font-size:11px;color:var(--muted);
+  margin-top:8px;word-break:break-all;letter-spacing:.5px}
+
+/* Ações */
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.btn-act{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;padding:9px 16px;
+  border-radius:7px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-act-teal{background:rgba(78,205,228,.1);border:1px solid rgba(78,205,228,.3);color:var(--teal)}
+.btn-act-teal:hover{background:rgba(78,205,228,.15)}
+.btn-act-ghost{background:none;border:1px solid var(--border);color:var(--muted)}
+.btn-act-ghost:hover{border-color:var(--muted);color:#fff}
+
+/* ── USINAS E RATEIO */
+.usina-blk{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+.usina-hdr{background:var(--bg3);padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.usina-nome{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px}
+.usina-nome span{color:var(--teal)}
+.usina-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.usina-badge{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.op{background:rgba(34,197,94,.15);color:var(--green)}
+.nb{background:rgba(234,179,8,.15);color:var(--yellow)}
+
+/* Rateio table */
+.rt{width:100%;border-collapse:collapse;font-size:13px}
+.rt th{text-align:left;padding:9px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--border)}
+.rt td{padding:11px 20px;border-bottom:1px solid rgba(26,45,80,.5)}
+.rt tr:last-child td{border-bottom:none}
+.rt td:first-child{font-weight:600}
+.td-mono{font-family:monospace;font-size:10px;color:var(--muted)}
+.pct-bar{height:6px;border-radius:3px;background:rgba(78,205,228,.2);margin-top:4px}
+.pct-fill{height:100%;border-radius:3px;background:var(--teal)}
+
+/* % edit input */
+.pct-input{background:var(--bg3);border:1px solid var(--border);border-radius:5px;
+  padding:5px 8px;font-size:13px;color:var(--teal);font-weight:700;width:70px;
+  font-family:'Barlow Condensed',sans-serif;outline:none;text-align:center}
+.pct-input:focus{border-color:var(--teal)}
+.pct-total{font-size:11px;padding:10px 20px;border-top:1px solid var(--border);
+  background:rgba(17,31,58,.4);display:flex;justify-content:space-between;align-items:center}
+.btn-salvar-rateio{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;background:var(--teal);color:var(--bg);
+  border:none;padding:8px 16px;border-radius:6px;cursor:pointer;transition:opacity .2s}
+.btn-salvar-rateio:hover{opacity:.85}
+
+/* ── GESTÃO DE CLIENTES */
+.btn-add{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;
+  letter-spacing:1px;text-transform:uppercase;background:var(--teal);color:var(--bg);
+  border:none;padding:10px 20px;border-radius:8px;cursor:pointer;
+  transition:opacity .2s;margin-bottom:20px;display:inline-flex;align-items:center;gap:6px}
+.btn-add:hover{opacity:.85}
+.btn-export{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;background:none;
+  border:1px solid var(--border);color:var(--muted);padding:10px 16px;
+  border-radius:8px;cursor:pointer;transition:all .2s;margin-left:8px}
+.btn-export:hover{border-color:var(--gold);color:var(--gold)}
+
+.cl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.cl-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px}
+.cl-card-nome{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;margin-bottom:3px}
+.cl-card-uc{font-family:monospace;font-size:10px;color:var(--muted);margin-bottom:12px}
+.cl-card-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);
+  padding:4px 0;border-bottom:1px solid rgba(26,45,80,.4)}
+.cl-card-row:last-child{border-bottom:none}
+.cl-card-row strong{color:#fff}
+.cl-card-actions{display:flex;gap:8px;margin-top:14px}
+.btn-editar{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;background:rgba(78,205,228,.08);
+  border:1px solid rgba(78,205,228,.2);color:var(--teal);padding:6px 12px;
+  border-radius:6px;cursor:pointer;transition:all .2s;flex:1}
+.btn-editar:hover{background:rgba(78,205,228,.15)}
+.btn-remover{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;background:none;
+  border:1px solid rgba(239,68,68,.2);color:rgba(239,68,68,.6);padding:6px 12px;
+  border-radius:6px;cursor:pointer;transition:all .2s}
+.btn-remover:hover{border-color:var(--red);color:var(--red)}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;margin-bottom:20px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:span 2}
+.form-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.form-input,.form-select{background:var(--bg3);border:1px solid var(--border);border-radius:7px;
+  padding:10px 12px;font-size:13px;font-family:'Barlow',sans-serif;color:#fff;
+  outline:none;width:100%;transition:border-color .2s}
+.form-input:focus,.form-select:focus{border-color:var(--teal)}
+.form-select option{background:var(--bg3)}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.btn-cancel{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;background:none;
+  border:1px solid var(--border);color:var(--muted);padding:10px 18px;
+  border-radius:7px;cursor:pointer;transition:all .2s}
+.btn-cancel:hover{border-color:var(--muted);color:#fff}
+.btn-save{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:12px;
+  letter-spacing:1px;text-transform:uppercase;background:var(--teal);color:var(--bg);
+  border:none;padding:10px 22px;border-radius:7px;cursor:pointer;transition:opacity .2s}
+.btn-save:hover{opacity:.85}
+
+/* ── PRODUÇÃO */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.prod-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px}
+.prod-nome{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:19px;margin-bottom:3px}
+.prod-nome span{color:var(--teal)}
+.prod-loc{font-size:11px;color:var(--muted);margin-bottom:18px}
+.prod-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ps-stat{background:var(--bg3);border-radius:8px;padding:12px}
+.ps-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.ps-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:21px;margin-top:3px}
+.prod-int{background:rgba(78,205,228,.04);border:1px dashed rgba(78,205,228,.2);
+  border-radius:7px;padding:12px;font-size:11px;color:var(--muted);text-align:center}
+.prod-int strong{color:var(--teal);display:block;margin-bottom:3px;font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.5px}
+
+/* Misc */
+.c-green{color:var(--green)} .c-red{color:var(--red)} .c-teal{color:var(--teal)}
+.c-gold{color:var(--gold)} .c-muted{color:var(--muted)} .c-yellow{color:var(--yellow)}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;
+  border-radius:20px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px}
+.pill-ok{background:rgba(34,197,94,.12);color:var(--green)}
+.pill-err{background:rgba(239,68,68,.12);color:var(--red)}
+.pill-pend{background:rgba(234,179,8,.12);color:var(--yellow)}
+.pill-no{background:rgba(26,45,80,.5);color:var(--muted)}
+
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--bg3);border:1px solid var(--teal);border-radius:10px;
+  padding:12px 18px;font-size:13px;color:var(--teal);
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  animation:toastIn .3s ease;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:700px){
+  .dash-nav{padding:0 12px}
+  .tpane{padding:18px 14px}
+  .topbar{padding:0 14px}
+  .nav-links{display:none}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:span 1}
+  .pipeline-steps{flex-direction:column}
+  .ps{border-radius:8px!important;border-left:1px solid var(--border)!important;margin-bottom:4px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="logo">LUZI <span>ENERGIA</span></a>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link">⚡ Site</a>
+    <a href="admin.html" class="nav-link active">🔐 Admin</a>
+    <a href="cliente.html" class="nav-link">☀️ Clientes</a>
+  </nav>
+  <div class="topbar-r">
+    <div class="save-status offline hidden" id="save-status">
+      <span id="save-icon">⚪</span><span id="save-txt">Offline</span>
+    </div>
+    <span class="badge-adm hidden" id="badge-adm">Administrador</span>
+    <button class="btn-sair hidden" id="btn-sair" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<!-- LOGIN -->
+<div id="v-login">
+  <div class="login-card">
+    <div class="ey">— Área restrita</div>
+    <div class="lt">Painel Administrativo</div>
+    <div class="ls">Acesso exclusivo da equipe Luzi Energia.</div>
+    <div class="login-err" id="login-err">Senha incorreta. Tente novamente.</div>
+    <div class="fl">Senha</div>
+    <input type="password" class="fi" id="pwd" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <label class="rem-row"><input type="checkbox" id="rem" checked><span>Lembrar por 30 dias</span></label>
+    <button class="btn-in" onclick="doLogin()">Entrar</button>
+    <button class="btn-ghost" onclick="location.href='index.html'">← Voltar ao site</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="v-dash" class="hidden">
+  <nav class="dash-nav">
+    <button class="dtab active" onclick="setTab('vg')">📊 Visão Geral</button>
+    <button class="dtab" onclick="setTab('usinas')">⚡ Usinas &amp; Rateios</button>
+    <button class="dtab" onclick="setTab('clientes')">👥 Gestão de Clientes</button>
+    <button class="dtab" onclick="setTab('producao')">🏭 Produção</button>
+  </nav>
+
+  <!-- VISÃO GERAL -->
+  <div id="tab-vg" class="tpane active">
+    <div class="vg-refresh">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px">Status das UCs</div>
+        <div class="vg-timestamp" id="vg-ts">Carregando...</div>
+      </div>
+    </div>
+    <div class="sum-row" id="sum-row"></div>
+    <div class="sec-hdr"><div class="sec-ttl">UCs ativas</div><div class="sec-ln"></div></div>
+    <div class="uc-list" id="uc-list"></div>
+  </div>
+
+  <!-- USINAS & RATEIOS -->
+  <div id="tab-usinas" class="tpane">
+    <div id="usinas-content"></div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div id="tab-clientes" class="tpane">
+    <div style="display:flex;align-items:center;margin-bottom:20px">
+      <button class="btn-add" onclick="abrirModal()">＋ Adicionar cliente</button>
+    </div>
+    <div class="cl-grid" id="cl-grid"></div>
+  </div>
+
+  <!-- PRODUÇÃO -->
+  <div id="tab-producao" class="tpane">
+    <div class="prod-grid" id="prod-grid"></div>
+  </div>
+</div>
+
+<!-- Modal edição/criação de cliente -->
+<div class="modal-overlay hidden" id="modal-overlay" onclick="if(event.target===this)fecharModal()">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Adicionar cliente</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Nome da UC</label><input class="form-input" id="f-nome" placeholder="Ex: Cartório"></div>
+      <div class="form-group"><label class="form-label">Número UC</label><input class="form-input" id="f-uc" placeholder="70296501229"></div>
+      <div class="form-group"><label class="form-label">Nome do cliente</label><input class="form-input" id="f-cliente" placeholder="Ex: Kenia"></div>
+      <div class="form-group"><label class="form-label">CPF / CNPJ</label><input class="form-input" id="f-doc" placeholder="Ex: 02790574000136"></div>
+      <div class="form-group"><label class="form-label">WhatsApp (com DDI)</label><input class="form-input" id="f-wpp" placeholder="5562999991234"></div>
+      <div class="form-group"><label class="form-label">Desconto (%)</label><input class="form-input" id="f-desc" type="number" placeholder="20"></div>
+      <div class="form-group"><label class="form-label">Tipo</label>
+        <select class="form-select" id="f-tipo">
+          <option value="cliente_ativo">Cliente ativo (boleto Luzi)</option>
+          <option value="proprio">Próprio (Luiz)</option>
+          <option value="pass_through">Repasse direto Equatorial</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Ação de boleto</label>
+        <select class="form-select" id="f-acao">
+          <option value="luzi_boleto_e_png">Boleto Luzi + PNG</option>
+          <option value="equatorial_direto">Equatorial direto</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Usina fornecedora</label>
+        <select class="form-select" id="f-usina">
+          <option value="">— nenhuma —</option>
+          <option value="cartorio">Usina Cartório</option>
+          <option value="escola">Usina Escola</option>
+          <option value="predio">Usina Prédio (em construção)</option>
+          <option value="abadiania">Usina Abadiânia</option>
+          <option value="chacara">Usina Chácara</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Dia de geração da fatura</label><input class="form-input" id="f-dg" type="number" placeholder="14" min="1" max="28"></div>
+      <div class="form-group full"><label class="form-label">Método de cálculo</label>
+        <select class="form-select" id="f-metodo">
+          <option value="autoconsumo">Autoconsumo</option>
+          <option value="planilha_injecao">Planilha de injeção</option>
+          <option value="sem_rateio">Sem rateio</option>
+        </select>
+      </div>
+      <div class="form-group full"><label class="form-label">URL do contrato (PDF no Netlify)</label><input class="form-input" id="f-contrato" placeholder="contratos/nome_cliente.pdf"></div>
+      <div class="form-group full"><label class="form-label">Observações</label><input class="form-input" id="f-obs" placeholder="Observações internas..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="btn-save" onclick="salvarCliente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONSTANTES
+// ═══════════════════════════════════════════════════════
+const ADMIN_HASH  = 'd69098f86e9e89c22f67391256c576531e0e3f2526c503d5644444479f74e31d';
+const SERVER_URL  = 'http://localhost:8080';
+let   modoLocal   = false;  // true = servidor local rodando, auto-save ativo
+let   saveTimer   = null;
+
+// ── Detecta se servidor local está rodando ────────────────
+async function detectarModo() {
+  try {
+    const r = await fetch(`${SERVER_URL}/api/ping`, {signal: AbortSignal.timeout(1500)});
+    if (r.ok) {
+      modoLocal = true;
+      setSaveStatus('ok', '⚪', 'Ao vivo');
+      document.getElementById('save-status').classList.remove('hidden');
+      console.log('✅ Servidor local detectado — modo edição ativo');
+    }
+  } catch {
+    modoLocal = false;
+    document.getElementById('save-status').classList.remove('hidden');
+    setSaveStatus('offline', '📡', 'Somente leitura');
+  }
+}
+
+// ── Indicador de save na topbar ───────────────────────────
+function setSaveStatus(cls, icon, txt) {
+  const el = document.getElementById('save-status');
+  const ic = document.getElementById('save-icon');
+  const tx = document.getElementById('save-txt');
+  el.className = `save-status ${cls}`;
+  ic.textContent = icon;
+  tx.textContent = txt;
+}
+
+// ── Auto-save com debounce ────────────────────────────────
+function autoSave(delay=400) {
+  if (!modoLocal) {
+    setSaveStatus('offline', '📡', 'Inicie o servidor admin para salvar');
+    setTimeout(()=>setSaveStatus('offline','📡','Somente leitura'), 3000);
+    return;
+  }
+  if (saveTimer) clearTimeout(saveTimer);
+  setSaveStatus('saving', '⏳', 'Salvando...');
+  saveTimer = setTimeout(async () => {
+    try {
+      D.atualizado = new Date().toISOString();
+      const r = await fetch(`${SERVER_URL}/api/save`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(D),
+        signal: AbortSignal.timeout(5000),
+      });
+      const j = await r.json();
+      if (j.ok) {
+        const hora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+        setSaveStatus('ok', '✓', `Salvo às ${hora}`);
+      } else {
+        setSaveStatus('err', '✗', 'Erro ao salvar');
+      }
+    } catch(e) {
+      setSaveStatus('err', '✗', 'Sem conexão com servidor');
+    }
+  }, delay);
+}
+
+// ═══════════════════════════════════════════════════════
+// DADOS BASE (fallback se data.json não encontrado)
+// ═══════════════════════════════════════════════════════
+const DATA_BASE = {
+  atualizado: new Date().toISOString(),
+  usinas: [
+    { id:'cartorio', nome:'Usina Cartório', uc:'20393118', uc_billing:'70296501229', loc:'Anápolis — GO', prod_media:2200, status:'operando',
+      rateio:[
+        {uc:'10029467606',uc_billing:'371372701262',nome:'Apto 100',    pct:44},
+        {uc:'21151635',   uc_billing:'77762501286', nome:'Casa Neneto', pct:36},
+        {uc:'21307209',   uc_billing:'79163601288', nome:'Térreo',      pct:20},
+      ]},
+    { id:'escola', nome:'Usina Escola', uc:'20760840', uc_billing:'73940201205', loc:'Anápolis — GO', prod_media:500, status:'operando',
+      rateio:[
+        {uc:'10027980845',uc_billing:'365716101232',nome:'Casa Leandro',   pct:75},
+        {uc:'10040035296',uc_billing:'430857301280',nome:'Firma Marrula',  pct:25},
+      ]},
+    { id:'predio', nome:'Usina Prédio', uc:null, loc:'Anápolis — GO', prod_media:null, status:'em construção', rateio:[] },
+    { id:'abadiania', nome:'Usina Abadiânia', uc:null, loc:'Abadiânia — GO', prod_media:null, status:'em construção', rateio:[] },
+    { id:'chacara', nome:'Usina Chácara', uc:'70977001259', loc:'GO', prod_media:null, status:'em montagem', rateio:[] },
+  ],
+  clientes: [
+    { nome:'Apto 100', uc:'371372701262', tipo:'proprio', cliente:'Luiz (próprio)', doc:'', wpp:'5562999741225', desc:null, dg:14, acao:'equatorial_direto', usina:'cartorio', metodo:'planilha_injecao', contrato:null, obs:'Apartamento de Luiz.' },
+    { nome:'Apto 300', uc:'371377601286', tipo:'proprio', cliente:'Dindinho (tio)', doc:'', wpp:'', desc:null, dg:14, acao:'equatorial_direto', usina:null, metodo:'sem_rateio', contrato:null, obs:'Tio de Luiz, 3º andar.' },
+    { nome:'Cartório', uc:'70296501229', tipo:'cliente_ativo', cliente:'Kenia', doc:'02790574000136', wpp:'5562992151600', desc:15, dg:24, acao:'luzi_boleto_e_png', usina:'cartorio', metodo:'autoconsumo', contrato:'contratos/cartorio.pdf', obs:'Usina própria.' },
+    { nome:'Casa Leandro', uc:'365716101232', tipo:'cliente_ativo', cliente:'Leandro Ribeiro', doc:'80372422187', wpp:'5562991136684', desc:20, dg:6, acao:'luzi_boleto_e_png', usina:'escola', metodo:'planilha_injecao', contrato:'contratos/casa_leandro.pdf', obs:'Contato: Luciana (tia).' },
+    { nome:'Casa Marrula', uc:'398986101273', tipo:'pass_through', cliente:'Miguel Hanna', doc:'70182543102', wpp:'5562992903232', desc:null, dg:19, acao:'equatorial_direto', usina:null, metodo:'sem_rateio', contrato:null, obs:'Sem usina vinculada ainda.' },
+    { nome:'Casa Neneto', uc:'77762501286', tipo:'cliente_ativo', cliente:'Wagner Neto', doc:'02109687100', wpp:'5562999797036', desc:20, dg:23, acao:'luzi_boleto_e_png', usina:'cartorio', metodo:'planilha_injecao', contrato:'contratos/casa_neneto.pdf', obs:'' },
+    { nome:'Chácara', uc:'70977001259', tipo:'proprio', cliente:'Luiz (próprio)', doc:'', wpp:'', desc:null, dg:5, acao:'equatorial_direto', usina:'chacara', metodo:'autoconsumo', contrato:null, obs:'Autoconsumo próprio.' },
+    { nome:'Escola', uc:'73940201205', tipo:'cliente_ativo', cliente:'Cleyton', doc:'50802328000108', wpp:'5562985340915', desc:20, dg:11, acao:'luzi_boleto_e_png', usina:'escola', metodo:'autoconsumo', contrato:'contratos/escola.pdf', obs:'Geração informada manualmente.' },
+    { nome:'Firma Marrula', uc:'430857301280', tipo:'cliente_ativo', cliente:'Miguel Hanna', doc:'70182543102', wpp:'5562992903232', desc:20, dg:20, acao:'luzi_boleto_e_png', usina:'escola', metodo:'planilha_injecao', contrato:'contratos/firma_marrula.pdf', obs:'Mesmo contato que Casa Marrula.' },
+    { nome:'Sobreloja', uc:'78431901209', tipo:'proprio', cliente:'Luiz (próprio)', doc:'', wpp:'', desc:null, dg:24, acao:'equatorial_direto', usina:null, metodo:'sem_rateio', contrato:null, obs:'Desocupado.' },
+    { nome:'Térreo', uc:'79163601288', tipo:'proprio', cliente:'Luiz (próprio)', doc:'', wpp:'', desc:null, dg:14, acao:'equatorial_direto', usina:'cartorio', metodo:'planilha_injecao', contrato:null, obs:'Térreo do prédio familiar.' },
+  ],
+  // Status das faturas (atualizado pelos scripts Python)
+  status_ucs: {}
+};
+
+// ═══════════════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════════════
+let D = JSON.parse(JSON.stringify(DATA_BASE));  // cópia mutável
+let openUC = null;
+let editIdx = null;
+
+// ═══════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function doLogin(){
+  const pwd=document.getElementById('pwd').value;
+  const h=await sha256(pwd);
+  if(h===ADMIN_HASH){
+    if(document.getElementById('rem').checked)
+      localStorage.setItem('luzi_adm',JSON.stringify({v:1,exp:Date.now()+30*864e5}));
+    else sessionStorage.setItem('luzi_adm_s','1');
+    showDash();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('pwd').value='';
+  }
+}
+function logout(){
+  localStorage.removeItem('luzi_adm');
+  sessionStorage.removeItem('luzi_adm_s');
+  document.getElementById('v-login').classList.remove('hidden');
+  document.getElementById('v-dash').classList.add('hidden');
+  document.getElementById('badge-adm').classList.add('hidden');
+  document.getElementById('btn-sair').classList.add('hidden');
+}
+function checkSession(){
+  const s=localStorage.getItem('luzi_adm');
+  if(s){const d=JSON.parse(s);if(d.v&&d.exp>Date.now())return true;localStorage.removeItem('luzi_adm');}
+  return !!sessionStorage.getItem('luzi_adm_s');
+}
+function showDash(){
+  document.getElementById('v-login').classList.add('hidden');
+  document.getElementById('v-dash').classList.remove('hidden');
+  document.getElementById('badge-adm').classList.remove('hidden');
+  document.getElementById('btn-sair').classList.remove('hidden');
+  detectarModo();
+  loadData().then(renderAll);
+}
+
+// ═══════════════════════════════════════════════════════
+// CARREGAMENTO DE DADOS (data.json)
+// ═══════════════════════════════════════════════════════
+async function loadData(){
+  try {
+    // Prefere servidor local (dados mais frescos, sem cache de deploy)
+    const url = modoLocal ? `${SERVER_URL}/api/data` : 'data.json?t='+Date.now();
+    const r=await fetch(url);
+    if(r.ok){ D=await r.json(); }
+  } catch(e){ /* usa DATA_BASE */ }
+  // Garante campos novos se data.json for antigo
+  D.usinas  = D.usinas  || DATA_BASE.usinas;
+  D.clientes= D.clientes|| DATA_BASE.clientes;
+  D.status_ucs = D.status_ucs || {};
+}
+
+async function refreshData(){
+  await loadData();
+  renderAll();
+}
+
+// Auto-refresh a cada 30s
+setInterval(()=>{if(checkSession())loadData().then(renderAll);}, 30000);
+
+// ═══════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════
+function setTab(id){
+  document.querySelectorAll('.tpane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+const R$=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const dtBR=iso=>{const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`};
+function hoje0(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function diasAte(iso){const v=new Date(iso);v.setHours(0,0,0,0);return Math.round((v-hoje0())/86400000);}
+function toast(msg,dur=2500){
+  const t=document.createElement('div');t.className='toast';t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),dur);
+}
+
+// Status da UC: calcula pipeline baseado em status_ucs + data da fatura
+function getUCStatus(c){
+  const st=D.status_ucs[c.uc]||{};
+  const hoje=hoje0();
+
+  // Próxima fatura esperada
+  const mes=hoje.getMonth(), ano=hoje.getFullYear(), dia=hoje.getDate();
+  let nextFat=new Date(ano,mes,c.dg);
+  if(dia>c.dg) nextFat=new Date(ano,mes+1,c.dg);
+  const diasFat=Math.round((nextFat-hoje)/86400000);
+
+  // Determina status geral
+  let icone='⚪', cor='c-muted', legenda='Sem dados';
+  if(st.pago){icone='✅';cor='c-green';legenda='Em dia';}
+  else if(st.fatura_chegou&&st.boleto_emitido&&st.wpp_enviado){icone='🟡';cor='c-yellow';legenda='Aguardando pagamento';}
+  else if(st.fatura_chegou&&!st.boleto_emitido){icone='🔵';cor='c-teal';legenda='Boleto pendente';}
+  else if(!st.fatura_chegou&&diasFat<-5){icone='🔴';cor='c-red';legenda='Fatura em atraso';}
+  else if(!st.fatura_chegou&&diasFat<=3&&diasFat>=0){icone='🟠';cor='c-yellow';legenda='Fatura chegando';}
+  else if(!st.fatura_chegou){icone='⚪';cor='c-muted';legenda='Aguardando fatura';}
+
+  return {icone,cor,legenda,st,diasFat,nextFat};
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════════════════════
+function renderAll(){
+  const ts=D.atualizado?new Date(D.atualizado).toLocaleString('pt-BR'):'—';
+  document.getElementById('vg-ts').textContent='Última atualização: '+ts;
+  renderSumario();
+  renderUCList();
+  renderUsinas();
+  renderClientes();
+  renderProducao();
+}
+
+// ── Sumário
+function renderSumario(){
+  const ativos=D.clientes.filter(c=>c.tipo==='cliente_ativo');
+  const pagos=Object.values(D.status_ucs).filter(s=>s.pago).length;
+  const alertas=D.clientes.filter(c=>{const u=getUCStatus(c);return u.icone==='🔴'||u.icone==='🟠';}).length;
+  document.getElementById('sum-row').innerHTML=`
+    <div class="sc"><div class="sc-lbl">Total de UCs</div><div class="sc-val">${D.clientes.length}</div></div>
+    <div class="sc"><div class="sc-lbl">Clientes ativos</div><div class="sc-val c-teal">${ativos.length}</div></div>
+    <div class="sc"><div class="sc-lbl">Faturas pagas</div><div class="sc-val c-green">${pagos}</div></div>
+    <div class="sc"><div class="sc-lbl">Alertas</div><div class="sc-val ${alertas>0?'c-red':'c-green'}">${alertas}</div></div>
+    <div class="sc"><div class="sc-lbl">Usinas</div><div class="sc-val">${D.usinas.filter(u=>u.status==='operando').length}</div></div>
+  `;
+}
+
+// ── Lista de UCs
+function renderUCList(){
+  document.getElementById('uc-list').innerHTML=D.clientes.map((c,i)=>{
+    const {icone,cor,legenda,st,diasFat}=getUCStatus(c);
+    const tipoBadge=c.tipo==='cliente_ativo'?'tb-ativo':c.tipo==='pass_through'?'tb-pass':'tb-prop';
+    const tipoLabel=c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio';
+
+    // Mini pipeline
+    const pip=[
+      {lbl:'Fatura',  ok:st.fatura_chegou},
+      {lbl:'BTG',     ok:st.boleto_emitido},
+      {lbl:'PNG',     ok:st.png_gerado},
+      {lbl:'WhatsApp',ok:st.wpp_enviado},
+      {lbl:'Pago',    ok:st.pago},
+    ];
+    const pipHtml=pip.map(p=>`<span class="pip ${p.ok?'pip-ok':'pip-no'}">${p.ok?'✓':''} ${p.lbl}</span>`).join('');
+
+    const isOpen=openUC===c.uc;
+    return `<div>
+      <div class="uc-row${isOpen?' expanded':''}" onclick="toggleUC('${c.uc}')">
+        <div class="uc-status-icon">${icone}</div>
+        <div style="flex:1;min-width:100px">
+          <div class="uc-nome">${c.nome}</div>
+          <div class="uc-num">UC ${c.uc}</div>
+        </div>
+        <span class="uc-tipo-badge ${tipoBadge}">${tipoLabel}</span>
+        <div class="uc-pipeline">${pipHtml}</div>
+        <div class="uc-arrow">${isOpen?'▲':'▼'}</div>
+      </div>
+      ${isOpen?renderDetail(c):''}
+    </div>`;
+  }).join('');
+}
+
+// ── Detalhe da UC
+function renderDetail(c){
+  const {st,diasFat,nextFat,legenda}=getUCStatus(c);
+  const fmt=dt=>dt?new Date(dt).toLocaleString('pt-BR'):'—';
+
+  const steps=[
+    {icon:'📧',lbl:'Fatura chegou',     ok:st.fatura_chegou,    val:fmt(st.ts_fatura),     cls:st.fatura_chegou?'st-ok':'st-no'},
+    {icon:'🏦',lbl:'Boleto BTG',        ok:st.boleto_emitido,   val:fmt(st.ts_boleto),     cls:st.boleto_emitido?'st-ok':st.fatura_chegou?'st-pend':'st-no'},
+    {icon:'🖼️',lbl:'PNG gerado',         ok:st.png_gerado,       val:fmt(st.ts_png),        cls:st.png_gerado?'st-ok':st.boleto_emitido?'st-pend':'st-no'},
+    {icon:'💬',lbl:'WhatsApp enviado',   ok:st.wpp_enviado,      val:fmt(st.ts_wpp),        cls:st.wpp_enviado?'st-ok':st.png_gerado?'st-pend':'st-no'},
+    {icon:'✅',lbl:'Boleto pago',        ok:st.pago,             val:fmt(st.ts_pago),       cls:st.pago?'st-ok':st.wpp_enviado?'st-pend':'st-no'},
+  ];
+
+  const pipeHtml=steps.map(s=>`
+    <div class="ps ${s.cls}">
+      <span class="ps-icon">${s.icon}</span>
+      <div class="ps-lbl">${s.lbl}</div>
+      <div class="ps-status">${s.ok?s.val:'Pendente'}</div>
+    </div>`).join('');
+
+  const fatura=st.fatura||{};
+  const temFatura=!!fatura.valor;
+
+  return `<div class="uc-detail">
+    <div class="detail-inner">
+      <!-- Pipeline -->
+      <div style="margin-bottom:18px">
+        <div class="sec-hdr"><div class="sec-ttl">Pipeline desta fatura</div><div class="sec-ln"></div></div>
+        <div class="pipeline-steps">${pipeHtml}</div>
+      </div>
+
+      <!-- Dados do cliente -->
+      <div style="margin-bottom:18px">
+        <div class="sec-hdr"><div class="sec-ttl">Dados do cliente</div><div class="sec-ln"></div></div>
+        <div class="cliente-info-row">
+          <div class="ci"><div class="dg-lbl">Cliente</div><div class="dg-val">${c.cliente}</div></div>
+          <div class="ci"><div class="dg-lbl">Documento</div><div class="dg-val">${c.doc||'—'}</div></div>
+          <div class="ci"><div class="dg-lbl">WhatsApp</div><div class="dg-val">${c.wpp?'+'+c.wpp:'—'}</div></div>
+          <div class="ci"><div class="dg-lbl">Desconto</div><div class="dg-val c-teal">${c.desc!=null?c.desc+'%':'—'}</div></div>
+          <div class="ci"><div class="dg-lbl">Usina</div><div class="dg-val">${c.usina||'—'}</div></div>
+          <div class="ci"><div class="dg-lbl">Próxima fatura</div><div class="dg-val">${nextFat.toLocaleDateString('pt-BR')} ${diasFat===0?'(hoje)':diasFat>0?`(em ${diasFat}d)`:`(${-diasFat}d atrás)`}</div></div>
+        </div>
+      </div>
+
+      <!-- Fatura atual -->
+      ${temFatura?`
+      <div style="margin-bottom:18px">
+        <div class="sec-hdr"><div class="sec-ttl">Fatura atual</div><div class="sec-ln"></div></div>
+        <div class="detail-grid">
+          <div class="dg-item"><div class="dg-lbl">Referência</div><div class="dg-val">${fatura.mes||'—'}</div></div>
+          <div class="dg-item"><div class="dg-lbl">Valor</div><div class="dg-val-big">${fatura.valor?R$(fatura.valor):'—'}</div></div>
+          <div class="dg-item"><div class="dg-lbl">Vencimento</div><div class="dg-val ${fatura.venc&&diasAte(fatura.venc)<0?'c-red':''}">${fatura.venc?dtBR(fatura.venc):'—'}</div></div>
+          <div class="dg-item"><div class="dg-lbl">Status</div><div class="dg-val">${legenda}</div></div>
+        </div>
+        ${fatura.linha?`<div class="dg-lbl" style="margin-top:8px">Linha digitável</div><div class="linha-dig">${fatura.linha}</div>`:''}
+      </div>`:''}
+
+      <!-- Ações -->
+      <div class="detail-actions">
+        ${c.wpp?`<button class="btn-act btn-act-teal" onclick="window.open('https://wa.me/${c.wpp}','_blank')">💬 Abrir WhatsApp</button>`:''}
+        ${c.contrato?`<button class="btn-act btn-act-ghost" onclick="window.open('${c.contrato}','_blank')">📄 Ver contrato</button>`:''}
+        <button class="btn-act btn-act-ghost" onclick="abrirModal(${D.clientes.findIndex(x=>x.uc==='${c.uc}')})">✏️ Editar</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleUC(uc){
+  openUC=openUC===uc?null:uc;
+  renderUCList();
+}
+
+// ── Usinas & Rateios
+function renderUsinas(){
+  document.getElementById('usinas-content').innerHTML=D.usinas.map(u=>`
+    <div class="usina-blk">
+      <div class="usina-hdr">
+        <div>
+          <div class="usina-nome">⚡ <span>${u.nome}</span></div>
+          <div class="usina-sub">${u.loc}${u.uc?' · UC '+u.uc:''} · Produção média: ${u.prod_media?u.prod_media+' kWh/mês':'em implantação'}</div>
+        </div>
+        <span class="usina-badge ${u.status==='operando'?'op':'nb'}">${u.status}</span>
+      </div>
+      ${u.rateio&&u.rateio.length>0?`
+        <table class="rt">
+          <thead><tr>
+            <th>UC consumidora</th>
+            <th>UC Equatorial (rateio)</th>
+            <th>UC Faturamento</th>
+            <th>% Créditos</th>
+            <th style="width:120px">Barra</th>
+          </tr></thead>
+          <tbody>${u.rateio.map((r,ri)=>`<tr>
+            <td>${r.nome}</td>
+            <td class="td-mono">${r.uc}</td>
+            <td class="td-mono">${r.uc_billing||'—'}</td>
+            <td>
+              <input class="pct-input" type="number" min="0" max="100"
+                value="${r.pct}" id="pct-${u.id}-${ri}"
+                oninput="atualizarPct('${u.id}',${ri},this.value)">
+              %
+            </td>
+            <td><div class="pct-bar"><div class="pct-fill" id="bar-${u.id}-${ri}" style="width:${r.pct}%"></div></div></td>
+          </tr>`).join('')}</tbody>
+        </table>
+        <div class="pct-total">
+          <span>Total: <strong id="tot-${u.id}" class="${somaRateio(u.id)===100?'c-green':'c-red'}">${somaRateio(u.id)}%</strong>
+            ${somaRateio(u.id)===100?'✓ correto':'⚠️ deve ser 100%'}</span>
+          <span style="font-size:10px;color:var(--muted)">Alterações salvas automaticamente</span>
+        </div>
+      `:`<div style="padding:16px 20px;font-size:13px;color:var(--muted)">
+        Nenhuma UC vinculada a esta usina ainda.
+        ${u.status!=='operando'?'<br><em>Usina ainda não está em operação.</em>':''}
+      </div>`}
+    </div>`).join('');
+}
+
+function somaRateio(usina_id){
+  const u=D.usinas.find(x=>x.id===usina_id);
+  if(!u||!u.rateio) return 0;
+  return u.rateio.reduce((s,r)=>s+(+r.pct),0);
+}
+
+function atualizarPct(usina_id,ri,val){
+  const u=D.usinas.find(x=>x.id===usina_id);
+  if(!u) return;
+  u.rateio[ri].pct=+val;
+  const bar=document.getElementById(`bar-${usina_id}-${ri}`);
+  if(bar) bar.style.width=Math.min(100,+val)+'%';
+  const tot=document.getElementById(`tot-${usina_id}`);
+  const soma=somaRateio(usina_id);
+  if(tot){tot.textContent=soma+'%';tot.className=soma===100?'c-green':'c-red';}
+  autoSave(1000);
+}
+
+function salvarRateio(usina_id){
+  const soma=somaRateio(usina_id);
+  if(soma!==100){toast('❌ Total deve ser 100%. Atual: '+soma+'%',3000);return;}
+  autoSave(200);
+  toast('✅ Rateio salvo!');
+}
+
+// ── Gestão de Clientes
+function renderClientes(){
+  document.getElementById('cl-grid').innerHTML=D.clientes.map((c,i)=>`
+    <div class="cl-card">
+      <div class="cl-card-nome">${c.nome}</div>
+      <div class="cl-card-uc">UC ${c.uc}</div>
+      <div class="cl-card-row"><span>Cliente</span><strong>${c.cliente}</strong></div>
+      <div class="cl-card-row"><span>Tipo</span><strong>${c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio'}</strong></div>
+      <div class="cl-card-row"><span>Desconto</span><strong class="c-teal">${c.desc!=null?c.desc+'%':'—'}</strong></div>
+      <div class="cl-card-row"><span>Usina</span><strong>${c.usina||'—'}</strong></div>
+      <div class="cl-card-row"><span>Contrato</span><strong>${c.contrato?'✅ Vinculado':'—'}</strong></div>
+      <div class="cl-card-actions">
+        <button class="btn-editar" onclick="abrirModal(${i})">✏️ Editar</button>
+        <button class="btn-remover" onclick="removerCliente(${i})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── Produção
+function renderProducao(){
+  document.getElementById('prod-grid').innerHTML=D.usinas.map(u=>`
+    <div class="prod-card">
+      <div class="prod-nome">⚡ <span>${u.nome}</span></div>
+      <div class="prod-loc">📍 ${u.loc}${u.uc?' · UC '+u.uc:''}</div>
+      <div class="prod-stats">
+        <div class="ps-stat"><div class="ps-stat-lbl">Prod. média</div>
+          <div class="ps-stat-val c-teal">${u.prod_media?u.prod_media+' kWh':'—'}</div></div>
+        <div class="ps-stat"><div class="ps-stat-lbl">Status</div>
+          <div class="ps-stat-val" style="font-size:15px">${u.status==='operando'?'🟢 Operando':u.status==='em montagem'?'🟡 Em montagem':'🔵 Em construção'}</div></div>
+        <div class="ps-stat"><div class="ps-stat-lbl">Clientes</div>
+          <div class="ps-stat-val">${u.rateio?u.rateio.length:0}</div></div>
+        <div class="ps-stat"><div class="ps-stat-lbl">Tipo</div>
+          <div class="ps-stat-val" style="font-size:14px">Solo</div></div>
+      </div>
+      <div class="prod-int">
+        <strong>🔌 Integração com inversor</strong>
+        ${u.status==='operando'?'Dados em tempo real após integração Growatt/Hoymiles.':'Disponível quando a usina entrar em operação.'}
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL CLIENTE
+// ═══════════════════════════════════════════════════════
+function abrirModal(idx=null){
+  editIdx=idx;
+  const title=document.getElementById('modal-title');
+  title.textContent=idx!==null?'Editar cliente':'Adicionar cliente';
+  const c=idx!==null?D.clientes[idx]:{};
+  document.getElementById('f-nome').value=c.nome||'';
+  document.getElementById('f-uc').value=c.uc||'';
+  document.getElementById('f-cliente').value=c.cliente||'';
+  document.getElementById('f-doc').value=c.doc||'';
+  document.getElementById('f-wpp').value=c.wpp||'';
+  document.getElementById('f-desc').value=c.desc!=null?c.desc:'';
+  document.getElementById('f-tipo').value=c.tipo||'cliente_ativo';
+  document.getElementById('f-acao').value=c.acao||'luzi_boleto_e_png';
+  document.getElementById('f-usina').value=c.usina||'';
+  document.getElementById('f-dg').value=c.dg||'';
+  document.getElementById('f-metodo').value=c.metodo||'planilha_injecao';
+  document.getElementById('f-contrato').value=c.contrato||'';
+  document.getElementById('f-obs').value=c.obs||'';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function fecharModal(){document.getElementById('modal-overlay').classList.add('hidden');editIdx=null;}
+function salvarCliente(){
+  const nc={
+    nome:document.getElementById('f-nome').value.trim(),
+    uc:document.getElementById('f-uc').value.trim(),
+    cliente:document.getElementById('f-cliente').value.trim(),
+    doc:document.getElementById('f-doc').value.trim(),
+    wpp:document.getElementById('f-wpp').value.trim(),
+    desc:document.getElementById('f-desc').value!==''?+document.getElementById('f-desc').value:null,
+    tipo:document.getElementById('f-tipo').value,
+    acao:document.getElementById('f-acao').value,
+    usina:document.getElementById('f-usina').value||null,
+    dg:+document.getElementById('f-dg').value||null,
+    metodo:document.getElementById('f-metodo').value,
+    contrato:document.getElementById('f-contrato').value.trim()||null,
+    obs:document.getElementById('f-obs').value.trim(),
+  };
+  if(!nc.nome||!nc.uc){toast('❌ Nome e UC são obrigatórios',2500);return;}
+  if(editIdx!==null) D.clientes[editIdx]=nc;
+  else D.clientes.push(nc);
+  fecharModal();
+  renderAll();
+  autoSave(200);
+  toast(modoLocal?'✅ Salvando e publicando...':'✅ Cliente salvo (inicie o servidor para publicar)');
+}
+function removerCliente(i){
+  if(!confirm('Remover "'+D.clientes[i].nome+'"?')) return;
+  D.clientes.splice(i,1);
+  renderAll();
+  autoSave(200);
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.onload=()=>{if(checkSession())showDash();};
+</script>
+</body>
+</html>

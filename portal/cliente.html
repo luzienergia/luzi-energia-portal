@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Cliente — Luzi Energia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg:     #080f1e;
+  --bg2:    #0d1830;
+  --bg3:    #111f3a;
+  --border: #1a2d50;
+  --teal:   #4ecde4;
+  --green:  #22c55e;
+  --gold:   #f59e0b;
+  --red:    #ef4444;
+  --text:   #ffffff;
+  --muted:  #7a9bb5;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+.hidden { display: none !important; }
+
+/* ── TOPBAR ───────────────────────────────────────────── */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(8,15,30,.95); backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px; height: 64px;
+}
+.logo { font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+        font-size: 22px; letter-spacing: 1px; text-decoration: none; color: #fff; }
+.logo span { color: var(--teal); }
+.nav-links { display: flex; gap: 8px; }
+.nav-link {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--muted);
+  text-decoration: none; padding: 8px 14px; border-radius: 6px; transition: all .2s;
+}
+.nav-link:hover { color: #fff; background: var(--bg3); }
+.nav-link.active { color: var(--teal); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.badge-cliente {
+  font-size: 12px; color: var(--teal); border: 1px solid rgba(78,205,228,.3);
+  padding: 5px 14px; border-radius: 20px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: .5px;
+}
+.btn-logout {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px;
+  letter-spacing: 1px; text-transform: uppercase;
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  padding: 7px 14px; border-radius: 6px; cursor: pointer; transition: all .2s;
+}
+.btn-logout:hover { border-color: var(--red); color: var(--red); }
+
+/* ── LOGIN ────────────────────────────────────────────── */
+#v-login {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 80px 24px 40px;
+}
+.login-card {
+  width: 100%; max-width: 420px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px;
+}
+.login-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 12px;
+}
+.login-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+               font-size: 32px; letter-spacing: 1px; margin-bottom: 6px; }
+.login-sub { font-size: 14px; color: var(--muted); margin-bottom: 32px; line-height: 1.5; }
+.field-label {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 8px;
+}
+.field-input {
+  width: 100%; background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px 16px; font-size: 15px; font-family: 'Barlow', sans-serif;
+  color: #fff; outline: none; margin-bottom: 24px; transition: border-color .2s; letter-spacing: 1px;
+}
+.field-input:focus { border-color: var(--teal); }
+.btn-primary {
+  width: 100%; padding: 16px; background: var(--teal); color: var(--bg);
+  border: none; border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+  font-size: 16px; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; transition: opacity .2s; margin-bottom: 12px;
+}
+.btn-primary:hover { opacity: .85; }
+.btn-ghost {
+  width: 100%; padding: 12px; background: none; border: none;
+  color: var(--muted); font-size: 13px; cursor: pointer; text-align: center;
+  font-family: 'Barlow', sans-serif; transition: color .2s;
+}
+.btn-ghost:hover { color: #fff; }
+.login-err {
+  background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.3);
+  border-radius: 8px; padding: 10px 14px; font-size: 13px; color: var(--red);
+  margin-bottom: 16px; display: none;
+}
+.login-cpf-hint { font-size: 11px; color: var(--muted); margin-top: -18px; margin-bottom: 20px; }
+
+/* ── PORTAL ───────────────────────────────────────────── */
+#v-portal { padding-top: 64px; }
+.portal-wrap { max-width: 960px; margin: 0 auto; padding: 36px 24px 60px; }
+
+/* Saudação */
+.saudacao { margin-bottom: 32px; }
+.saudacao-label {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 6px;
+}
+.saudacao-nome { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 34px; }
+.saudacao-nome span { color: var(--teal); }
+.saudacao-sub { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* Savings cards */
+.savings-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 32px; }
+.sv-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 22px 20px;
+  text-align: center;
+}
+.sv-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+            font-family: 'Barlow Condensed', sans-serif; font-weight: 700; margin-bottom: 8px; }
+.sv-value { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 28px; }
+.c-teal  { color: var(--teal); }
+.c-gold  { color: var(--gold); }
+.c-green { color: var(--green); }
+.sv-sub  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* Gráfico */
+.chart-card {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 14px;
+  padding: 24px; margin-bottom: 32px;
+}
+.chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+.chart-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; }
+.chart-legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.leg-dot { width: 10px; height: 10px; border-radius: 50%; }
+.chart-area { position: relative; height: 240px; }
+
+/* Contrato (discreto) */
+.contrato-row {
+  display: flex; justify-content: flex-end; margin-bottom: 28px;
+}
+.btn-contrato {
+  display: flex; align-items: center; gap: 8px;
+  background: none; border: 1px solid var(--border); border-radius: 8px;
+  color: var(--muted); padding: 8px 16px; font-size: 12px; cursor: pointer;
+  font-family: 'Barlow', sans-serif; transition: all .2s;
+  text-decoration: none;
+}
+.btn-contrato:hover { border-color: var(--muted); color: #fff; }
+.btn-contrato svg { opacity: .6; }
+
+/* Histórico de faturas */
+.sec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-title {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+}
+.fat-list { display: flex; flex-direction: column; gap: 8px; }
+.fat-row {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+  cursor: pointer; transition: all .2s; flex-wrap: wrap; gap: 10px;
+}
+.fat-row:hover { background: var(--bg3); border-color: rgba(78,205,228,.25); }
+.fat-row-left { display: flex; align-items: center; gap: 14px; }
+.fat-mes { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 17px; }
+.fat-status { font-size: 10px; padding: 2px 9px; border-radius: 20px;
+              font-family: 'Barlow Condensed', sans-serif; font-weight: 700; letter-spacing: .5px; }
+.s-pago   { background: rgba(34,197,94,.12); color: var(--green); }
+.s-vencer { background: rgba(234,179,8,.12);  color: #eab308; }
+.s-vencido{ background: rgba(239,68,68,.12);  color: var(--red); }
+.fat-row-right { display: flex; align-items: center; gap: 16px; }
+.fat-valor { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 18px; color: var(--gold); }
+.fat-venc  { font-size: 11px; color: var(--muted); }
+.fat-arrow { font-size: 12px; color: var(--muted); }
+
+/* Detail panel */
+.fat-detail {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0; margin-top: -4px;
+  overflow: hidden; transition: all .3s;
+}
+.fat-detail-inner { padding: 22px 18px; }
+.detail-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.det-item { flex: 1; min-width: 130px; }
+.det-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted);
+           font-family: 'Barlow Condensed', sans-serif; font-weight: 700; margin-bottom: 4px; }
+.det-val { font-size: 14px; font-weight: 600; }
+.det-val-big { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 22px; color: var(--gold); }
+.btn-boleto {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--teal); color: var(--bg); border: none;
+  border-radius: 8px; padding: 12px 22px; font-size: 14px; cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+  letter-spacing: .5px; text-decoration: none; transition: opacity .2s;
+}
+.btn-boleto:hover { opacity: .85; }
+.btn-resumo {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: none; border: 1px solid var(--border); color: var(--muted);
+  border-radius: 8px; padding: 12px 22px; font-size: 14px; cursor: pointer;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+  letter-spacing: .5px; text-decoration: none; transition: all .2s;
+}
+.btn-resumo:hover { border-color: var(--muted); color: #fff; }
+.linha-digitavel {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+  padding: 10px 14px; font-family: monospace; font-size: 13px; color: var(--muted);
+  margin-top: 12px; word-break: break-all; letter-spacing: .5px;
+}
+.economia-destaque {
+  background: rgba(34,197,94,.06); border: 1px solid rgba(34,197,94,.2);
+  border-radius: 8px; padding: 10px 14px; display: flex; gap: 8px;
+  align-items: center; font-size: 13px; margin-top: 8px;
+}
+.economia-destaque strong { color: var(--green); font-family: 'Barlow Condensed', sans-serif; font-size: 16px; }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .savings-row { grid-template-columns: 1fr 1fr; }
+  .savings-row .sv-card:last-child { grid-column: span 2; }
+  .topbar { padding: 0 16px; }
+  .nav-links { display: none; }
+  .portal-wrap { padding: 24px 16px 48px; }
+  .fat-row-right { justify-content: flex-end; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ════════════════════════════════════════════ -->
+<header class="topbar">
+  <a href="index.html" class="logo">LUZI <span>ENERGIA</span></a>
+  <nav class="nav-links">
+    <a href="index.html" class="nav-link">⚡ Site</a>
+    <a href="admin.html" class="nav-link">🔐 Admin</a>
+    <a href="cliente.html" class="nav-link active">☀️ Clientes</a>
+  </nav>
+  <div class="topbar-right">
+    <span class="badge-cliente hidden" id="badge-nome">—</span>
+    <button class="btn-logout hidden" id="btn-logout" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<!-- ══ LOGIN ═════════════════════════════════════════════ -->
+<div id="v-login">
+  <div class="login-card">
+    <div class="login-eyebrow">— Portal do cliente</div>
+    <div class="login-title">Acesse o seu painel de controle</div>
+    <div class="login-sub">Digite seu CPF ou CNPJ para acessar suas faturas e acompanhar sua economia.</div>
+    <div class="login-err" id="login-err">CPF/CNPJ não encontrado. Confirme com a Luzi Energia.</div>
+    <div class="field-label">CPF ou CNPJ</div>
+    <input type="text" class="field-input" id="cpf-input" placeholder="000.000.000-00"
+           maxlength="18" oninput="formatDoc(this)" onkeydown="if(event.key==='Enter')doLoginCliente()">
+    <div class="login-cpf-hint">Somente os números já funcionam</div>
+    <button class="btn-primary" onclick="doLoginCliente()">Entrar</button>
+    <div style="text-align:center;margin:8px 0;font-size:11px;color:var(--muted)">— ou —</div>
+    <button class="btn-ghost" onclick="toggleAdminLogin()" style="color:var(--teal);font-size:11px">🔐 Acesso admin (ver como cliente)</button>
+    <div id="admin-login-box" class="hidden" style="margin-top:14px">
+      <div class="field-label">Senha admin</div>
+      <input type="password" class="field-input" id="admin-pwd" placeholder="••••••••" style="margin-bottom:10px">
+      <div class="field-label">Selecionar cliente</div>
+      <select class="field-input" id="admin-sel" style="margin-bottom:14px">
+        <option value="">— escolha o cliente —</option>
+      </select>
+      <button class="btn-primary" onclick="doLoginAdmin()" style="margin-bottom:0">Ver painel deste cliente</button>
+    </div>
+    <button class="btn-ghost" onclick="location.href='index.html'">← Voltar ao site</button>
+  </div>
+</div>
+
+<!-- ══ PORTAL ════════════════════════════════════════════ -->
+<div id="v-portal" class="hidden">
+  <div class="portal-wrap">
+
+    <div class="saudacao">
+      <div class="saudacao-label">— Bem-vindo ao seu painel</div>
+      <div class="saudacao-nome">☀️ <span id="p-nome">—</span></div>
+      <div class="saudacao-sub" id="p-sub">—</div>
+    </div>
+
+    <!-- Savings cards -->
+    <div class="savings-row" id="savings-row"></div>
+
+    <!-- Gráfico -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">Histórico de consumo e economia</div>
+        <div class="chart-legend">
+          <div class="leg"><div class="leg-dot" style="background:#f59e0b"></div> Sem desconto</div>
+          <div class="leg"><div class="leg-dot" style="background:#4ecde4"></div> Com desconto (Luzi)</div>
+          <div class="leg"><div class="leg-dot" style="background:#22c55e"></div> Economia</div>
+        </div>
+      </div>
+      <div class="chart-area"><canvas id="grafico-economia"></canvas></div>
+    </div>
+
+    <!-- Contrato (discreto) -->
+    <div class="contrato-row">
+      <a href="#" class="btn-contrato" id="btn-contrato" onclick="return baixarContrato()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21H19.44a2 2 0 001.94-1.515L22 17"/>
+        </svg>
+        Baixar contrato
+      </a>
+    </div>
+
+    <!-- Histórico de faturas -->
+    <div class="sec-header">
+      <div class="sec-title">Faturas</div>
+      <div class="sec-line"></div>
+    </div>
+    <div class="fat-list" id="fat-list"></div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DADOS dos clientes (por CPF/CNPJ)
+// ═══════════════════════════════════════════════════════
+const CLIENTES_DB = {
+  '02790574000136': {
+    nome: 'Cartório 2º Ofício',
+    uc: '70296501229',
+    desconto: 15,
+    contrato: 'contratos/cartorio.pdf',
+    faturas: [
+      { mes:'06/2026', ref:'jun/26', semDesc:1212.44, comDesc:1030.57, venc:'2026-07-10', status:'vencido', boleto:null, resumo:null, linha:'00000.00000 00000.000000 00000.000000 0 00000000000000' },
+      { mes:'05/2026', ref:'mai/26', semDesc:1087.20, comDesc:924.12,  venc:'2026-06-10', status:'pago',    boleto:null, resumo:null, linha:null },
+      { mes:'04/2026', ref:'abr/26', semDesc:1120.80, comDesc:952.68,  venc:'2026-05-10', status:'pago',    boleto:null, resumo:null, linha:null },
+      { mes:'03/2026', ref:'mar/26', semDesc:980.50,  comDesc:833.43,  venc:'2026-04-10', status:'pago',    boleto:null, resumo:null, linha:null },
+    ]
+  },
+  '80372422187': {
+    nome: 'Leandro Ribeiro',
+    uc: '365716101232',
+    desconto: 20,
+    contrato: 'contratos/casa_leandro.pdf',
+    faturas: [
+      { mes:'07/2026', ref:'jul/26', semDesc:1336.56, comDesc:1069.25, venc:'2026-07-23', status:'vencer', boleto:null, resumo:null, linha:'00000.00000 00000.000000 00000.000000 0 00000000000000' },
+      { mes:'06/2026', ref:'jun/26', semDesc:1180.00, comDesc:944.00,  venc:'2026-06-23', status:'pago',   boleto:null, resumo:null, linha:null },
+      { mes:'05/2026', ref:'mai/26', semDesc:1090.00, comDesc:872.00,  venc:'2026-05-23', status:'pago',   boleto:null, resumo:null, linha:null },
+    ]
+  },
+  '02109687100': {
+    nome: 'Wagner Neto',
+    uc: '77762501286',
+    desconto: 20,
+    contrato: 'contratos/casa_neneto.pdf',
+    faturas: [
+      { mes:'06/2026', ref:'jun/26', semDesc:636.30, comDesc:509.04, venc:'2026-07-13', status:'vencer', boleto:null, resumo:null, linha:'00000.00000 00000.000000 00000.000000 0 00000000000000' },
+      { mes:'05/2026', ref:'mai/26', semDesc:590.00, comDesc:472.00, venc:'2026-06-13', status:'pago',   boleto:null, resumo:null, linha:null },
+      { mes:'04/2026', ref:'abr/26', semDesc:620.00, comDesc:496.00, venc:'2026-05-13', status:'pago',   boleto:null, resumo:null, linha:null },
+    ]
+  },
+  '50802328000108': {
+    nome: 'Escola Mendes e Flor',
+    uc: '73940201205',
+    desconto: 20,
+    contrato: 'contratos/escola.pdf',
+    faturas: [
+      { mes:'06/2026', ref:'jun/26', semDesc:835.48, comDesc:668.38, venc:'2026-07-13', status:'vencer', boleto:null, resumo:null, linha:'00000.00000 00000.000000 00000.000000 0 00000000000000' },
+      { mes:'05/2026', ref:'mai/26', semDesc:760.00, comDesc:608.00, venc:'2026-06-13', status:'pago',   boleto:null, resumo:null, linha:null },
+      { mes:'04/2026', ref:'abr/26', semDesc:810.00, comDesc:648.00, venc:'2026-05-13', status:'pago',   boleto:null, resumo:null, linha:null },
+    ]
+  },
+  '70182543102': {
+    nome: 'Miguel Hanna (Firma Marrula)',
+    uc: '430857301280',
+    desconto: 20,
+    contrato: 'contratos/firma_marrula.pdf',
+    faturas: [
+      { mes:'06/2026', ref:'jun/26', semDesc:455.25, comDesc:364.20, venc:'2026-06-30', status:'vencido', boleto:null, resumo:null, linha:null },
+      { mes:'05/2026', ref:'mai/26', semDesc:410.00, comDesc:328.00, venc:'2026-05-30', status:'pago',    boleto:null, resumo:null, linha:null },
+    ]
+  },
+};
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+const R$ = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const dtBR = iso => { const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; };
+
+function formatDoc(el) {
+  let v = el.value.replace(/\D/g,'');
+  if(v.length<=11) {
+    v=v.replace(/(\d{3})(\d)/,'$1.$2')
+       .replace(/(\d{3})(\d)/,'$1.$2')
+       .replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  } else {
+    v=v.slice(0,14)
+       .replace(/(\d{2})(\d)/,'$1.$2')
+       .replace(/(\d{3})(\d)/,'$1.$2')
+       .replace(/(\d{3})(\d)/,'$1/$2')
+       .replace(/(\d{4})(\d{1,2})$/,'$1-$2');
+  }
+  el.value=v;
+}
+
+function docKey(s) { return s.replace(/\D/g,''); }
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+const ADMIN_HASH_CLI = 'd69098f86e9e89c22f67391256c576531e0e3f2526c503d5644444479f74e31d';
+let currentCliente = null;
+let currentDoc = null;
+
+function toggleAdminLogin(){
+  const box=document.getElementById('admin-login-box');
+  box.classList.toggle('hidden');
+}
+
+async function doLoginAdmin(){
+  const pwd=document.getElementById('admin-pwd').value;
+  const sel=document.getElementById('admin-sel').value;
+  if(!sel){alert('Selecione um cliente.');return;}
+  const h=await sha256(pwd);
+  if(h!==ADMIN_HASH_CLI){alert('Senha admin incorreta.');return;}
+  currentDoc=sel;
+  currentCliente=CLIENTES_DB[sel];
+  showPortal();
+}
+
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+
+function doLoginCliente() {
+  const raw = document.getElementById('cpf-input').value;
+  const key = docKey(raw);
+  const cli = CLIENTES_DB[key];
+  if(!cli){
+    document.getElementById('login-err').style.display='block';
+    return;
+  }
+  currentDoc = key;
+  currentCliente = cli;
+  // memorizar IP/dispositivo via localStorage
+  localStorage.setItem('luzi_cli', JSON.stringify({doc:key, exp:Date.now()+30*864e5}));
+  showPortal();
+}
+
+function logout() {
+  localStorage.removeItem('luzi_cli');
+  currentCliente=null; currentDoc=null;
+  document.getElementById('v-login').classList.remove('hidden');
+  document.getElementById('v-portal').classList.add('hidden');
+  document.getElementById('badge-nome').classList.add('hidden');
+  document.getElementById('btn-logout').classList.add('hidden');
+  document.getElementById('cpf-input').value='';
+  document.getElementById('login-err').style.display='none';
+}
+
+function checkSession() {
+  const s=localStorage.getItem('luzi_cli');
+  if(!s) return false;
+  const d=JSON.parse(s);
+  if(!d.doc||d.exp<Date.now()){localStorage.removeItem('luzi_cli');return false;}
+  const cli=CLIENTES_DB[d.doc];
+  if(!cli) return false;
+  currentDoc=d.doc; currentCliente=cli;
+  return true;
+}
+
+function showPortal() {
+  document.getElementById('v-login').classList.add('hidden');
+  document.getElementById('v-portal').classList.remove('hidden');
+  const badge=document.getElementById('badge-nome');
+  badge.textContent=currentCliente.nome; badge.classList.remove('hidden');
+  document.getElementById('btn-logout').classList.remove('hidden');
+  renderPortal();
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER PORTAL
+// ═══════════════════════════════════════════════════════
+let grafChart = null;
+
+function renderPortal() {
+  const cli = currentCliente;
+  document.getElementById('p-nome').textContent = cli.nome;
+  document.getElementById('p-sub').textContent =
+    `${cli.desconto}% de desconto · UC ${cli.uc||'—'} · Luzi Energia`;
+
+  const totalSemDesc = cli.faturas.reduce((s,f)=>s+f.semDesc,0);
+  const totalComDesc = cli.faturas.reduce((s,f)=>s+f.comDesc,0);
+  const economia = totalSemDesc - totalComDesc;
+  const ultimaFat = cli.faturas[0];
+
+  document.getElementById('savings-row').innerHTML=`
+    <div class="sv-card">
+      <div class="sv-label">Última fatura</div>
+      <div class="sv-value c-gold">${R$(ultimaFat.comDesc)}</div>
+      <div class="sv-sub">${ultimaFat.ref} · vence ${dtBR(ultimaFat.venc)}</div>
+    </div>
+    <div class="sv-card">
+      <div class="sv-label">Sem desconto seria</div>
+      <div class="sv-value" style="color:var(--muted)">${R$(ultimaFat.semDesc)}</div>
+      <div class="sv-sub">tarifa cheia Equatorial</div>
+    </div>
+    <div class="sv-card">
+      <div class="sv-label">Economia total acumulada</div>
+      <div class="sv-value c-green">${R$(economia)}</div>
+      <div class="sv-sub">${cli.faturas.length} faturas com a Luzi · UC ${cli.uc||'—'}</div>
+    </div>`;
+
+  renderGrafico(cli.faturas);
+  renderFaturas(cli.faturas);
+}
+
+function renderGrafico(faturas) {
+  const sorted = [...faturas].reverse();
+  const labels = sorted.map(f=>f.ref);
+  const semDesc = sorted.map(f=>f.semDesc);
+  const comDesc = sorted.map(f=>f.comDesc);
+  const economia = sorted.map(f=>+(f.semDesc-f.comDesc).toFixed(2));
+
+  if(grafChart) grafChart.destroy();
+  const ctx = document.getElementById('grafico-economia').getContext('2d');
+  grafChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'Sem desconto', data:semDesc, backgroundColor:'rgba(245,158,11,.25)', borderColor:'#f59e0b', borderWidth:1.5, borderRadius:4 },
+        { label:'Com desconto', data:comDesc, backgroundColor:'rgba(78,205,228,.25)',  borderColor:'#4ecde4', borderWidth:1.5, borderRadius:4 },
+        { label:'Economia',     data:economia, type:'line', borderColor:'#22c55e', backgroundColor:'rgba(34,197,94,.08)', borderWidth:2, tension:.3, pointBackgroundColor:'#22c55e', fill:true, yAxisID:'y2' },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{ display:false } },
+      scales: {
+        x: { grid:{color:'rgba(26,45,80,.6)'}, ticks:{color:'#7a9bb5',font:{family:'Barlow',size:11}} },
+        y: { grid:{color:'rgba(26,45,80,.6)'}, ticks:{color:'#7a9bb5',font:{size:11},callback:v=>'R$ '+v.toLocaleString('pt-BR')}, beginAtZero:true },
+        y2:{ display:false, beginAtZero:true }
+      }
+    }
+  });
+}
+
+let openIdx = null;
+
+function renderFaturas(faturas) {
+  const list = document.getElementById('fat-list');
+  list.innerHTML = faturas.map((f,i)=>`
+    <div>
+      <div class="fat-row" onclick="toggleDetail(${i})">
+        <div class="fat-row-left">
+          <div class="fat-mes">${f.mes}</div>
+          <span class="fat-status ${f.status==='pago'?'s-pago':f.status==='vencer'?'s-vencer':'s-vencido'}">${f.status==='pago'?'Pago':f.status==='vencer'?'Vence em breve':'Vencida'}</span>
+        </div>
+        <div class="fat-row-right">
+          <div class="fat-valor">${R$(f.comDesc)}</div>
+          <div class="fat-venc">Venc. ${dtBR(f.venc)}</div>
+          <div class="fat-arrow" id="arrow-${i}">▼</div>
+        </div>
+      </div>
+      <div class="fat-detail hidden" id="detail-${i}">
+        <div class="fat-detail-inner">
+          <div class="detail-row">
+            <div class="det-item">
+              <div class="det-lbl">Valor com desconto</div>
+              <div class="det-val-big">${R$(f.comDesc)}</div>
+            </div>
+            <div class="det-item">
+              <div class="det-lbl">Sem desconto seria</div>
+              <div class="det-val" style="color:var(--muted)">${R$(f.semDesc)}</div>
+            </div>
+            <div class="det-item">
+              <div class="det-lbl">Desconto (${currentCliente.desconto}%)</div>
+              <div class="det-val c-green">${R$(f.semDesc-f.comDesc)}</div>
+            </div>
+            <div class="det-item">
+              <div class="det-lbl">Vencimento</div>
+              <div class="det-val">${dtBR(f.venc)}</div>
+            </div>
+          </div>
+          ${f.status!=='pago'&&f.linha?`
+          <div class="economia-destaque">💳 <span>Linha digitável para pagamento:</span></div>
+          <div class="linha-digitavel">${f.linha}</div>
+          `:f.status==='pago'?'<div class="economia-destaque">✅ <strong>Fatura paga</strong></div>':''}
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
+            ${f.boleto?`<a href="${f.boleto}" class="btn-boleto" target="_blank">📄 Abrir boleto</a>`:''}
+            ${f.resumo?`<a href="${f.resumo}" class="btn-resumo" target="_blank">📊 Ver resumo</a>`:''}
+            ${!f.boleto&&!f.resumo?`<span style="font-size:12px;color:var(--muted)">Boleto e resumo disponíveis após emissão pelo sistema.</span>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleDetail(i) {
+  const det = document.getElementById('detail-'+i);
+  const arr = document.getElementById('arrow-'+i);
+  if(openIdx===i){
+    det.classList.add('hidden'); arr.textContent='▼'; openIdx=null;
+  } else {
+    if(openIdx!==null){
+      document.getElementById('detail-'+openIdx).classList.add('hidden');
+      document.getElementById('arrow-'+openIdx).textContent='▼';
+    }
+    det.classList.remove('hidden'); arr.textContent='▲'; openIdx=i;
+  }
+}
+
+function baixarContrato() {
+  if(currentCliente?.contrato) {
+    window.open(currentCliente.contrato,'_blank');
+  } else {
+    alert('Contrato ainda não disponível no sistema. Entre em contato com a Luzi Energia.');
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+window.onload = () => {
+  // Preenche select de clientes para login admin
+  const sel=document.getElementById('admin-sel');
+  if(sel){
+    Object.keys(CLIENTES_DB).forEach(k=>{
+      const opt=document.createElement('option');
+      opt.value=k; opt.textContent=CLIENTES_DB[k].nome;
+      sel.appendChild(opt);
+    });
+  }
+  if(checkSession()) showPortal();
+};
+</script>
+</body>
+</html>

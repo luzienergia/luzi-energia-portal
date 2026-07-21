@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luzi Energia — Energia Solar por Assinatura | Goiás & DF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080f1e; --bg2:#0d1830; --bg3:#111f3a;
+  --border:#1a2d50; --teal:#4ecde4; --green:#22c55e;
+  --gold:#f59e0b; --red:#ef4444; --text:#ffffff; --muted:#7a9bb5;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+
+/* ══ NAV ════════════════════════════════════════════════ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:300;
+  background:rgba(8,15,30,.96);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;height:64px;gap:8px;
+}
+.logo-link{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px;letter-spacing:1px;flex-shrink:0}
+.logo-link span{color:var(--teal)}
+.nav-tabs{display:flex;flex:1;justify-content:center;gap:2px}
+.nav-tab{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--muted);padding:8px 14px;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all .2s;
+  background:none;border-top:none;border-left:none;border-right:none;
+  white-space:nowrap;
+}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:var(--teal);border-bottom-color:var(--teal)}
+.nav-tab.portal-tab{
+  border:1px solid var(--border);border-radius:6px;
+  font-size:11px;padding:7px 12px;
+}
+.nav-tab.portal-tab:hover{border-color:var(--teal);color:var(--teal)}
+.btn-wpp{
+  flex-shrink:0;background:#22c55e;color:#fff;
+  padding:10px 18px;border-radius:30px;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:6px;transition:opacity .2s;white-space:nowrap;
+}
+.btn-wpp:hover{opacity:.9}
+
+/* ══ SECTIONS ════════════════════════════════════════════ */
+section[data-sec]{padding-top:64px;min-height:100vh;display:none}
+section[data-sec].active{display:block}
+.section-inner{max-width:1100px;margin:0 auto;padding:0 32px}
+
+/* ══ HERO ════════════════════════════════════════════════ */
+.hero{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:80px 24px 60px;
+}
+.hero-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--teal);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1 1 30px;height:1px;background:var(--border)}
+.hero h1{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(40px,6vw,72px);line-height:1.05;letter-spacing:.5px;
+  max-width:840px;margin-bottom:20px;
+}
+.hero h1 em{font-style:normal;color:var(--teal)}
+.hero-sub{font-size:17px;color:var(--muted);max-width:560px;line-height:1.6;margin-bottom:36px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:48px}
+.cta-primary{
+  background:var(--green);color:#fff;
+  padding:16px 28px;border-radius:30px;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:8px;transition:opacity .2s;
+}
+.cta-primary:hover{opacity:.9}
+.cta-secondary{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  padding:16px 28px;border-radius:30px;font-size:15px;
+  transition:all .2s;
+}
+.cta-secondary:hover{border-color:var(--teal);color:var(--teal)}
+.scroll-hint{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;animation:bounce 2s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+/* Badges deslizantes */
+.badges-row{
+  display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  max-width:700px;margin:0 auto 48px;
+}
+.badge{
+  font-size:12px;color:var(--muted);border:1px solid var(--border);
+  padding:6px 14px;border-radius:20px;white-space:nowrap;
+}
+
+/* ══ SECTION HEADER ══════════════════════════════════════ */
+.sec-eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+}
+.sec-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(28px,4vw,48px);line-height:1.1;margin-bottom:12px;
+}
+.sec-title em{font-style:normal;color:var(--teal)}
+.sec-sub{color:var(--muted);font-size:15px;line-height:1.6;max-width:560px;margin-bottom:40px}
+
+/* ══ COMO FUNCIONA ════════════════════════════════════════ */
+.steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.step{
+  background:var(--bg2);border:1px solid var(--border);border-radius:14px;
+  padding:28px 24px;position:relative;
+}
+.step-n{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:48px;color:rgba(78,205,228,.15);position:absolute;top:16px;right:20px;line-height:1;
+}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;margin-bottom:8px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ══ USINAS ══════════════════════════════════════════════ */
+.usinas-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.usina-pill{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:12px 18px;font-size:13px;color:var(--muted);
+}
+.usina-pill strong{color:var(--teal)}
+
+/* ══ BENEFÍCIOS ══════════════════════════════════════════ */
+.bens{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.ben{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:22px 20px;display:flex;gap:14px;align-items:flex-start;
+}
+.ben-icon{font-size:22px;flex-shrink:0;margin-top:2px}
+.ben-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:16px;margin-bottom:4px}
+.ben-desc{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* ══ SIMULADOR ════════════════════════════════════════════ */
+.sim-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  padding:36px;margin:0 auto;max-width:720px;
+}
+.sim-label{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:14px;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;
+}
+.sim-value{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:42px;color:var(--teal);margin-bottom:12px;
+}
+input[type=range]{
+  -webkit-appearance:none;width:100%;height:4px;border-radius:2px;
+  background:var(--border);outline:none;margin-bottom:6px;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:var(--teal);cursor:pointer;
+}
+.range-limits{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:28px}
+.sim-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.sim-item{background:var(--bg3);border-radius:10px;padding:14px}
+.sim-item-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.sim-item-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px}
+.c-teal{color:var(--teal)} .c-green{color:var(--green)} .c-gold{color:var(--gold)} .c-muted{color:var(--muted)}
+.sim-checklist{margin:0 0 20px;padding:0}
+.sim-checklist li{list-style:none;font-size:13px;color:var(--muted);padding:5px 0;display:flex;gap:8px}
+.sim-checklist li::before{content:'✓';color:var(--green)}
+.sim-disclaimer{
+  background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);
+  border-radius:8px;padding:12px 16px;font-size:12px;color:var(--muted);line-height:1.6;margin-top:16px;
+}
+
+/* ══ CONTATO ══════════════════════════════════════════════ */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px}
+.contact-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;display:flex;flex-direction:column;gap:6px;
+}
+.contact-item-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.contact-item-val{font-size:14px;font-weight:600}
+.cta-box{
+  background:linear-gradient(135deg,var(--bg2) 0%,var(--bg3) 100%);
+  border:1px solid var(--border);border-radius:16px;
+  padding:36px;text-align:center;margin-top:12px;
+}
+.cta-box-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:10px}
+.cta-box-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:26px;margin-bottom:8px}
+.cta-box-sub{font-size:14px;color:var(--muted);margin-bottom:24px}
+.cta-hint{font-size:11px;color:var(--muted);margin-top:12px}
+
+/* ══ CARRO ════════════════════════════════════════════════ */
+.included-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.inc{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:18px;display:flex;gap:10px;align-items:flex-start;
+}
+.inc-icon{font-size:18px;flex-shrink:0}
+.inc-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;margin-bottom:3px}
+.inc-desc{font-size:11px;color:var(--muted);line-height:1.5}
+.highlight-banner{
+  background:rgba(78,205,228,.06);border:1px solid rgba(78,205,228,.2);
+  border-radius:12px;padding:20px 24px;margin:16px 0;font-size:14px;line-height:1.6;
+}
+.highlight-banner strong{color:var(--teal)}
+
+/* Stats row */
+.stats-row{display:flex;gap:20px;flex-wrap:wrap;margin:28px 0}
+.stat-block{flex:1;min-width:120px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:36px;color:var(--teal)}
+.stat-label{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+/* Plan simulator */
+.plan-sim{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:32px}
+.plan-opts{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.plan-btn{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:10px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:14px;cursor:pointer;color:var(--muted);transition:all .2s;
+}
+.plan-btn.active{background:rgba(78,205,228,.1);border-color:var(--teal);color:var(--teal)}
+.plan-result{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;
+}
+.pr-item{background:var(--bg3);border-radius:8px;padding:14px}
+.pr-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;margin-bottom:4px}
+.pr-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px}
+.plan-big-val{
+  background:rgba(78,205,228,.06);border:1px solid rgba(78,205,228,.2);
+  border-radius:10px;padding:20px;text-align:center;margin-bottom:12px;
+}
+.plan-big-val .pr-label{margin-bottom:6px}
+.plan-big-val .pr-val{font-size:36px;color:var(--teal)}
+.plan-big-val .sub{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Responsabilidades */
+.resp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.resp-col{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px}
+.resp-col-title{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:18px;margin-bottom:16px;color:var(--teal)}
+.resp-item{font-size:13px;color:var(--muted);padding:6px 0;border-bottom:1px solid rgba(26,45,80,.4);display:flex;gap:8px;align-items:flex-start}
+.resp-item:last-child{border-bottom:none}
+
+/* Por que elétrico */
+.ev-compare{display:flex;gap:12px;flex-direction:column;max-width:500px;margin:24px 0}
+.ev-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px}
+.ev-bar-label{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:15px;margin-bottom:6px}
+.ev-bar-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
+.ev-bar-track{height:8px;border-radius:4px;margin-bottom:4px}
+.ev-bar-km{background:var(--teal)}
+.ev-bar-gas{background:var(--red);width:80%}
+.ev-savings{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:20px}
+.ev-s{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.ev-s-val{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:var(--teal);margin-bottom:4px}
+.ev-s-label{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* ══ SECTION SPACER ══════════════════════════════════════ */
+.sec-block{padding:72px 0;border-bottom:1px solid var(--border)}
+.sec-block:last-child{border-bottom:none}
+
+/* ══ FOOTER ══════════════════════════════════════════════ */
+footer{
+  background:var(--bg2);border-top:1px solid var(--border);
+  padding:32px;text-align:center;font-size:12px;color:var(--muted);line-height:2;
+}
+footer strong{color:#fff}
+
+/* FAB WhatsApp */
+.fab{
+  position:fixed;bottom:28px;right:28px;z-index:200;
+  width:52px;height:52px;border-radius:50%;background:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;box-shadow:0 4px 20px rgba(34,197,94,.4);
+  transition:transform .2s;
+}
+.fab:hover{transform:scale(1.1)}
+
+/* ══ RESPONSIVE ══════════════════════════════════════════ */
+@media(max-width:768px){
+  nav{padding:0 16px;gap:6px}
+  .nav-tabs{gap:0}
+  .nav-tab{font-size:10px;padding:6px 8px}
+  .btn-wpp{display:none}
+  .sim-grid,.plan-result{grid-template-columns:1fr}
+  .resp-grid{grid-template-columns:1fr}
+  .section-inner{padding:0 16px}
+  .sim-card,.plan-sim{padding:24px 16px}
+  .hero{padding:60px 16px 40px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ════════════════════════════════════════════════ -->
+<nav>
+  <a href="#" class="logo-link" onclick="switchSec('energia')">LUZI <span>ENERGIA</span></a>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-energia"  onclick="switchSec('energia')">⚡ Energia por Assinatura</button>
+    <button class="nav-tab"        id="tab-carro"    onclick="switchSec('carro')">🚗 Carro por Assinatura</button>
+    <a class="nav-tab portal-tab" href="admin.html">🔐 Admin</a>
+    <a class="nav-tab portal-tab" href="cliente.html">☀️ Portal Cliente</a>
+  </div>
+  <a class="btn-wpp" href="https://wa.me/5562999741225?text=Olá!%20Quero%20falar%20com%20a%20Luzi%20Energia." target="_blank">📲 Falar no WhatsApp</a>
+</nav>
+
+<!-- ══ SEÇÃO 1 — ENERGIA ══════════════════════════════════ -->
+<section data-sec="energia" class="active" id="sec-energia">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Geração distribuída solar — Goiás &amp; DF</div>
+    <h1>Pague <em>20% menos</em> na conta de luz.<br>Sem obra. Sem placas.</h1>
+    <p class="hero-sub">A Luzi Energia gera energia solar nas próprias usinas e injeta os créditos direto na sua conta. Você assina o contrato — a gente cuida do resto.</p>
+    <div class="hero-cta">
+      <a class="cta-primary" href="https://wa.me/5562999741225?text=Olá!%20Quero%20economizar%20na%20conta%20de%20energia%20com%20a%20Luzi%20Energia." target="_blank">📲 Quero economizar agora</a>
+      <a class="cta-secondary" href="#en-simular">Simular economia ↓</a>
+    </div>
+    <div class="badges-row">
+      <span class="badge">Sem obra</span><span class="badge">Sem investimento</span>
+      <span class="badge">Sem fidelidade</span><span class="badge">Sem instalação de placas</span>
+      <span class="badge">Apenas um boleto</span><span class="badge">100% energia solar</span>
+      <span class="badge">Atendimento humanizado</span>
+    </div>
+    <div class="scroll-hint">⬇ Role para explorar</div>
+  </div>
+
+  <!-- Como funciona -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Como funciona</div>
+      <div class="sec-title">Você assina.<br><em>A gente cuida do resto.</em></div>
+      <p class="sec-sub">Quatro etapas — todas conduzidas pela Luzi Energia. Você só precisa assinar o contrato.</p>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-title">Você assina o contrato</div><p class="step-desc">Contrato flexível, sem fidelidade obrigatória. Assinatura digital ou presencial com atendimento humanizado.</p></div>
+        <div class="step"><div class="step-n">2</div><div class="step-title">Mudança de titularidade</div><p class="step-desc">Cuidamos de toda a burocracia junto à Equatorial Goiás para vincular sua unidade consumidora à nossa usina.</p></div>
+        <div class="step"><div class="step-n">3</div><div class="step-title">Rateio e injeção de energia</div><p class="step-desc">A energia gerada é injetada na rede e os créditos são rateados e compensados na sua conta de luz.</p></div>
+        <div class="step"><div class="step-n">4</div><div class="step-title">Recebe o boleto</div><p class="step-desc">Apenas um boleto mensal da Luzi, com resumo do consumo e desconto já aplicado.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usinas -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">🏭 Usinas próprias</div>
+      <div class="sec-title">Energia de verdade,<br><em>gerada por nós.</em></div>
+      <p class="sec-sub">Construímos e operamos nossas próprias usinas solares de solo. Sem intermediários: o desconto vai direto da nossa geração para o seu bolso.</p>
+      <div class="usinas-row">
+        <div class="usina-pill"><strong>📍</strong> Anápolis — GO</div>
+        <div class="usina-pill"><strong>📍</strong> Abadiânia — GO</div>
+        <div class="usina-pill"><strong>📍</strong> Gama — DF</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benefícios -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Por que a Luzi</div>
+      <div class="sec-title">O que nos <em>diferencia.</em></div>
+      <p class="sec-sub">Usinas próprias, atendimento local e desconto garantido em contrato.</p>
+      <div class="bens">
+        <div class="ben"><div class="ben-icon">📜</div><div><div class="ben-title">Desconto garantido em contrato</div><p class="ben-desc">20% de desconto no kWh injetado, por escrito. Independente de bandeiras ou reajustes da distribuidora.</p></div></div>
+        <div class="ben"><div class="ben-icon">📄</div><div><div class="ben-title">Um único boleto</div><p class="ben-desc">Você para de pagar à distribuidora. Recebe só o boleto da Luzi com resumo claro do consumo.</p></div></div>
+        <div class="ben"><div class="ben-icon">🔧</div><div><div class="ben-title">Zero obra ou instalação</div><p class="ben-desc">Nenhuma placa no telhado, nenhum técnico no imóvel. A compensação acontece direto na sua conta.</p></div></div>
+        <div class="ben"><div class="ben-icon">🤝</div><div><div class="ben-title">Atendimento humanizado</div><p class="ben-desc">Empresa goiana com equipe real e próxima. Sem chatbot, sem fila. Você fala com gente de verdade.</p></div></div>
+        <div class="ben"><div class="ben-icon">🔓</div><div><div class="ben-title">Sem fidelidade</div><p class="ben-desc">Contratos flexíveis, na maioria dos casos sem fidelidade obrigatória. Liberdade para o cliente.</p></div></div>
+        <div class="ben"><div class="ben-icon">🌱</div><div><div class="ben-title">100% energia limpa</div><p class="ben-desc">Some pontos nas metas ESG da sua empresa com energia solar, renovável e sem emissões.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulador -->
+  <div class="sec-block" id="en-simular">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Simule sua economia</div>
+      <div class="sec-title">Quanto você<br><em>vai economizar?</em></div>
+      <p class="sec-sub">Arraste e veja o desconto estimado da Luzi Energia.</p>
+      <div class="sim-card">
+        <div class="sim-label">Valor médio da sua conta de energia</div>
+        <div class="sim-value" id="en-sim-val">R$ 1.000</div>
+        <input type="range" id="en-slider" min="300" max="20000" value="1000" step="50" oninput="calcEn()">
+        <div class="range-limits"><span>R$ 300</span><span>R$ 20.000</span></div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div style="flex:1;min-width:220px">
+            <ul class="sim-checklist">
+              <li>Desconto de 20% no kWh injetado</li>
+              <li>Sem obra ou instalação</li>
+              <li>Um único boleto mensal</li>
+              <li>Sem fidelidade obrigatória</li>
+              <li>Atendimento humanizado</li>
+            </ul>
+            <p style="font-size:12px;color:var(--muted);font-style:italic">💡 Condomínios e grandes consumidores podem ter condições especiais.</p>
+          </div>
+          <div style="flex:1;min-width:200px">
+            <div class="sim-grid">
+              <div class="sim-item"><div class="sim-item-label">Economia por mês</div><div class="sim-item-val c-green" id="en-eco-mes">R$ 200</div></div>
+              <div class="sim-item"><div class="sim-item-label">Você paga à Luzi</div><div class="sim-item-val c-teal" id="en-paga">R$ 800</div></div>
+              <div class="sim-item"><div class="sim-item-label">Conta atual</div><div class="sim-item-val c-muted" id="en-conta">R$ 1.000</div></div>
+              <div class="sim-item"><div class="sim-item-label">Economia anual</div><div class="sim-item-val c-gold" id="en-eco-ano">R$ 2.400</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="sim-disclaimer">⚠️ O desconto de 20% incide apenas sobre o kWh injetado. A conta também contém encargos fixos não compensáveis — taxa mínima, CIP, Fio B e tributos. A economia real varia conforme o perfil de consumo.</div>
+        <div style="margin-top:24px;text-align:center">
+          <a class="cta-primary" style="display:inline-flex" href="https://wa.me/5562999741225?text=Olá!%20Quero%20economizar%20na%20conta%20de%20luz%20com%20a%20Luzi%20Energia." target="_blank">📲 Quero esse desconto</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contato Energia -->
+  <div class="sec-block" id="en-contact">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Fale conosco</div>
+      <div class="sec-title">Atendimento humanizado,<br><em>de verdade.</em></div>
+      <p class="sec-sub">Nada de chatbot, nada de fila. Você fala com a nossa equipe diretamente. Atendemos Goiás e Distrito Federal.</p>
+      <div class="contact-grid">
+        <div class="contact-item"><div class="contact-item-label">📍 Atendimento</div><div class="contact-item-val">Goiás &amp; Distrito Federal</div></div>
+        <div class="contact-item"><div class="contact-item-label">📱 WhatsApp</div><div class="contact-item-val"><a href="https://wa.me/5562999741225" style="color:var(--teal)">(62) 99974-1225</a></div></div>
+        <div class="contact-item"><div class="contact-item-label">✉️ E-mail</div><div class="contact-item-val"><a href="mailto:luzienergia@outlook.com" style="color:var(--teal)">luzienergia@outlook.com</a></div></div>
+        <div class="contact-item"><div class="contact-item-label">🏢 CNPJ</div><div class="contact-item-val">57.285.036/0001-86</div></div>
+      </div>
+      <div class="cta-box">
+        <div class="cta-box-eyebrow">☀️ Fale com a gente agora</div>
+        <div class="cta-box-title">Mande o valor da sua conta pelo WhatsApp</div>
+        <p class="cta-box-sub">Receba uma proposta personalizada em minutos.</p>
+        <a class="cta-primary" style="display:inline-flex" href="https://wa.me/5562999741225?text=Olá!%20Tenho%20interesse%20em%20economizar%20na%20conta%20de%20luz%20com%20a%20Luzi%20Energia." target="_blank">📲 Chamar no WhatsApp</a>
+        <p class="cta-hint">Respondemos em horário comercial</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ SEÇÃO 2 — CARRO ════════════════════════════════════ -->
+<section data-sec="carro" id="sec-carro">
+
+  <!-- Hero Carro -->
+  <div class="hero">
+    <div class="hero-eyebrow" style="font-size:11px">Luzi Energia — Carro por Assinatura · Goiás &amp; DF</div>
+    <h1>BYD Dolphin Mini <em>zero km</em> para sua empresa.</h1>
+    <p class="hero-sub">Assinatura completa — IPVA, seguro, revisões, pneus e carregador portátil inclusos. Você só paga a mensalidade. Nada mais.</p>
+    <div class="hero-cta">
+      <a class="cta-primary" href="https://wa.me/5562999741225?text=Olá!%20Tenho%20interesse%20no%20carro%20por%20assinatura%20da%20Luzi%20Energia." target="_blank">📲 Falar no WhatsApp</a>
+      <a class="cta-secondary" href="#mob-calc">Ver planos ↓</a>
+    </div>
+    <div class="badges-row">
+      <span class="badge">Zero km sempre</span><span class="badge">IPVA incluso</span>
+      <span class="badge">Seguro incluso</span><span class="badge">Revisões inclusas</span>
+      <span class="badge">Pneus inclusos</span><span class="badge">Carregador 220V incluso</span>
+      <span class="badge">Planos personalizáveis</span>
+    </div>
+    <div class="scroll-hint">⬇ Role para explorar</div>
+  </div>
+
+  <!-- Tudo incluso -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Tudo incluso</div>
+      <div class="sec-title">Uma mensalidade.<br><em>Zero preocupação.</em></div>
+      <p class="sec-sub">Todos os custos fixos do veículo estão inclusos. Sua empresa foca no que importa.</p>
+      <div class="included-grid">
+        <div class="inc"><div class="inc-icon">🛡️</div><div><div class="inc-title">Seguro completo</div><p class="inc-desc">Cobertura contra colisão, roubo, furto e danos a terceiros.</p></div></div>
+        <div class="inc"><div class="inc-icon">📋</div><div><div class="inc-title">IPVA &amp; Licenciamento</div><p class="inc-desc">Documentação anual e impostos do veículo por nossa conta.</p></div></div>
+        <div class="inc"><div class="inc-icon">🔧</div><div><div class="inc-title">Revisões BYD</div><p class="inc-desc">Revisões a cada 20.000 km conforme tabela oficial BYD.</p></div></div>
+        <div class="inc"><div class="inc-icon">🛞</div><div><div class="inc-title">Pneus</div><p class="inc-desc">Substituição por desgaste natural inclusa no plano.</p></div></div>
+        <div class="inc"><div class="inc-icon">⚡</div><div><div class="inc-title">Veículo zero km</div><p class="inc-desc">BYD Dolphin Mini 100% elétrico, tecnologia Blade Battery.</p></div></div>
+        <div class="inc"><div class="inc-icon">🏆</div><div><div class="inc-title">Garantia de fábrica</div><p class="inc-desc">8 anos na bateria e 6 anos no veículo. Toda a vigência coberta.</p></div></div>
+      </div>
+      <div class="highlight-banner">🔌 <strong>Carregador portátil 220V incluso em todos os planos.</strong> Plugue em qualquer tomada 220V e carregue onde estiver — escritório, casa, onde precisar. Sem instalação especial.</div>
+      <div class="highlight-banner">🎁 <strong>Brinde: plotagem da logo da sua empresa no veículo.</strong> Nos planos de 24 ou 36 meses com 3.000 km/mês ou ilimitado, fazemos a plotagem gratuitamente.</div>
+    </div>
+  </div>
+
+  <!-- EV stats -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">⚡ 100% elétrico</div>
+      <div class="sec-title">O carro urbano<br><em>mais eficiente do Brasil.</em></div>
+      <p class="sec-sub">250 km de autonomia, tecnologia Blade Battery e custo de R$ 0,11 por km. O Dolphin Mini é o carro ideal para frotas corporativas em cidade.</p>
+      <div class="stats-row">
+        <div class="stat-block"><div class="stat-num">250</div><div class="stat-label">km de autonomia real</div></div>
+        <div class="stat-block"><div class="stat-num">8</div><div class="stat-label">anos de garantia da bateria</div></div>
+        <div class="stat-block"><div class="stat-num">R$0,11</div><div class="stat-label">custo por km rodado</div></div>
+        <div class="stat-block"><div class="stat-num">6</div><div class="stat-label">anos de garantia do veículo</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulador de planos -->
+  <div class="sec-block" id="mob-calc">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Simulador de planos</div>
+      <div class="sec-title">Monte o plano ideal<br><em>para sua empresa.</em></div>
+      <p class="sec-sub">Escolha o prazo e a quilometragem. O valor é calculado na hora.</p>
+      <div class="plan-sim">
+        <div class="sim-label">Prazo do contrato</div>
+        <div class="plan-opts" id="prazo-opts">
+          <button class="plan-btn" onclick="setPrazo(12)">12 meses</button>
+          <button class="plan-btn active" onclick="setPrazo(24)">24 meses</button>
+          <button class="plan-btn" onclick="setPrazo(36)">36 meses</button>
+        </div>
+        <div class="sim-label" style="margin-top:16px">Quilometragem mensal</div>
+        <div class="plan-opts" id="km-opts">
+          <button class="plan-btn" onclick="setKm(1000)">1.000 km</button>
+          <button class="plan-btn active" onclick="setKm(1500)">1.500 km</button>
+          <button class="plan-btn" onclick="setKm(3000)">3.000 km</button>
+          <button class="plan-btn" onclick="setKm(99999)">Ilimitado</button>
+        </div>
+        <div style="margin-top:24px">
+          <div class="plan-big-val">
+            <div class="pr-label">Mensalidade estimada</div>
+            <div class="pr-val" id="pl-mens">R$ 3.800</div>
+            <div class="sub">por veículo / mês — tudo incluso</div>
+          </div>
+          <div class="plan-result">
+            <div class="pr-item"><div class="pr-label">Prazo</div><div class="pr-val" id="pl-prazo">24 meses</div></div>
+            <div class="pr-item"><div class="pr-label">KM/mês</div><div class="pr-val" id="pl-km">1.500 km</div></div>
+            <div class="pr-item"><div class="pr-label">KM total</div><div class="pr-val" id="pl-kmtotal">36.000 km</div></div>
+            <div class="pr-item"><div class="pr-label">Total do contrato</div><div class="pr-val c-gold" id="pl-total">R$ 91.200</div></div>
+            <div class="pr-item"><div class="pr-label">Carregador 220V</div><div class="pr-val c-green">✓ Incluso</div></div>
+            <div class="pr-item"><div class="pr-label">IPVA &amp; seguro</div><div class="pr-val c-green">✓ Inclusos</div></div>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">💡 Plano personalizado? Esses valores são sugestões. Adaptamos prazo, quilometragem e condições para a realidade da sua empresa.</p>
+          <div style="text-align:center;margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+            <a class="cta-primary" href="https://wa.me/5562999741225?text=Olá!%20Tenho%20interesse%20no%20carro%20por%20assinatura%20da%20Luzi%20Energia." target="_blank">📲 Solicitar este plano</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Responsabilidades -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Transparência total</div>
+      <div class="sec-title">Quem paga o <em>quê.</em></div>
+      <p class="sec-sub">Responsabilidades claras desde o início. Sem surpresas.</p>
+      <div class="resp-grid">
+        <div class="resp-col">
+          <div class="resp-col-title">LUZI ENERGIA</div>
+          <div class="resp-item">✅ IPVA e licenciamento anual</div>
+          <div class="resp-item">✅ Seguro do veículo (apólice por nossa conta)</div>
+          <div class="resp-item">✅ Revisões preventivas a cada 20.000 km</div>
+          <div class="resp-item">✅ Pneus por desgaste natural</div>
+          <div class="resp-item">✅ Entrega zero km + carregador portátil 220V</div>
+        </div>
+        <div class="resp-col" style="--teal:#ef4444">
+          <div class="resp-col-title" style="color:var(--muted)">CLIENTE</div>
+          <div class="resp-item">⚡ Recarga elétrica do veículo</div>
+          <div class="resp-item">🔨 Danos por batida, colisão ou uso indevido</div>
+          <div class="resp-item">🚗 Multas de trânsito e infrações</div>
+          <div class="resp-item">🔑 Perda ou dano de chaves por negligência</div>
+          <div class="resp-item">💰 Franquia do seguro em caso de sinistro</div>
+        </div>
+      </div>
+      <div class="sim-disclaimer" style="margin-top:16px">⚠️ <strong>Acionamento de seguro:</strong> a apólice é administrada pela Luzi Energia, mas o custo da franquia recai sobre o cliente responsável pelo sinistro.</div>
+    </div>
+  </div>
+
+  <!-- Por que elétrico -->
+  <div class="sec-block">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Por que elétrico</div>
+      <div class="sec-title">A economia que seu<br><em>financeiro vai agradecer.</em></div>
+      <p class="sec-sub">Custo por km comparado a um carro a gasolina (12 km/litro).</p>
+      <div class="ev-compare">
+        <div class="ev-bar">
+          <div class="ev-bar-label">⚡ BYD Dolphin Mini — R$ 0,11/km</div>
+          <div class="ev-bar-sub">Bateria 30 kWh · tarifa R$ 0,89/kWh · autonomia 250 km</div>
+          <div class="ev-bar-track ev-bar-km" style="width:19%"></div>
+        </div>
+        <div class="ev-bar">
+          <div class="ev-bar-label">⛽ Carro a gasolina — R$ 0,57/km</div>
+          <div class="ev-bar-sub">12 km/litro · gasolina R$ 6,89/litro (Goiás)</div>
+          <div class="ev-bar-track ev-bar-gas"></div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--muted);margin:8px 0 20px">O elétrico é <strong style="color:var(--green)">5× mais barato</strong> por km rodado</p>
+      <div class="ev-savings">
+        <div class="ev-s"><div class="ev-s-val" id="ev-eco-1500">R$ 690</div><div class="ev-s-label">Economia mensal em combustível para 1.500 km/mês</div></div>
+        <div class="ev-s"><div class="ev-s-val" id="ev-eco-3000">R$ 1.380</div><div class="ev-s-label">Economia mensal em combustível para 3.000 km/mês</div></div>
+        <div class="ev-s"><div class="ev-s-val" style="font-size:20px">8 anos</div><div class="ev-s-label">Garantia da bateria BYD — toda a vigência do contrato coberta</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contato Carro -->
+  <div class="sec-block" id="mob-contact">
+    <div class="section-inner">
+      <div class="sec-eyebrow">Fale conosco</div>
+      <div class="sec-title">Atendimento humanizado,<br><em>de verdade.</em></div>
+      <p class="sec-sub">Atendemos Goiás e Distrito Federal. Fale direto com a gente e receba uma proposta no mesmo dia.</p>
+      <div class="contact-grid">
+        <div class="contact-item"><div class="contact-item-label">📍 Atendimento</div><div class="contact-item-val">Goiás &amp; Distrito Federal</div></div>
+        <div class="contact-item"><div class="contact-item-label">📱 WhatsApp</div><div class="contact-item-val"><a href="https://wa.me/5562999741225" style="color:var(--teal)">(62) 99974-1225</a></div></div>
+        <div class="contact-item"><div class="contact-item-label">✉️ E-mail</div><div class="contact-item-val"><a href="mailto:luzienergia@outlook.com" style="color:var(--teal)">luzienergia@outlook.com</a></div></div>
+        <div class="contact-item"><div class="contact-item-label">🏢 CNPJ</div><div class="contact-item-val">57.285.036/0001-86</div></div>
+      </div>
+      <div class="cta-box">
+        <div class="cta-box-eyebrow">💬 Fale direto pelo WhatsApp</div>
+        <div class="cta-box-title">Nos conte o que sua empresa precisa</div>
+        <p class="cta-box-sub">Montamos um plano personalizado para você.</p>
+        <a class="cta-primary" style="display:inline-flex" href="https://wa.me/5562999741225?text=Olá!%20Tenho%20interesse%20no%20carro%20por%20assinatura%20da%20Luzi%20Energia." target="_blank">📲 Chamar no WhatsApp</a>
+        <p class="cta-hint">Respondemos em horário comercial</p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════ -->
+<footer>
+  <strong>LUZI ENERGIA</strong><br>
+  CNPJ 57.285.036/0001-86 · Goiás &amp; Distrito Federal<br>
+  luzienergia@outlook.com · (62) 99974-1225<br><br>
+  © 2025 Luzi Energia. Todos os direitos reservados. · luzienergia.com.br
+</footer>
+
+<!-- FAB WhatsApp -->
+<a class="fab" href="https://wa.me/5562999741225" target="_blank">💬</a>
+
+<script>
+/* ── Tabs ───────────────────────────────────────────── */
+function switchSec(id){
+  document.querySelectorAll('[data-sec]').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab:not(.portal-tab)').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  window.scrollTo({top:0});
+}
+
+/* ── Simulador Energia ──────────────────────────────── */
+const fmtBRL = v => 'R$ '+Math.round(v).toLocaleString('pt-BR');
+function calcEn(){
+  const v = +document.getElementById('en-slider').value;
+  const desc = v * 0.20;
+  const paga = v - desc;
+  document.getElementById('en-sim-val').textContent = fmtBRL(v);
+  document.getElementById('en-eco-mes').textContent  = fmtBRL(desc);
+  document.getElementById('en-paga').textContent     = fmtBRL(paga);
+  document.getElementById('en-conta').textContent    = fmtBRL(v);
+  document.getElementById('en-eco-ano').textContent  = fmtBRL(desc*12);
+}
+calcEn();
+
+/* ── Simulador Planos Carro ────────────────────────── */
+const PRECOS = {
+  12:  {1000:4200, 1500:4500, 3000:5200, 99999:6000},
+  24:  {1000:3600, 1500:3800, 3000:4500, 99999:5200},
+  36:  {1000:3200, 1500:3500, 3000:4100, 99999:4800},
+};
+let selPrazo=24, selKm=1500;
+
+function setPrazo(p){
+  selPrazo=p;
+  document.querySelectorAll('#prazo-opts .plan-btn').forEach((b,i)=>{
+    b.classList.toggle('active',[12,24,36][i]===p);
+  });
+  updatePlan();
+}
+function setKm(k){
+  selKm=k;
+  document.querySelectorAll('#km-opts .plan-btn').forEach((b,i)=>{
+    b.classList.toggle('active',[1000,1500,3000,99999][i]===k);
+  });
+  updatePlan();
+}
+function updatePlan(){
+  const mens = PRECOS[selPrazo][selKm];
+  const total = mens * selPrazo;
+  const kmLabel = selKm===99999?'Ilimitado':selKm.toLocaleString('pt-BR')+' km';
+  const kmTot = selKm===99999?'Ilimitado':(selKm*selPrazo).toLocaleString('pt-BR')+' km';
+  const plotagem = (selPrazo>=24 && selKm>=3000)?'✓ Inclusa':'—';
+  document.getElementById('pl-mens').textContent   = fmtBRL(mens);
+  document.getElementById('pl-prazo').textContent  = selPrazo+' meses';
+  document.getElementById('pl-km').textContent     = kmLabel;
+  document.getElementById('pl-kmtotal').textContent= kmTot;
+  document.getElementById('pl-total').textContent  = fmtBRL(total);
+}
+updatePlan();
+</script>
+</body>
+</html>

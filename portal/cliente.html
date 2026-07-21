@@ -107,6 +107,30 @@ body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--te
 }
 .login-cpf-hint { font-size: 11px; color: var(--muted); margin-top: -18px; margin-bottom: 20px; }
 
+/* ── SELECT PROPERTY ──────────────────────────────────── */
+#v-select-property {
+  min-height: 100vh; display: flex; align-items: center;
+  justify-content: center; padding: 80px 24px 40px;
+}
+.sp-card {
+  width: 100%; max-width: 420px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px;
+}
+.sp-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+            font-size: 28px; letter-spacing: 1px; margin-bottom: 8px; }
+.sp-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+.sp-btn {
+  display: block; width: 100%; text-align: left;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px 20px; margin-bottom: 12px;
+  cursor: pointer; transition: all .2s; color: var(--text);
+}
+.sp-btn:hover { border-color: var(--teal); background: rgba(78,205,228,.06); }
+.sp-btn-nome { font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+               font-size: 18px; letter-spacing: .5px; }
+.sp-btn-uc { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
 /* ── PORTAL ───────────────────────────────────────────── */
 #v-portal { padding-top: 64px; }
 .portal-wrap { max-width: 960px; margin: 0 auto; padding: 36px 24px 60px; }
@@ -283,6 +307,17 @@ body { font-family: 'Barlow', sans-serif; background: var(--bg); color: var(--te
   </div>
 </div>
 
+<!-- ══ SELECT PROPERTY ═══════════════════════════════════ -->
+<div id="v-select-property" class="hidden">
+  <div class="sp-card">
+    <div class="login-eyebrow">— Selecione o imóvel</div>
+    <div class="sp-title">Qual UC deseja acessar?</div>
+    <div class="sp-sub">Este CPF tem mais de um imóvel cadastrado. Escolha abaixo.</div>
+    <div id="sp-list"></div>
+    <button class="btn-ghost" onclick="voltarLogin()" style="margin-top:12px;color:var(--muted)">← Voltar</button>
+  </div>
+</div>
+
 <!-- ══ PORTAL ════════════════════════════════════════════ -->
 <div id="v-portal" class="hidden">
   <div class="portal-wrap">
@@ -379,16 +414,25 @@ const CLIENTES_DB = {
       { mes:'04/2026', ref:'abr/26', semDesc:810.00, comDesc:648.00, venc:'2026-05-13', status:'pago',   boleto:null, resumo:null, linha:null },
     ]
   },
-  '70182543102': {
-    nome: 'Miguel Hanna (Firma Marrula)',
-    uc: '430857301280',
-    desconto: 20,
-    contrato: 'contratos/firma_marrula.pdf',
-    faturas: [
-      { mes:'06/2026', ref:'jun/26', semDesc:455.25, comDesc:364.20, venc:'2026-06-30', status:'vencido', boleto:null, resumo:null, linha:null },
-      { mes:'05/2026', ref:'mai/26', semDesc:410.00, comDesc:328.00, venc:'2026-05-30', status:'pago',    boleto:null, resumo:null, linha:null },
-    ]
-  },
+  '70182543102': [
+    {
+      nome: 'Firma Marrula',
+      uc: '430857301280',
+      desconto: 20,
+      contrato: 'contratos/firma_marrula.pdf',
+      faturas: [
+        { mes:'06/2026', ref:'jun/26', semDesc:455.25, comDesc:364.20, venc:'2026-06-30', status:'pago', boleto:null, resumo:null, linha:null },
+        { mes:'05/2026', ref:'mai/26', semDesc:410.00, comDesc:328.00, venc:'2026-05-30', status:'pago', boleto:null, resumo:null, linha:null },
+      ]
+    },
+    {
+      nome: 'Casa Marrula',
+      uc: '398986101273',
+      desconto: 20,
+      contrato: null,
+      faturas: []
+    }
+  ],
 };
 
 // ═══════════════════════════════════════════════════════
@@ -433,8 +477,10 @@ async function doLoginAdmin(){
   if(!sel){alert('Selecione um cliente.');return;}
   const h=await sha256(pwd);
   if(h!==ADMIN_HASH_CLI){alert('Senha admin incorreta.');return;}
-  currentDoc=sel;
-  currentCliente=CLIENTES_DB[sel];
+  const [dk, pi] = sel.split('|');
+  const entry = CLIENTES_DB[dk];
+  currentDoc = dk;
+  currentCliente = Array.isArray(entry) ? entry[Number(pi||0)] : entry;
   showPortal();
 }
 
@@ -446,16 +492,41 @@ async function sha256(s){
 function doLoginCliente() {
   const raw = document.getElementById('cpf-input').value;
   const key = docKey(raw);
-  const cli = CLIENTES_DB[key];
-  if(!cli){
-    document.getElementById('login-err').style.display='block';
-    return;
-  }
+  const entry = CLIENTES_DB[key];
+  if(!entry){ document.getElementById('login-err').style.display='block'; return; }
   currentDoc = key;
-  currentCliente = cli;
-  // memorizar IP/dispositivo via localStorage
   localStorage.setItem('luzi_cli', JSON.stringify({doc:key, exp:Date.now()+30*864e5}));
+  if(Array.isArray(entry)) {
+    showSelectProperty(entry);
+  } else {
+    currentCliente = entry;
+    showPortal();
+  }
+}
+
+function showSelectProperty(properties) {
+  document.getElementById('v-login').classList.add('hidden');
+  document.getElementById('v-select-property').classList.remove('hidden');
+  document.getElementById('sp-list').innerHTML = properties.map((p,i)=>`
+    <button class="sp-btn" onclick="selectProperty(${i})">
+      <div class="sp-btn-nome">${p.nome}</div>
+      <div class="sp-btn-uc">UC ${p.uc||'—'}${p.faturas&&p.faturas.length===0?' · Em implantação':''}</div>
+    </button>`).join('');
+}
+
+function selectProperty(idx) {
+  const entry = CLIENTES_DB[currentDoc];
+  currentCliente = Array.isArray(entry) ? entry[idx] : entry;
+  const saved = JSON.parse(localStorage.getItem('luzi_cli')||'{}');
+  saved.propIdx = idx;
+  localStorage.setItem('luzi_cli', JSON.stringify(saved));
+  document.getElementById('v-select-property').classList.add('hidden');
   showPortal();
+}
+
+function voltarLogin() {
+  document.getElementById('v-select-property').classList.add('hidden');
+  document.getElementById('v-login').classList.remove('hidden');
 }
 
 function logout() {
@@ -463,6 +534,7 @@ function logout() {
   currentCliente=null; currentDoc=null;
   document.getElementById('v-login').classList.remove('hidden');
   document.getElementById('v-portal').classList.add('hidden');
+  document.getElementById('v-select-property').classList.add('hidden');
   document.getElementById('badge-nome').classList.add('hidden');
   document.getElementById('btn-logout').classList.add('hidden');
   document.getElementById('cpf-input').value='';
@@ -474,9 +546,15 @@ function checkSession() {
   if(!s) return false;
   const d=JSON.parse(s);
   if(!d.doc||d.exp<Date.now()){localStorage.removeItem('luzi_cli');return false;}
-  const cli=CLIENTES_DB[d.doc];
-  if(!cli) return false;
-  currentDoc=d.doc; currentCliente=cli;
+  const entry=CLIENTES_DB[d.doc];
+  if(!entry) return false;
+  currentDoc=d.doc;
+  if(Array.isArray(entry)) {
+    if(d.propIdx===undefined) return false;
+    currentCliente=entry[d.propIdx];
+  } else {
+    currentCliente=entry;
+  }
   return true;
 }
 
@@ -499,6 +577,24 @@ function renderPortal() {
   document.getElementById('p-nome').textContent = cli.nome;
   document.getElementById('p-sub').textContent =
     `${cli.desconto}% de desconto · UC ${cli.uc||'—'} · Luzi Energia`;
+
+  // UC sem faturas ainda (em implantação)
+  if (!cli.faturas || cli.faturas.length === 0) {
+    document.getElementById('savings-row').innerHTML = `
+      <div class="sv-card" style="grid-column:1/-1;text-align:center">
+        <div class="sv-label">Em implantação</div>
+        <div class="sv-value" style="color:var(--muted);font-size:24px">—</div>
+        <div class="sv-sub">Sua usina está sendo conectada. As faturas aparecerão aqui assim que a energia começar a ser injetada.</div>
+      </div>`;
+    const chartWrap = document.querySelector('.chart-wrap');
+    if(chartWrap) chartWrap.style.display='none';
+    document.getElementById('fat-list').innerHTML = `
+      <div style="text-align:center;padding:40px 24px;color:var(--muted);font-size:14px;line-height:1.8">
+        ⚡ Nenhuma fatura disponível ainda.<br>
+        A Luzi Energia está em processo de implantação para esta UC.
+      </div>`;
+    return;
+  }
 
   const totalSemDesc = cli.faturas.reduce((s,f)=>s+f.semDesc,0);
   const totalComDesc = cli.faturas.reduce((s,f)=>s+f.comDesc,0);
@@ -639,9 +735,18 @@ window.onload = () => {
   const sel=document.getElementById('admin-sel');
   if(sel){
     Object.keys(CLIENTES_DB).forEach(k=>{
-      const opt=document.createElement('option');
-      opt.value=k; opt.textContent=CLIENTES_DB[k].nome;
-      sel.appendChild(opt);
+      const entry=CLIENTES_DB[k];
+      if(Array.isArray(entry)){
+        entry.forEach((p,i)=>{
+          const opt=document.createElement('option');
+          opt.value=`${k}|${i}`; opt.textContent=p.nome;
+          sel.appendChild(opt);
+        });
+      } else {
+        const opt=document.createElement('option');
+        opt.value=k; opt.textContent=entry.nome;
+        sel.appendChild(opt);
+      }
     });
   }
   if(checkSession()) showPortal();

@@ -388,6 +388,9 @@ a{color:inherit;text-decoration:none}
 
   <!-- USINAS & RATEIOS -->
   <div id="tab-usinas" class="tpane">
+    <div style="display:flex;align-items:center;margin-bottom:20px">
+      <button class="btn-add" onclick="abrirModalUsina()">＋ Adicionar usina</button>
+    </div>
     <div id="usinas-content"></div>
   </div>
 
@@ -453,6 +456,42 @@ a{color:inherit;text-decoration:none}
     <div class="modal-actions">
       <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
       <button class="btn-save" onclick="salvarCliente()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal edição/criação de usina -->
+<div class="modal-overlay hidden" id="modal-usina-overlay" onclick="if(event.target===this)fecharModalUsina()">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-title" id="modal-usina-title">Adicionar usina</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Nome da usina</label><input class="form-input" id="fu-nome" placeholder="Ex: Usina Cartório"></div>
+      <div class="form-group"><label class="form-label">ID interno (sem espaços)</label><input class="form-input" id="fu-id" placeholder="Ex: cartorio"></div>
+      <div class="form-group"><label class="form-label">UC Equatorial</label><input class="form-input" id="fu-uc" placeholder="70296501229"></div>
+      <div class="form-group"><label class="form-label">Produção média (kWh/mês)</label><input class="form-input" id="fu-prod" type="number" placeholder="1500"></div>
+      <div class="form-group full"><label class="form-label">Localização</label><input class="form-input" id="fu-loc" placeholder="Ex: Anápolis – GO"></div>
+      <div class="form-group full"><label class="form-label">Status</label>
+        <select class="form-select" id="fu-status">
+          <option value="operando">Operando</option>
+          <option value="em construção">Em construção</option>
+          <option value="em montagem">Em montagem</option>
+          <option value="em implantação">Em implantação</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Rateio -->
+    <div style="margin-top:20px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:12px">
+        Rateio de créditos
+      </div>
+      <div id="fu-rateio-rows"></div>
+      <button class="btn-add" style="margin-top:10px;font-size:12px;padding:7px 14px" onclick="addRateioRow()">＋ Adicionar UC consumidora</button>
+    </div>
+
+    <div class="modal-actions" style="margin-top:24px">
+      <button class="btn-cancel" onclick="fecharModalUsina()">Cancelar</button>
+      <button class="btn-save" onclick="salvarUsina()">Salvar usina</button>
     </div>
   </div>
 </div>
@@ -909,14 +948,18 @@ function toggleUC(uc){
 
 // ── Usinas & Rateios
 function renderUsinas(){
-  document.getElementById('usinas-content').innerHTML=D.usinas.map(u=>`
+  document.getElementById('usinas-content').innerHTML=D.usinas.map((u,ui)=>`
     <div class="usina-blk">
       <div class="usina-hdr">
         <div>
           <div class="usina-nome">⚡ <span>${u.nome}</span></div>
           <div class="usina-sub">${u.loc}${u.uc?' · UC '+u.uc:''} · Produção média: ${u.prod_media?u.prod_media+' kWh/mês':'em implantação'}</div>
         </div>
-        <span class="usina-badge ${u.status==='operando'?'op':'nb'}">${u.status}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="usina-badge ${u.status==='operando'?'op':'nb'}">${u.status}</span>
+          <button class="btn-editar" onclick="abrirModalUsina(${ui})" title="Editar usina">✏️</button>
+          <button class="btn-remover" onclick="removerUsina(${ui})" title="Remover usina">✕</button>
+        </div>
       </div>
       ${u.rateio&&u.rateio.length>0?`
         <table class="rt">
@@ -950,6 +993,125 @@ function renderUsinas(){
         ${u.status!=='operando'?'<br><em>Usina ainda não está em operação.</em>':''}
       </div>`}
     </div>`).join('');
+}
+
+// ── Modal Usina ──────────────────────────────────────────
+let editUsinaIdx = null;
+
+function abrirModalUsina(idx=null){
+  editUsinaIdx = idx;
+  const u = idx!==null ? D.usinas[idx] : {};
+  document.getElementById('modal-usina-title').textContent = idx!==null ? 'Editar usina' : 'Adicionar usina';
+  document.getElementById('fu-nome').value  = u.nome||'';
+  document.getElementById('fu-id').value    = u.id||'';
+  document.getElementById('fu-uc').value    = u.uc||'';
+  document.getElementById('fu-prod').value  = u.prod_media||'';
+  document.getElementById('fu-loc').value   = u.loc||'';
+  document.getElementById('fu-status').value= u.status||'em construção';
+  // Desabilita edição do ID em modo edição
+  document.getElementById('fu-id').disabled = idx!==null;
+  renderRateioRows(u.rateio||[]);
+  document.getElementById('modal-usina-overlay').classList.remove('hidden');
+}
+
+function fecharModalUsina(){
+  document.getElementById('modal-usina-overlay').classList.add('hidden');
+  editUsinaIdx=null;
+}
+
+function renderRateioRows(rateio){
+  document.getElementById('fu-rateio-rows').innerHTML = rateio.map((r,i)=>`
+    <div class="form-grid" id="rrow-${i}" style="margin-bottom:8px;padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
+      <div class="form-group"><label class="form-label" style="font-size:10px">UC consumidora</label>
+        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-nome-${i}" value="${r.nome||''}"></div>
+      <div class="form-group"><label class="form-label" style="font-size:10px">UC Equatorial</label>
+        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-uc-${i}" value="${r.uc||''}"></div>
+      <div class="form-group"><label class="form-label" style="font-size:10px">UC Faturamento</label>
+        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-ucb-${i}" value="${r.uc_billing||''}"></div>
+      <div class="form-group"><label class="form-label" style="font-size:10px">% Créditos</label>
+        <input class="form-input" style="padding:8px 10px;font-size:13px" type="number" min="0" max="100" id="rr-pct-${i}" value="${r.pct||0}"></div>
+      <div class="form-group" style="display:flex;align-items:flex-end">
+        <button class="btn-remover" style="width:100%;justify-content:center" onclick="removerRateioRow(${i})">✕ Remover</button>
+      </div>
+    </div>`).join('');
+}
+
+function addRateioRow(){
+  const rows = document.querySelectorAll('[id^="rrow-"]');
+  const i = rows.length;
+  const div = document.createElement('div');
+  div.className='form-grid'; div.id=`rrow-${i}`;
+  div.style.cssText='margin-bottom:8px;padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)';
+  div.innerHTML=`
+    <div class="form-group"><label class="form-label" style="font-size:10px">UC consumidora</label>
+      <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-nome-${i}" value=""></div>
+    <div class="form-group"><label class="form-label" style="font-size:10px">UC Equatorial</label>
+      <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-uc-${i}" value=""></div>
+    <div class="form-group"><label class="form-label" style="font-size:10px">UC Faturamento</label>
+      <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-ucb-${i}" value=""></div>
+    <div class="form-group"><label class="form-label" style="font-size:10px">% Créditos</label>
+      <input class="form-input" style="padding:8px 10px;font-size:13px" type="number" min="0" max="100" id="rr-pct-${i}" value="0"></div>
+    <div class="form-group" style="display:flex;align-items:flex-end">
+      <button class="btn-remover" style="width:100%;justify-content:center" onclick="removerRateioRow(${i})">✕ Remover</button>
+    </div>`;
+  document.getElementById('fu-rateio-rows').appendChild(div);
+}
+
+function removerRateioRow(i){
+  const el = document.getElementById(`rrow-${i}`);
+  if(el) el.remove();
+  // renumerar IDs
+  const remaining = document.querySelectorAll('[id^="rrow-"]');
+  remaining.forEach((row,ni)=>{
+    row.id=`rrow-${ni}`;
+    ['nome','uc','ucb','pct'].forEach(f=>{
+      const inp=row.querySelector(`[id^="rr-${f}-"]`);
+      if(inp) inp.id=`rr-${f}-${ni}`;
+    });
+    const btn=row.querySelector('.btn-remover');
+    if(btn) btn.setAttribute('onclick',`removerRateioRow(${ni})`);
+  });
+}
+
+function coletarRateioModal(){
+  const rows = document.querySelectorAll('[id^="rrow-"]');
+  return Array.from(rows).map((_,i)=>({
+    nome: (document.getElementById(`rr-nome-${i}`)?.value||'').trim(),
+    uc:   (document.getElementById(`rr-uc-${i}`)?.value||'').trim(),
+    uc_billing: (document.getElementById(`rr-ucb-${i}`)?.value||'').trim()||null,
+    pct:  +(document.getElementById(`rr-pct-${i}`)?.value||0),
+  })).filter(r=>r.nome||r.uc);
+}
+
+function salvarUsina(){
+  const nome = document.getElementById('fu-nome').value.trim();
+  const id   = editUsinaIdx!==null
+    ? D.usinas[editUsinaIdx].id
+    : document.getElementById('fu-id').value.trim().toLowerCase().replace(/\s+/g,'_');
+  if(!nome||!id){toast('❌ Nome e ID são obrigatórios',2500);return;}
+  const nu = {
+    id,
+    nome,
+    uc:          document.getElementById('fu-uc').value.trim()||null,
+    loc:         document.getElementById('fu-loc').value.trim(),
+    prod_media:  document.getElementById('fu-prod').value ? +document.getElementById('fu-prod').value : null,
+    status:      document.getElementById('fu-status').value,
+    rateio:      coletarRateioModal(),
+  };
+  if(editUsinaIdx!==null) D.usinas[editUsinaIdx]=nu;
+  else D.usinas.push(nu);
+  fecharModalUsina();
+  renderAll();
+  autoSave(200);
+  toast('✅ Usina salva!');
+}
+
+function removerUsina(i){
+  if(!confirm('Remover usina "'+D.usinas[i].nome+'"? Esta ação não pode ser desfeita.')) return;
+  D.usinas.splice(i,1);
+  renderAll();
+  autoSave(200);
+  toast('🗑 Usina removida');
 }
 
 function somaRateio(usina_id){

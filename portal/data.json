@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-07-21T20:05:08.452Z",
+  "atualizado": "2026-07-21T17:01:01.794140",
   "usinas": [
     {
       "id": "cartorio",
@@ -85,17 +85,17 @@
     {
       "nome": "Apto 100",
       "uc": "371372701262",
+      "tipo": "proprio",
       "cliente": "Luiz (próprio)",
       "doc": "",
       "wpp": "5562999741225",
       "desc": null,
-      "tipo": "proprio",
+      "dg": 14,
       "acao": "equatorial_direto",
       "usina": "cartorio",
-      "dg": 14,
       "metodo": "planilha_injecao",
       "contrato": null,
-      "obs": "Apartamento de Luiz"
+      "obs": "Apartamento de Luiz."
     },
     {
       "nome": "Apto 300",
@@ -248,5 +248,6 @@
       "obs": "Térreo do prédio familiar."
     }
   ],
-  "status_ucs": {}
+  "status_ucs": {},
+  "ultima_verificacao_btg": "2026-07-21T17:01:01.794149"
 }

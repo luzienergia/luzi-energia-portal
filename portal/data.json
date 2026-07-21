@@ -1,0 +1,33 @@
+{
+  "atualizado": "2026-07-21T16:00:00.000Z",
+  "usinas": [
+    { "id": "cartorio", "nome": "Usina Cartório", "uc": "20393118", "uc_billing": "70296501229", "loc": "Anápolis — GO", "prod_media": 2200, "status": "operando",
+      "rateio": [
+        { "uc": "10029467606", "uc_billing": "371372701262", "nome": "Apto 100",    "pct": 44 },
+        { "uc": "21151635",    "uc_billing": "77762501286",  "nome": "Casa Neneto", "pct": 36 },
+        { "uc": "21307209",    "uc_billing": "79163601288",  "nome": "Térreo",      "pct": 20 }
+      ]},
+    { "id": "escola", "nome": "Usina Escola", "uc": "20760840", "uc_billing": "73940201205", "loc": "Anápolis — GO", "prod_media": 500, "status": "operando",
+      "rateio": [
+        { "uc": "10027980845", "uc_billing": "365716101232", "nome": "Casa Leandro",  "pct": 75 },
+        { "uc": "10040035296", "uc_billing": "430857301280", "nome": "Firma Marrula", "pct": 25 }
+      ]},
+    { "id": "predio",    "nome": "Usina Prédio",    "uc": null, "loc": "Anápolis — GO",  "prod_media": null, "status": "em construção", "rateio": [] },
+    { "id": "abadiania", "nome": "Usina Abadiânia", "uc": null, "loc": "Abadiânia — GO", "prod_media": null, "status": "em construção", "rateio": [] },
+    { "id": "chacara",   "nome": "Usina Chácara",   "uc": "70977001259", "loc": "GO", "prod_media": null, "status": "em montagem", "rateio": [] }
+  ],
+  "clientes": [
+    { "nome": "Apto 100",      "uc": "371372701262", "tipo": "proprio",       "cliente": "Luiz (próprio)",  "doc": "",              "wpp": "5562999741225", "desc": null, "dg": 14, "acao": "equatorial_direto",  "usina": "cartorio", "metodo": "planilha_injecao", "contrato": null,                          "obs": "Apartamento de Luiz." },
+    { "nome": "Apto 300",      "uc": "371377601286", "tipo": "proprio",       "cliente": "Dindinho (tio)", "doc": "",              "wpp": "",              "desc": null, "dg": 14, "acao": "equatorial_direto",  "usina": null,       "metodo": "sem_rateio",       "contrato": null,                          "obs": "Tio de Luiz, 3º andar." },
+    { "nome": "Cartório",      "uc": "70296501229",  "tipo": "cliente_ativo", "cliente": "Kenia",           "doc": "02790574000136","wpp": "5562992151600", "desc": 15,   "dg": 24, "acao": "luzi_boleto_e_png",  "usina": "cartorio", "metodo": "autoconsumo",      "contrato": "contratos/cartorio.pdf",      "obs": "Usina própria." },
+    { "nome": "Casa Leandro",  "uc": "365716101232", "tipo": "cliente_ativo", "cliente": "Leandro Ribeiro", "doc": "80372422187",   "wpp": "5562991136684", "desc": 20,   "dg": 6,  "acao": "luzi_boleto_e_png",  "usina": "escola",   "metodo": "planilha_injecao", "contrato": "contratos/casa_leandro.pdf",  "obs": "Contato: Luciana (tia)." },
+    { "nome": "Casa Marrula",  "uc": "398986101273", "tipo": "pass_through",  "cliente": "Miguel Hanna",    "doc": "70182543102",   "wpp": "5562992903232", "desc": null, "dg": 19, "acao": "equatorial_direto",  "usina": null,       "metodo": "sem_rateio",       "contrato": null,                          "obs": "Sem usina vinculada ainda." },
+    { "nome": "Casa Neneto",   "uc": "77762501286",  "tipo": "cliente_ativo", "cliente": "Wagner Neto",     "doc": "02109687100",   "wpp": "5562999797036", "desc": 20,   "dg": 23, "acao": "luzi_boleto_e_png",  "usina": "cartorio", "metodo": "planilha_injecao", "contrato": "contratos/casa_neneto.pdf",   "obs": "" },
+    { "nome": "Chácara",       "uc": "70977001259",  "tipo": "proprio",       "cliente": "Luiz (próprio)",  "doc": "",              "wpp": "",              "desc": null, "dg": 5,  "acao": "equatorial_direto",  "usina": "chacara",  "metodo": "autoconsumo",      "contrato": null,                          "obs": "Autoconsumo próprio." },
+    { "nome": "Escola",        "uc": "73940201205",  "tipo": "cliente_ativo", "cliente": "Cleyton",         "doc": "50802328000108","wpp": "5562985340915", "desc": 20,   "dg": 11, "acao": "luzi_boleto_e_png",  "usina": "escola",   "metodo": "autoconsumo",      "contrato": "contratos/escola.pdf",        "obs": "Geração informada manualmente." },
+    { "nome": "Firma Marrula", "uc": "430857301280", "tipo": "cliente_ativo", "cliente": "Miguel Hanna",    "doc": "70182543102",   "wpp": "5562992903232", "desc": 20,   "dg": 20, "acao": "luzi_boleto_e_png",  "usina": "escola",   "metodo": "planilha_injecao", "contrato": "contratos/firma_marrula.pdf", "obs": "Mesmo contato que Casa Marrula." },
+    { "nome": "Sobreloja",     "uc": "78431901209",  "tipo": "proprio",       "cliente": "Luiz (próprio)",  "doc": "",              "wpp": "",              "desc": null, "dg": 24, "acao": "equatorial_direto",  "usina": null,       "metodo": "sem_rateio",       "contrato": null,                          "obs": "Desocupado." },
+    { "nome": "Térreo",        "uc": "79163601288",  "tipo": "proprio",       "cliente": "Luiz (próprio)",  "doc": "",              "wpp": "",              "desc": null, "dg": 14, "acao": "equatorial_direto",  "usina": "cartorio", "metodo": "planilha_injecao", "contrato": null,                          "obs": "Térreo do prédio familiar." }
+  ],
+  "status_ucs": {}
+}

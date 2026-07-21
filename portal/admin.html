@@ -463,24 +463,52 @@ a{color:inherit;text-decoration:none}
 // ═══════════════════════════════════════════════════════
 const ADMIN_HASH  = 'd69098f86e9e89c22f67391256c576531e0e3f2526c503d5644444479f74e31d';
 const SERVER_URL  = 'http://localhost:8080';
-let   modoLocal   = false;  // true = servidor local rodando, auto-save ativo
-let   saveTimer   = null;
+const GH_REPO    = 'luzienergia/luzi-energia-portal';
+const GH_PATH    = 'portal/data.json';
+const GH_API     = `https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`;
+const GH_KEY     = 'luzi_ghtoken';
 
-// ── Detecta se servidor local está rodando ────────────────
+let modoLocal    = false;
+let modoGitHub   = false;
+let ghToken      = null;
+let ghSHA        = null;
+let saveTimer    = null;
+
+// ── Detecta modo: local → GitHub → leitura ───────────────
 async function detectarModo() {
+  // 1. Tenta servidor local
   try {
-    const r = await fetch(`${SERVER_URL}/api/ping`, {signal: AbortSignal.timeout(1500)});
+    const r = await fetch(`${SERVER_URL}/api/ping`, {signal: AbortSignal.timeout(1200)});
     if (r.ok) {
       modoLocal = true;
-      setSaveStatus('ok', '⚪', 'Ao vivo');
+      setSaveStatus('ok', '✓', 'Ao vivo');
       document.getElementById('save-status').classList.remove('hidden');
-      console.log('✅ Servidor local detectado — modo edição ativo');
+      return;
     }
-  } catch {
-    modoLocal = false;
-    document.getElementById('save-status').classList.remove('hidden');
-    setSaveStatus('offline', '📡', 'Somente leitura');
+  } catch {}
+
+  // 2. Tenta token GitHub
+  ghToken = localStorage.getItem(GH_KEY);
+  if (ghToken) {
+    try {
+      const r = await fetch(GH_API, {
+        headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github.v3+json' },
+        signal: AbortSignal.timeout(5000)
+      });
+      if (r.ok) {
+        modoGitHub = true;
+        setSaveStatus('ok', '☁️', 'Ao vivo');
+        document.getElementById('save-status').classList.remove('hidden');
+        return;
+      }
+    } catch {}
   }
+
+  // 3. Sem acesso — mostra botão configurar
+  setSaveStatus('offline', '⚙️', 'Configurar acesso');
+  document.getElementById('save-status').classList.remove('hidden');
+  document.getElementById('save-status').style.cursor = 'pointer';
+  document.getElementById('save-status').onclick = configurarGitHub;
 }
 
 // ── Indicador de save na topbar ───────────────────────────
@@ -493,33 +521,88 @@ function setSaveStatus(cls, icon, txt) {
   tx.textContent = txt;
 }
 
+// ── Configura token GitHub (uma vez só) ──────────────────
+async function configurarGitHub() {
+  const token = prompt(
+    'Para editar de qualquer dispositivo, informe seu Token GitHub.\n\n' +
+    'Gere em: github.com → Settings → Developer settings → Personal access tokens → Fine-grained tokens\n' +
+    '(Permissão necessária: Contents → Read and write)\n\n' +
+    'Cole o token abaixo (começa com github_pat_ ou ghp_):'
+  );
+  if (!token) return;
+  localStorage.setItem(GH_KEY, token);
+  ghToken = token;
+  modoGitHub = true;
+  setSaveStatus('ok', '☁️', 'Acesso configurado!');
+  document.getElementById('save-status').style.cursor = 'default';
+  document.getElementById('save-status').onclick = null;
+  await loadData();
+  renderAll();
+}
+
+// ── Salva via GitHub API (commit direto) ─────────────────
+async function salvarGitHub() {
+  try {
+    // Pega SHA atual se não tiver
+    if (!ghSHA) {
+      const r = await fetch(GH_API, {
+        headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (r.ok) { const j = await r.json(); ghSHA = j.sha; }
+    }
+    D.atualizado = new Date().toISOString();
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(D, null, 2))));
+    const r = await fetch(GH_API, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${ghToken}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/vnd.github.v3+json',
+      },
+      body: JSON.stringify({
+        message: `[admin] ${new Date().toLocaleString('pt-BR')}`,
+        content,
+        sha: ghSHA,
+      }),
+    });
+    if (r.ok) {
+      const j = await r.json();
+      ghSHA = j.content.sha;
+      const hora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+      setSaveStatus('ok', '☁️', `Publicado às ${hora}`);
+    } else {
+      const err = await r.json().catch(()=>({}));
+      setSaveStatus('err', '✗', err.message || 'Erro GitHub');
+    }
+  } catch(e) {
+    setSaveStatus('err', '✗', 'Sem conexão');
+  }
+}
+
 // ── Auto-save com debounce ────────────────────────────────
 function autoSave(delay=400) {
-  if (!modoLocal) {
-    setSaveStatus('offline', '📡', 'Inicie o servidor admin para salvar');
-    setTimeout(()=>setSaveStatus('offline','📡','Somente leitura'), 3000);
+  if (!modoLocal && !modoGitHub) {
+    configurarGitHub();
     return;
   }
   if (saveTimer) clearTimeout(saveTimer);
   setSaveStatus('saving', '⏳', 'Salvando...');
   saveTimer = setTimeout(async () => {
-    try {
-      D.atualizado = new Date().toISOString();
-      const r = await fetch(`${SERVER_URL}/api/save`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(D),
-        signal: AbortSignal.timeout(5000),
-      });
-      const j = await r.json();
-      if (j.ok) {
-        const hora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-        setSaveStatus('ok', '✓', `Salvo às ${hora}`);
-      } else {
-        setSaveStatus('err', '✗', 'Erro ao salvar');
-      }
-    } catch(e) {
-      setSaveStatus('err', '✗', 'Sem conexão com servidor');
+    if (modoLocal) {
+      try {
+        D.atualizado = new Date().toISOString();
+        const r = await fetch(`${SERVER_URL}/api/save`, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(D), signal: AbortSignal.timeout(5000),
+        });
+        const j = await r.json();
+        if (j.ok) {
+          const hora = new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+          setSaveStatus('ok', '✓', `Salvo às ${hora}`);
+        } else setSaveStatus('err', '✗', 'Erro ao salvar');
+      } catch(e) { setSaveStatus('err', '✗', 'Sem conexão com servidor'); }
+    } else {
+      await salvarGitHub();
     }
   }, delay);
 }
@@ -616,14 +699,25 @@ function showDash(){
 // ═══════════════════════════════════════════════════════
 async function loadData(){
   try {
-    // Prefere servidor local (dados mais frescos, sem cache de deploy)
-    const url = modoLocal ? `${SERVER_URL}/api/data` : 'data.json?t='+Date.now();
-    const r=await fetch(url);
-    if(r.ok){ D=await r.json(); }
-  } catch(e){ /* usa DATA_BASE */ }
-  // Garante campos novos se data.json for antigo
-  D.usinas  = D.usinas  || DATA_BASE.usinas;
-  D.clientes= D.clientes|| DATA_BASE.clientes;
+    if (modoLocal) {
+      const r = await fetch(`${SERVER_URL}/api/data`);
+      if (r.ok) { D = await r.json(); }
+    } else if (modoGitHub && ghToken) {
+      const r = await fetch(GH_API, {
+        headers: { Authorization: `Bearer ${ghToken}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (r.ok) {
+        const j = await r.json();
+        ghSHA = j.sha;
+        D = JSON.parse(decodeURIComponent(escape(atob(j.content))));
+      }
+    } else {
+      const r = await fetch('data.json?t='+Date.now());
+      if (r.ok) { D = await r.json(); }
+    }
+  } catch(e) { /* usa DATA_BASE */ }
+  D.usinas     = (D.usinas    && D.usinas.length)    ? D.usinas    : DATA_BASE.usinas;
+  D.clientes   = (D.clientes  && D.clientes.length)  ? D.clientes  : DATA_BASE.clientes;
   D.status_ucs = D.status_ucs || {};
 }
 

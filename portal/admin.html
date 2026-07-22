@@ -766,31 +766,31 @@ const DATA_BASE = {
 };
 
 // Histórico de faturas por cliente (espelho do CLIENTES_DB do cliente.html)
-const FATURAS_DB = {
+let FATURAS_DB = {
+  // ── Valores reais extraídos do BTG Empresas em 21/07/2026 ──
   '02790574000136': { nome:'Cartório 2º Ofício', uc:'70296501229', doc:'02790574000136', desconto:15, faturas:[
-    {mes:'06/2026',ref:'jun/26',semDesc:1212.44,comDesc:1030.57,venc:'2026-07-10',status:'vencer'},
-    {mes:'05/2026',ref:'mai/26',semDesc:1087.20,comDesc:924.12, venc:'2026-06-10',status:'pago'},
-    {mes:'04/2026',ref:'abr/26',semDesc:1120.80,comDesc:952.68, venc:'2026-05-10',status:'pago'},
-    {mes:'03/2026',ref:'mar/26',semDesc:980.50, comDesc:833.43, venc:'2026-04-10',status:'pago'},
+    {mes:'06/2026',ref:'jun/26',semDesc:1212.44,comDesc:1030.57,venc:'2026-07-10',status:'vencer'}, // VENCIDO (computeStatus detecta)
+    {mes:'05/2026',ref:'mai/26',semDesc:1240.82,comDesc:1054.70,venc:'2026-06-03',status:'vencer'}, // VENCIDO
+    {mes:'04/2026',ref:'abr/26',semDesc:1294.00,comDesc:1099.90,venc:'2026-05-06',status:'pago'},
   ]},
   '80372422187': { nome:'Leandro Ribeiro', uc:'365716101232', doc:'80372422187', desconto:20, faturas:[
     {mes:'07/2026',ref:'jul/26',semDesc:1336.56,comDesc:1069.25,venc:'2026-07-23',status:'vencer'},
-    {mes:'06/2026',ref:'jun/26',semDesc:1180.00,comDesc:944.00, venc:'2026-06-23',status:'pago'},
-    {mes:'05/2026',ref:'mai/26',semDesc:1090.00,comDesc:872.00, venc:'2026-05-23',status:'pago'},
+    {mes:'06/2026',ref:'jun/26',semDesc:1557.24,comDesc:1245.79,venc:'2026-06-17',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:1679.48,comDesc:1343.58,venc:'2026-05-19',status:'pago'},
   ]},
   '02109687100': { nome:'Wagner Neto', uc:'77762501286', doc:'02109687100', desconto:20, faturas:[
-    {mes:'06/2026',ref:'jun/26',semDesc:636.30,comDesc:509.04,venc:'2026-07-13',status:'vencer'},
-    {mes:'05/2026',ref:'mai/26',semDesc:590.00,comDesc:472.00,venc:'2026-06-13',status:'pago'},
-    {mes:'04/2026',ref:'abr/26',semDesc:620.00,comDesc:496.00,venc:'2026-05-13',status:'pago'},
+    {mes:'06/2026',ref:'jun/26',semDesc:636.30, comDesc:509.04, venc:'2026-06-30',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:861.21, comDesc:688.97, venc:'2026-06-05',status:'pago'},
   ]},
   '50802328000108': { nome:'Escola Mendes e Flor', uc:'73940201205', doc:'50802328000108', desconto:20, faturas:[
-    {mes:'06/2026',ref:'jun/26',semDesc:835.48,comDesc:668.38,venc:'2026-07-13',status:'vencer'},
-    {mes:'05/2026',ref:'mai/26',semDesc:760.00,comDesc:608.00,venc:'2026-06-13',status:'pago'},
-    {mes:'04/2026',ref:'abr/26',semDesc:810.00,comDesc:648.00,venc:'2026-05-13',status:'pago'},
+    {mes:'06/2026',ref:'jun/26',semDesc:835.48, comDesc:668.38, venc:'2026-07-20',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:995.39, comDesc:796.31, venc:'2026-06-20',status:'pago'},
+    {mes:'04/2026',ref:'abr/26',semDesc:426.23, comDesc:340.98, venc:'2026-05-20',status:'pago'},
   ]},
   'firma_marrula': { nome:'Firma Marrula', uc:'430857301280', doc:'70182543102', desconto:20, faturas:[
-    {mes:'06/2026',ref:'jun/26',semDesc:455.25,comDesc:364.20,venc:'2026-06-30',status:'pago'},
-    {mes:'05/2026',ref:'mai/26',semDesc:410.00,comDesc:328.00,venc:'2026-05-30',status:'pago'},
+    {mes:'07/2026',ref:'jul/26',semDesc:284.86, comDesc:227.89, venc:'2026-07-28',status:'vencer'},
+    {mes:'06/2026',ref:'jun/26',semDesc:455.25, comDesc:364.20, venc:'2026-06-30',status:'pago'},
+    {mes:'05/2026',ref:'mai/26',semDesc:449.11, comDesc:359.29, venc:'2026-05-29',status:'pago'},
   ]},
 };
 
@@ -868,6 +868,10 @@ async function loadData(){
   D.usinas     = (D.usinas    && D.usinas.length)    ? D.usinas    : DATA_BASE.usinas;
   D.clientes   = (D.clientes  && D.clientes.length)  ? D.clientes  : DATA_BASE.clientes;
   D.status_ucs = D.status_ucs || {};
+  // Se data.json tiver histórico de faturas, sobrescreve o FATURAS_DB hardcoded
+  if (D.faturas && Object.keys(D.faturas).length > 0) {
+    FATURAS_DB = D.faturas;
+  }
 }
 
 async function refreshData(){

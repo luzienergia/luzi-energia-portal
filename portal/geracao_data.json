@@ -1,0 +1,53 @@
+{
+  "atualizado_em": "2026-07-22T19:30:16",
+  "hoje": "2026-07-22",
+  "total_hoje_kwh": 273.45,
+  "usinas": {
+    "cartorio": {
+      "nome": "Cartório",
+      "cor": "#3b82f6",
+      "cor_fundo": "rgba(59,130,246,.18)",
+      "historico": {
+        "2026-07-22": 38.33
+      },
+      "hoje_kwh": 38.33,
+      "total_kwh": 38.33,
+      "media_diaria_kwh": 38.33,
+      "dias_registrados": 1
+    },
+    "escola": {
+      "nome": "Escola",
+      "cor": "#f59e0b",
+      "cor_fundo": "rgba(245,158,11,.18)",
+      "historico": {},
+      "hoje_kwh": 0.0,
+      "total_kwh": 0,
+      "media_diaria_kwh": 0.0,
+      "dias_registrados": 0
+    },
+    "gama_1": {
+      "nome": "Gama SAJ",
+      "cor": "#10b981",
+      "cor_fundo": "rgba(16,185,129,.18)",
+      "historico": {
+        "2026-07-22": 114.72
+      },
+      "hoje_kwh": 114.72,
+      "total_kwh": 114.72,
+      "media_diaria_kwh": 114.72,
+      "dias_registrados": 1
+    },
+    "gama_2": {
+      "nome": "Gama Sungrow",
+      "cor": "#8b5cf6",
+      "cor_fundo": "rgba(139,92,246,.18)",
+      "historico": {
+        "2026-07-22": 120.4
+      },
+      "hoje_kwh": 120.4,
+      "total_kwh": 120.4,
+      "media_diaria_kwh": 120.4,
+      "dias_registrados": 1
+    }
+  }
+}

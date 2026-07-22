@@ -442,7 +442,7 @@ a{color:inherit;text-decoration:none}
 <div id="v-dash" class="hidden">
   <nav class="dash-nav">
     <button class="dtab active" onclick="setTab('vg')">📋 Cobranças</button>
-    <button class="dtab" onclick="setTab('usinas')">⚡ Usinas &amp; Rateios</button>
+    <button class="dtab" onclick="setTab('usinas');loadGerData()">⚡ Usinas &amp; Rateios</button>
     <button class="dtab" onclick="setTab('clientes')">👥 Gestão de Clientes</button>
   </nav>
 
@@ -467,6 +467,49 @@ a{color:inherit;text-decoration:none}
 
   <!-- USINAS & RATEIOS -->
   <div id="tab-usinas" class="tpane">
+
+    <!-- ☀️ PRODUÇÃO SOLAR — visão geral -->
+    <div style="background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:14px;padding:20px 22px;margin-bottom:26px">
+      <!-- Header row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">☀️ Produção Solar</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span id="prod-ts" style="font-size:10px;color:var(--muted)"></span>
+          <button onclick="loadGerData()" style="background:rgba(78,205,228,.1);border:1px solid rgba(78,205,228,.25);color:var(--teal);padding:5px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <!-- Stats row -->
+      <div id="prod-stats-row" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px">
+        <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Neste mês</div><div class="usina-prod-stat-val" id="ps-mes">—</div></div>
+        <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Últimos 30 dias</div><div class="usina-prod-stat-val" id="ps-30d">—</div></div>
+        <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Média 12 meses</div><div class="usina-prod-stat-val" id="ps-media">—</div></div>
+      </div>
+
+      <!-- Navigator row -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <button onclick="navProdDay(-1)" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:#c8d4e8;width:34px;height:34px;border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
+          <span id="prod-day-label" style="font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;color:#fff;min-width:180px;text-align:center"></span>
+          <button onclick="navProdDay(1)" id="prod-nav-next" style="background:rgba(255,255,255,.06);border:1px solid var(--border);color:#c8d4e8;width:34px;height:34px;border-radius:8px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">›</button>
+        </div>
+        <div class="usina-filter-row" style="margin-bottom:0">
+          <span style="font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px">PERÍODO:</span>
+          <input type="date" id="prod-dt-from" class="usina-filter-input" title="De">
+          <input type="date" id="prod-dt-to" class="usina-filter-input" title="Até">
+          <button onclick="filtrarProd()" class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 10px">🔍 Filtrar</button>
+          <button onclick="resetProdFiltro()" class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 10px;opacity:.6">✕</button>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div style="background:rgba(8,15,30,.5);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:16px 14px">
+        <canvas id="prod-chart" style="max-height:260px"></canvas>
+        <div id="prod-no-data" style="display:none;text-align:center;padding:50px 0;color:var(--muted);font-size:12px">Sem dados para o período selecionado</div>
+      </div>
+    </div>
+
+    <!-- Usinas (rateio) -->
     <div style="display:flex;align-items:center;margin-bottom:20px">
       <button class="btn-add" onclick="abrirModalUsina()">＋ Adicionar usina</button>
     </div>
@@ -890,6 +933,7 @@ function setTab(id){
   document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+id).classList.add('active');
   event.currentTarget.classList.add('active');
+  if(id==='usinas') initProdLabel();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1182,36 +1226,35 @@ function renderUsinas(){
         Nenhuma UC vinculada a esta usina ainda.
         ${u.status!=='operando'?'<br><em>Usina ainda não está em operação.</em>':''}
       </div>`}
-      <!-- Produção -->
-      <div class="usina-prod">
-        <div class="usina-prod-title">Produção</div>
-        <div class="usina-prod-stats">
-          <div class="usina-prod-stat">
-            <div class="usina-prod-stat-lbl">Últimos 30 dias</div>
-            <div class="usina-prod-stat-val">${u.prod_30d!=null?u.prod_30d+' kWh':'—'}</div>
+      <!-- Produção por usina (dados do geracao_data.json) -->
+      ${(()=>{
+        const gd = gerData && gerData.usinas && gerData.usinas[u.id];
+        const anoMes = (gerData&&gerData.hoje||new Date().toISOString().slice(0,10)).slice(0,7);
+        const d30 = new Date(); d30.setDate(d30.getDate()-29);
+        let mes=null, d30v=null, media=null;
+        if(gd){
+          const h=gd.historico||{};
+          mes   = Object.entries(h).filter(([d])=>d.startsWith(anoMes)).reduce((s,[,v])=>s+(v||0),0);
+          d30v  = Object.entries(h).filter(([d])=>new Date(d+'T00:00:00')>=d30).reduce((s,[,v])=>s+(v||0),0);
+          media = gd.media_diaria_kwh;
+        } else {
+          mes   = u.prod_mes;
+          d30v  = u.prod_30d;
+          media = u.prod_media;
+        }
+        const fmt=v=>v!=null?v.toFixed?.(1)+' kWh':v+' kWh';
+        return `<div class="usina-prod">
+          <div class="usina-prod-title">Produção ${gd?'<span style="color:var(--teal);font-size:9px">● AO VIVO</span>':''}</div>
+          <div class="usina-prod-stats">
+            <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Neste mês</div>
+              <div class="usina-prod-stat-val">${mes!=null?fmt(mes):'—'}</div></div>
+            <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Últimos 30 dias</div>
+              <div class="usina-prod-stat-val">${d30v!=null?fmt(d30v):'—'}</div></div>
+            <div class="usina-prod-stat"><div class="usina-prod-stat-lbl">Média diária</div>
+              <div class="usina-prod-stat-val">${media!=null?fmt(media):'—'}</div></div>
           </div>
-          <div class="usina-prod-stat">
-            <div class="usina-prod-stat-lbl">Neste mês</div>
-            <div class="usina-prod-stat-val">${u.prod_mes!=null?u.prod_mes+' kWh':'—'}</div>
-          </div>
-          <div class="usina-prod-stat">
-            <div class="usina-prod-stat-lbl">Média 12 meses</div>
-            <div class="usina-prod-stat-val">${u.prod_media!=null?u.prod_media+' kWh':'—'}</div>
-          </div>
-        </div>
-        <div class="usina-chart-box">
-          <div class="usina-filter-row">
-            <span style="font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px">PERÍODO:</span>
-            <input type="date" class="usina-filter-input" title="De">
-            <input type="date" class="usina-filter-input" title="Até">
-            <button class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 10px">🔍 Filtrar</button>
-          </div>
-          <div class="usina-chart-ph">
-            📊 Gráfico de geração<br>
-            <span style="font-size:10px;opacity:.5">Disponível após integração com inversor (Growatt/Hoymiles)</span>
-          </div>
-        </div>
-      </div>
+        </div>`;
+      })()}
     </div>`).join('');
 }
 
@@ -1551,6 +1594,212 @@ function removerCliente(i){
   D.clientes.splice(i,1);
   renderAll();
   autoSave(200);
+}
+
+// ═══════════════════════════════════════════════════════
+// PRODUÇÃO SOLAR (integrado na aba Usinas & Rateios)
+// ═══════════════════════════════════════════════════════
+let gerData = null;
+let prodChart = null;
+let prodDiaAtual = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+let prodModoFiltro = false; // true = período, false = dia único
+
+async function loadGerData(){
+  try{
+    const r = await fetch('./geracao_data.json?_='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    gerData = await r.json();
+    renderProdOverview();
+    renderUsinas(); // atualiza stats por usina
+  }catch(e){
+    const el = document.getElementById('prod-ts');
+    if(el) el.textContent = '⚠️ '+e.message;
+  }
+}
+
+function renderProdOverview(){
+  if(!gerData) return;
+  const usinas = gerData.usinas || {};
+  const hoje = gerData.hoje || new Date().toISOString().slice(0,10);
+
+  // Timestamp
+  const ts = gerData.atualizado_em
+    ? new Date(gerData.atualizado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})
+    : null;
+  const el = document.getElementById('prod-ts');
+  if(el && ts) el.textContent = 'Atualizado '+ts;
+
+  // Calcular stats agregadas (soma de todas as usinas)
+  const anoMes = hoje.slice(0,7); // YYYY-MM
+  const d30 = new Date(); d30.setDate(d30.getDate()-29);
+
+  let totalMes=0, total30d=0, total12m=0, dias12m=0;
+  Object.values(usinas).forEach(u=>{
+    const h = u.historico || {};
+    Object.entries(h).forEach(([dt,v])=>{
+      if(dt.startsWith(anoMes)) totalMes += (v||0);
+      const dtObj = new Date(dt+'T00:00:00');
+      if(dtObj >= d30) total30d += (v||0);
+      total12m += (v||0);
+      dias12m++;
+    });
+  });
+  const nUsinas = Object.keys(usinas).length || 1;
+  // dias12m contém entradas × usinas; normalizar
+  const totalDias = dias12m / nUsinas;
+
+  document.getElementById('ps-mes').textContent   = totalMes.toFixed(1)+' kWh';
+  document.getElementById('ps-30d').textContent   = total30d.toFixed(1)+' kWh';
+  document.getElementById('ps-media').textContent = totalDias>0 ? (total12m/totalDias).toFixed(1)+' kWh/d' : '—';
+
+  // Atualizar label do dia
+  if(!prodModoFiltro) renderProdDia(prodDiaAtual);
+}
+
+// Formata YYYY-MM-DD → "22 de julho de 2026"
+function fmtDiaLongo(iso){
+  const [y,m,d] = iso.split('-');
+  const meses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+  return `${parseInt(d)} de ${meses[parseInt(m)-1]} de ${y}`;
+}
+
+function navProdDay(delta){
+  prodModoFiltro = false;
+  const d = new Date(prodDiaAtual+'T00:00:00');
+  d.setDate(d.getDate()+delta);
+  const novoIso = d.toISOString().slice(0,10);
+  const hojeIso = new Date().toISOString().slice(0,10);
+  if(novoIso > hojeIso) return; // não avança além de hoje
+  prodDiaAtual = novoIso;
+  renderProdDia(prodDiaAtual);
+}
+
+function renderProdDia(iso){
+  const lbl = document.getElementById('prod-day-label');
+  if(lbl) lbl.textContent = fmtDiaLongo(iso);
+
+  // Bloqueia seta direita se for hoje
+  const hojeIso = new Date().toISOString().slice(0,10);
+  const next = document.getElementById('prod-nav-next');
+  if(next) next.style.opacity = iso >= hojeIso ? '.25' : '1';
+
+  if(!gerData) return;
+  const usinas = gerData.usinas || {};
+
+  // Barras: uma por usina para o dia selecionado
+  const labels = Object.values(usinas).map(u=>u.nome);
+  const values = Object.values(usinas).map(u=>(u.historico||{})[iso]||0);
+  const bgColors  = Object.values(usinas).map(u=>u.cor_fundo||u.cor);
+  const brdColors = Object.values(usinas).map(u=>u.cor);
+
+  const temDados = values.some(v=>v>0);
+  const canvas  = document.getElementById('prod-chart');
+  const noData  = document.getElementById('prod-no-data');
+  canvas.style.display  = temDados ? 'block' : 'none';
+  noData.style.display  = temDados ? 'block' : 'none';
+  // se sem dados mostra msg mas deixa canvas oculto
+  if(!temDados){ noData.style.display='block'; canvas.style.display='none'; return; }
+  noData.style.display = 'none';
+
+  _buildChart('bar', labels, [{
+    label: fmtDiaLongo(iso),
+    data: values,
+    backgroundColor: bgColors,
+    borderColor: brdColors,
+    borderWidth: 1.5,
+    borderRadius: 6,
+  }], false);
+}
+
+function filtrarProd(){
+  const from = document.getElementById('prod-dt-from').value;
+  const to   = document.getElementById('prod-dt-to').value;
+  if(!from && !to){ resetProdFiltro(); return; }
+  prodModoFiltro = true;
+  if(!gerData) return;
+
+  const usinas = gerData.usinas || {};
+  // Coletar todas as datas no intervalo
+  const dtFrom = from || '2000-01-01';
+  const dtTo   = to   || new Date().toISOString().slice(0,10);
+
+  // Todas as datas que existem em qualquer usina dentro do range
+  const datesSet = new Set();
+  Object.values(usinas).forEach(u=>{
+    Object.keys(u.historico||{}).forEach(dt=>{ if(dt>=dtFrom&&dt<=dtTo) datesSet.add(dt); });
+  });
+  const datas = [...datesSet].sort();
+
+  if(!datas.length){
+    document.getElementById('prod-chart').style.display='none';
+    document.getElementById('prod-no-data').style.display='block';
+    return;
+  }
+
+  const labels = datas.map(d=>{ const[y,m,day]=d.split('-'); return day+'/'+m; });
+  const datasets = Object.values(usinas).map(u=>({
+    label: u.nome,
+    data: datas.map(d=>(u.historico||{})[d]||0),
+    backgroundColor: u.cor_fundo||u.cor,
+    borderColor: u.cor,
+    borderWidth: 1.5,
+    borderRadius: 4,
+  }));
+
+  document.getElementById('prod-day-label').textContent =
+    dtBR(dtFrom)+' → '+dtBR(dtTo);
+  document.getElementById('prod-chart').style.display='block';
+  document.getElementById('prod-no-data').style.display='none';
+  _buildChart('bar', labels, datasets, true);
+}
+
+function resetProdFiltro(){
+  prodModoFiltro = false;
+  document.getElementById('prod-dt-from').value='';
+  document.getElementById('prod-dt-to').value='';
+  prodDiaAtual = new Date().toISOString().slice(0,10);
+  renderProdDia(prodDiaAtual);
+}
+
+function _buildChart(type, labels, datasets, showLegend){
+  const canvas = document.getElementById('prod-chart');
+  if(prodChart){ prodChart.destroy(); prodChart=null; }
+  prodChart = new Chart(canvas.getContext('2d'),{
+    type,
+    data:{labels, datasets},
+    options:{
+      responsive:true,
+      maintainAspectRatio:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{
+          display: showLegend,
+          labels:{color:'#c8d4e8',font:{size:12,family:"'Barlow Condensed',sans-serif",weight:'700'},
+                  boxWidth:12,boxHeight:12,borderRadius:3}
+        },
+        tooltip:{
+          backgroundColor:'rgba(12,18,34,.96)',
+          titleColor:'#c8d4e8',bodyColor:'#8b9cb6',
+          borderColor:'rgba(255,255,255,.08)',borderWidth:1,
+          callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toFixed(2)+' kWh'}
+        }
+      },
+      scales:{
+        x:{ticks:{color:'#8b9cb6',font:{size:10,family:"'Barlow Condensed',sans-serif"}},
+           grid:{color:'rgba(255,255,255,.04)'}},
+        y:{ticks:{color:'#8b9cb6',font:{size:10},callback:v=>v.toFixed(0)+' kWh'},
+           grid:{color:'rgba(255,255,255,.05)'},beginAtZero:true}
+      }
+    }
+  });
+}
+
+// Inicializa label do dia ao mostrar a aba (sem dados ainda)
+function initProdLabel(){
+  const lbl = document.getElementById('prod-day-label');
+  if(lbl) lbl.textContent = fmtDiaLongo(prodDiaAtual);
+  const next = document.getElementById('prod-nav-next');
+  if(next) next.style.opacity='.25';
 }
 
 // ═══════════════════════════════════════════════════════

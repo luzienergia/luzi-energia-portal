@@ -80,6 +80,24 @@
       "prod_media": null,
       "status": "em montagem",
       "rateio": []
+    },
+    {
+      "id": "gama_1",
+      "nome": "Usina Gama — SAJ",
+      "uc": null,
+      "loc": "Anápolis — GO",
+      "prod_media": null,
+      "status": "operando",
+      "rateio": []
+    },
+    {
+      "id": "gama_2",
+      "nome": "Usina Gama — Sungrow",
+      "uc": null,
+      "loc": "Anápolis — GO",
+      "prod_media": null,
+      "status": "operando",
+      "rateio": []
     }
   ],
   "clientes": [

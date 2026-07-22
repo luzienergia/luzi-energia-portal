@@ -1576,13 +1576,32 @@ function hexRgba(hex, a){
 }
 
 async function loadGerData(){
+  // Feedback visual no botão de atualizar
+  const btn = document.querySelector('[onclick="loadGerData()"]');
+  if(btn){ btn.textContent='⏳ Carregando...'; btn.disabled=true; }
   try{
     const r = await fetch('./geracao_data.json?_='+Date.now());
     if(!r.ok) throw new Error('HTTP '+r.status);
     gerData = await r.json();
     renderUsinas();
-    setTimeout(initAllUsinaCharts, 80);
-  }catch(e){ console.error('loadGerData:', e.message); }
+    setTimeout(initAllUsinaCharts, 150);
+    if(btn){ btn.textContent='↻ Atualizar geração'; btn.disabled=false; }
+  }catch(e){
+    console.error('loadGerData:', e.message);
+    if(btn){ btn.textContent='⚠️ Erro ao carregar'; btn.disabled=false; }
+    // Exibir erro dentro do conteúdo
+    const el = document.getElementById('usinas-content');
+    if(el && !gerData){
+      const errDiv = el.querySelector('.ger-err');
+      if(!errDiv){
+        const d = document.createElement('div');
+        d.className='ger-err';
+        d.style.cssText='padding:12px 20px;font-size:12px;color:var(--red);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;margin-bottom:16px';
+        d.textContent='⚠️ Não foi possível carregar geracao_data.json — '+e.message;
+        el.prepend(d);
+      }
+    }
+  }
 }
 
 function initAllUsinaCharts(){
@@ -1600,10 +1619,10 @@ function renderUsinaChart(id){
   const hojeIso = new Date().toISOString().slice(0,10);
   const f       = usinaFilters[id] || {from:null, to:null};
 
-  // Sem dados de geração ainda
-  if(!gd || !Object.keys(gd.historico||{}).length){
+  // Sem integração para esta usina
+  if(!gd){
     canvas.style.display = 'none';
-    if(nodata) { nodata.style.display='block'; nodata.textContent='Sem dados de geração ainda'; }
+    if(nodata) { nodata.style.display='block'; nodata.textContent='Sem integração de geração'; }
     if(statVal) statVal.textContent = '—';
     if(statLbl) statLbl.textContent = 'aguardando integração';
     return;

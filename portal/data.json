@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-07-22T08:04:34.748771",
+  "atualizado": "2026-07-22T08:18:00.898705",
   "usinas": [
     {
       "id": "cartorio",
@@ -249,7 +249,7 @@
     }
   ],
   "status_ucs": {},
-  "ultima_verificacao_btg": "2026-07-22T08:04:34.748781",
+  "ultima_verificacao_btg": "2026-07-22T08:18:00.898708",
   "faturas": {
     "02790574000136": {
       "nome": "Cartório",

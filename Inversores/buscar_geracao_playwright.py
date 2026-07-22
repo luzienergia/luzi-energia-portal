@@ -172,104 +172,52 @@ def _tsun_do_login(page, username: str, password: str) -> str | None:
     return token_box.get("token")
 
 
-def _tsun_api_get_stations(token: str) -> list[dict]:
-    """Lista estações via API REST com Bearer token."""
-    if not _requests:
-        return []
-    hdrs = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    endpoints = [
-        f"{TSUN_BASE}/station-s/station/list?page=1&size=20",
-        f"{TSUN_BASE}/system/station/list?pageNum=1&pageSize=20&businessType=1",
-    ]
-    for url in endpoints:
-        try:
-            r = _requests.get(url, headers=hdrs, timeout=15)
-            d = r.json()
-            recs = (
-                d.get("data", {}).get("records")
-                or d.get("data", {}).get("list")
-                or d.get("rows")
-                or []
-            )
-            if recs:
-                return recs
-        except Exception as e:
-            print(f"   ⚠️  TSUN stations {url}: {e}")
-    return []
 
 
-def _tsun_api_get_energy_today(token: str, station: dict) -> float:
-    """Retorna kWh de hoje para uma estação."""
-    if not _requests:
-        return 0.0
-    hdrs = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    sid  = station.get("id") or station.get("stationId") or station.get("powerStationGuid", "")
-    guid = station.get("powerStationGuid") or sid
+def _tsun_extract_energy(url: str, data, captured: dict):
+    """
+    Varre recursivamente uma resposta JSON do TSUN em busca de campos de geração do dia.
+    Atualiza captured["today_kwh"] e captured["stations"] se encontrar algo.
+    """
+    ENERGY_KEYS = {
+        "todayEnergy", "dailyEnergy", "dayEnergy", "energyToday",
+        "daily_energy", "today_yield", "dayYield", "todayYield",
+        "powerToday", "generationToday", "eToday", "eTodayKwh",
+    }
 
-    endpoints = [
-        f"{TSUN_BASE}/device-s/device-monitor/current-data?stationId={sid}",
-        f"{TSUN_BASE}/station-s/station/realTimeInfo?stationId={sid}",
-        f"{TSUN_BASE}/system/station/getPowerStationByGuid?powerStationGuid={guid}",
-    ]
-    for url in endpoints:
-        try:
-            r = _requests.get(url, headers=hdrs, timeout=15)
-            d = r.json()
-            data = d.get("data") or {}
-            if isinstance(data, list):
-                data = data[0] if data else {}
+    def _walk(obj, depth=0):
+        if depth > 6:
+            return
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k in ENERGY_KEYS and v is not None:
+                    try:
+                        kwh = float(v)
+                        if kwh > 10_000:      # provável Wh → converter
+                            kwh /= 1000.0
+                        if 0 < kwh < 5000:    # sanity check
+                            old = captured.get("today_kwh")
+                            if old is None or kwh > old:
+                                captured["today_kwh"] = kwh
+                                seg = url.split("?")[0].split("/")[-1]
+                                print(f"   🎯 TSUN [{seg}] {k}={kwh:.3f} kWh")
+                    except (ValueError, TypeError):
+                        pass
+                else:
+                    _walk(v, depth + 1)
+        elif isinstance(obj, list):
+            for item in obj:
+                _walk(item, depth + 1)
 
-            # Diferentes campos conforme versão da API
-            val = (
-                data.get("todayEnergy")
-                or data.get("dailyEnergy")
-                or data.get("dayEnergy")
-                or data.get("energyToday")
-                or data.get("daily_energy")
-                or data.get("today_yield")
-            )
-            if val is not None:
-                kwh = float(val)
-                # API retorna Wh → converter para kWh se valor for grande
-                if kwh > 10_000:
-                    kwh /= 1000.0
-                return kwh
-        except Exception as e:
-            print(f"   ⚠️  TSUN energy {url}: {e}")
-
-    # Fallback: tentar via inverter info (old API)
-    try:
-        params = {
-            "searchOr": "", "status": "", "deviceTypeEn": "inverter",
-            "powerStationGuid": guid, "businessType": 0, "pageNum": 1, "pageSize": 10
-        }
-        r = _requests.get(
-            f"{TSUN_BASE}/tools/device/selectDeviceInverter",
-            params=params, headers=hdrs, timeout=15
-        )
-        invs = r.json().get("rows", [])
-        total_wh = 0.0
-        for inv in invs:
-            dev_guid = inv.get("deviceGuid", "")
-            r2 = _requests.get(
-                f"{TSUN_BASE}/tools/device/selectDeviceInverterInfo",
-                params={"deviceGuid": dev_guid, "timezone": "-03:00"},
-                headers=hdrs, timeout=15
-            )
-            info = r2.json().get("data") or {}
-            wh = float(info.get("energyToday") or 0)
-            total_wh += wh
-        if total_wh > 0:
-            return total_wh / 1000.0
-    except Exception:
-        pass
-
-    return 0.0
+    if isinstance(data, dict):
+        _walk(data)
 
 
 def tsun_fetch_playwright(username: str = "", password: str = "") -> dict | None:
     """
-    Login TSUN com sessão persistente + slider captcha + coleta de geração via API.
+    Login TSUN com sessão persistente + slider captcha.
+    Intercepta TODAS as respostas JSON do portal enquanto carrega,
+    extrai dados de geração sem precisar conhecer o endpoint exato.
     Retorna { "hoje_kwh": float, "estacoes": [...] } ou None.
     """
     try:
@@ -287,14 +235,27 @@ def tsun_fetch_playwright(username: str = "", password: str = "") -> dict | None
     print("🔌 TSUN (escola): conectando via Playwright...")
     TSUN_SESSION_DIR.mkdir(parents=True, exist_ok=True)
 
+    captured: dict = {"today_kwh": None}
+
+    def _on_response(response):
+        url = response.url
+        # Ignorar recursos estáticos
+        if any(s in url for s in (".js", ".css", ".png", ".jpg", ".ico", ".woff", ".svg")):
+            return
+        ct = response.headers.get("content-type", "")
+        if "json" not in ct:
+            return
+        try:
+            data = response.json()
+            _tsun_extract_energy(url, data, captured)
+        except Exception:
+            pass
+
     with sync_playwright() as p:
         ctx = p.chromium.launch_persistent_context(
             user_data_dir=str(TSUN_SESSION_DIR),
-            headless=False,   # headed: necessário para o slider AWSC não detectar bot
-            args=[
-                "--disable-blink-features=AutomationControlled",
-                "--no-sandbox",
-            ],
+            headless=False,
+            args=["--disable-blink-features=AutomationControlled", "--no-sandbox"],
             user_agent=(
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -302,96 +263,59 @@ def tsun_fetch_playwright(username: str = "", password: str = "") -> dict | None
             ),
         )
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
-
-        # Ocultar webdriver flag
         page.add_init_script(
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         )
 
-        # Verificar se já tem sessão ativa (navegar para o dashboard)
+        # Interceptar ANTES de qualquer navegação
+        page.on("response", _on_response)
+
         page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
         time.sleep(1.5)
 
-        logged_in = "/login" not in page.url and "login" not in page.url.lower()
-        token: str | None = None
-
-        if not logged_in:
-            print("   ℹ️  TSUN: sem sessão salva — fazendo login...")
+        if "/login" in page.url or "login" in page.url.lower():
+            print("   ℹ️  TSUN: sem sessão — fazendo login...")
             token = _tsun_do_login(page, u, pw)
             if not token:
                 print("❌ TSUN: falha no login (captcha ou credenciais)")
                 ctx.close()
                 return None
-            print("   ✅ TSUN: token OAuth2 obtido")
+            print("   ✅ TSUN: login OK")
+            # Navegar para o dashboard — as APIs serão chamadas automaticamente
+            page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
+            time.sleep(3)
         else:
-            # Já logado: extrair token do storage (pode não funcionar, mas tentamos)
-            print("   ℹ️  TSUN: sessão ativa reutilizada")
-            # Se não tiver token em memória, tenta refazer login silencioso
-            # (o refresh token pode estar salvo na sessão persistente)
+            print("   ℹ️  TSUN: sessão ativa")
+
+        # Se ainda não capturou, navegar por algumas rotas do SPA para triggar as APIs
+        if captured["today_kwh"] is None:
+            for route in ["/home", "/station/list", "/dashboard", "/overview"]:
+                try:
+                    page.goto(f"{TSUN_BASE}{route}", wait_until="networkidle")
+                    time.sleep(2)
+                    if captured["today_kwh"] is not None:
+                        break
+                except Exception:
+                    continue
+
+        # Último recurso: DOM scraping
+        if captured["today_kwh"] is None:
+            body = page.evaluate("() => document.body.innerText") or ""
+            matches = re.findall(r"([\d]+\.?\d*)\s*(?:kWh|度|kwh)", body)
+            if matches:
+                captured["today_kwh"] = float(matches[0])
+                print(f"   📊 TSUN (DOM): {captured['today_kwh']:.3f} kWh")
 
         ctx.close()
 
-    # Com o token em mãos, buscar dados via requests (mais rápido que Playwright)
-    if token and _requests:
-        stations = _tsun_api_get_stations(token)
-        if not stations:
-            print("❌ TSUN: nenhuma estação encontrada via API")
-            return None
-
-        estacoes_info = []
-        hoje_total = 0.0
-        for st in stations:
-            nome = st.get("name") or st.get("stationName") or st.get("powerStationGuid", "?")
-            kwh = _tsun_api_get_energy_today(token, st)
-            estacoes_info.append({"nome": nome, "hoje_kwh": kwh})
-            hoje_total += kwh
-            print(f"   📊 TSUN {nome}: hoje={kwh:.3f} kWh")
-
-        return {"hoje_kwh": hoje_total, "estacoes": estacoes_info}
-
-    # Fallback: sem token (sessão já existia mas não re-logou)
-    # Neste caso fazemos scraping DOM via Playwright
-    print("   ⚠️  TSUN: sem token OAuth2 — tentando scraping DOM...")
-    return _tsun_scrape_dom(u, pw)
-
-
-def _tsun_scrape_dom(username: str, password: str) -> dict | None:
-    """Fallback: scraping DOM do dashboard TSUN quando não conseguimos o token."""
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
+    kwh = captured.get("today_kwh")
+    if kwh is None:
+        print("❌ TSUN: nenhum dado de geração encontrado")
         return None
 
-    with sync_playwright() as p:
-        ctx = p.chromium.launch_persistent_context(
-            user_data_dir=str(TSUN_SESSION_DIR),
-            headless=False,
-            args=["--disable-blink-features=AutomationControlled"],
-        )
-        page = ctx.pages[0] if ctx.pages else ctx.new_page()
-        page.add_init_script(
-            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
-        )
+    print(f"   📊 TSUN Escola: hoje={kwh:.3f} kWh")
+    return {"hoje_kwh": kwh, "estacoes": [{"nome": "Escola", "hoje_kwh": kwh}]}
 
-        page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
-        time.sleep(2)
-
-        if "/login" in page.url:
-            _tsun_do_login(page, username, password)
-            page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
-            time.sleep(2)
-
-        body = page.evaluate("() => document.body.innerText")
-        ctx.close()
-
-    # Extrair kWh do DOM — buscar padrões de energia
-    kwh_matches = re.findall(r"([\d.]+)\s*(?:kWh|度|kwh)", body or "")
-    if kwh_matches:
-        hoje_kwh = float(kwh_matches[0])
-        print(f"   📊 TSUN (DOM scraping): {hoje_kwh:.3f} kWh")
-        return {"hoje_kwh": hoje_kwh, "estacoes": [{"nome": "Escola", "hoje_kwh": hoje_kwh}]}
-
-    return None
 
 
 # ══════════════════════════════════════════════════════════════════════════════

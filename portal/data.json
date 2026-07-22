@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-07-22T12:16:52.195789",
+  "atualizado": "2026-07-22T15:05:56.739289",
   "usinas": [
     {
       "id": "cartorio",
@@ -34,21 +34,22 @@
       "id": "escola",
       "nome": "Usina Escola",
       "uc": "20760840",
-      "uc_billing": "73940201205",
       "loc": "Anápolis — GO",
-      "prod_media": 500,
+      "prod_media": 2000,
+      "prod_30d": null,
+      "prod_mes": null,
       "status": "operando",
       "rateio": [
         {
+          "nome": "Casa Leandro",
           "uc": "10027980845",
           "uc_billing": "365716101232",
-          "nome": "Casa Leandro",
           "pct": 75
         },
         {
+          "nome": "Firma Marrula",
           "uc": "10040035296",
           "uc_billing": "430857301280",
-          "nome": "Firma Marrula",
           "pct": 25
         }
       ]
@@ -249,7 +250,7 @@
     }
   ],
   "status_ucs": {},
-  "ultima_verificacao_btg": "2026-07-22T12:16:52.195797",
+  "ultima_verificacao_btg": "2026-07-22T15:05:56.739296",
   "faturas": {
     "02790574000136": {
       "nome": "Cartório",
@@ -276,7 +277,7 @@
         {
           "mes": "04/2026",
           "ref": "abr/26",
-          "semDesc": 1294.0,
+          "semDesc": 1294,
           "comDesc": 1099.9,
           "venc": "2026-05-06",
           "status": "pago"

@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-07-22T00:01:40.431241",
+  "atualizado": "2026-07-22T00:16:38.113489",
   "usinas": [
     {
       "id": "cartorio",
@@ -249,7 +249,7 @@
     }
   ],
   "status_ucs": {},
-  "ultima_verificacao_btg": "2026-07-22T00:01:40.431248",
+  "ultima_verificacao_btg": "2026-07-22T00:16:38.113497",
   "faturas": {
     "02790574000136": {
       "nome": "Cartório",
@@ -257,9 +257,30 @@
       "doc": "02790574000136",
       "desconto": 15,
       "faturas": [
-        {"mes": "06/2026", "ref": "jun/26", "semDesc": 1212.44, "comDesc": 1030.57, "venc": "2026-07-10", "status": "vencer"},
-        {"mes": "05/2026", "ref": "mai/26", "semDesc": 1240.82, "comDesc": 1054.70, "venc": "2026-06-03", "status": "vencer"},
-        {"mes": "04/2026", "ref": "abr/26", "semDesc": 1294.00, "comDesc": 1099.90, "venc": "2026-05-06", "status": "pago"}
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 1212.44,
+          "comDesc": 1030.57,
+          "venc": "2026-07-10",
+          "status": "vencer"
+        },
+        {
+          "mes": "05/2026",
+          "ref": "mai/26",
+          "semDesc": 1240.82,
+          "comDesc": 1054.7,
+          "venc": "2026-06-03",
+          "status": "vencer"
+        },
+        {
+          "mes": "04/2026",
+          "ref": "abr/26",
+          "semDesc": 1294.0,
+          "comDesc": 1099.9,
+          "venc": "2026-05-06",
+          "status": "pago"
+        }
       ]
     },
     "80372422187": {
@@ -268,9 +289,30 @@
       "doc": "80372422187",
       "desconto": 20,
       "faturas": [
-        {"mes": "07/2026", "ref": "jul/26", "semDesc": 1336.56, "comDesc": 1069.25, "venc": "2026-07-23", "status": "vencer"},
-        {"mes": "06/2026", "ref": "jun/26", "semDesc": 1557.24, "comDesc": 1245.79, "venc": "2026-06-17", "status": "pago"},
-        {"mes": "05/2026", "ref": "mai/26", "semDesc": 1679.48, "comDesc": 1343.58, "venc": "2026-05-19", "status": "pago"}
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 1336.56,
+          "comDesc": 1069.25,
+          "venc": "2026-07-23",
+          "status": "vencer"
+        },
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 1557.24,
+          "comDesc": 1245.79,
+          "venc": "2026-06-17",
+          "status": "pago"
+        },
+        {
+          "mes": "05/2026",
+          "ref": "mai/26",
+          "semDesc": 1679.48,
+          "comDesc": 1343.58,
+          "venc": "2026-05-19",
+          "status": "pago"
+        }
       ]
     },
     "02109687100": {
@@ -279,8 +321,22 @@
       "doc": "02109687100",
       "desconto": 20,
       "faturas": [
-        {"mes": "06/2026", "ref": "jun/26", "semDesc": 636.30, "comDesc": 509.04, "venc": "2026-06-30", "status": "pago"},
-        {"mes": "05/2026", "ref": "mai/26", "semDesc": 861.21, "comDesc": 688.97, "venc": "2026-06-05", "status": "pago"}
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 636.3,
+          "comDesc": 509.04,
+          "venc": "2026-06-30",
+          "status": "pago"
+        },
+        {
+          "mes": "05/2026",
+          "ref": "mai/26",
+          "semDesc": 861.21,
+          "comDesc": 688.97,
+          "venc": "2026-06-05",
+          "status": "pago"
+        }
       ]
     },
     "50802328000108": {
@@ -289,9 +345,30 @@
       "doc": "50802328000108",
       "desconto": 20,
       "faturas": [
-        {"mes": "06/2026", "ref": "jun/26", "semDesc": 835.48, "comDesc": 668.38, "venc": "2026-07-20", "status": "pago"},
-        {"mes": "05/2026", "ref": "mai/26", "semDesc": 995.39, "comDesc": 796.31, "venc": "2026-06-20", "status": "pago"},
-        {"mes": "04/2026", "ref": "abr/26", "semDesc": 426.23, "comDesc": 340.98, "venc": "2026-05-20", "status": "pago"}
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 835.48,
+          "comDesc": 668.38,
+          "venc": "2026-07-20",
+          "status": "pago"
+        },
+        {
+          "mes": "05/2026",
+          "ref": "mai/26",
+          "semDesc": 995.39,
+          "comDesc": 796.31,
+          "venc": "2026-06-20",
+          "status": "pago"
+        },
+        {
+          "mes": "04/2026",
+          "ref": "abr/26",
+          "semDesc": 426.23,
+          "comDesc": 340.98,
+          "venc": "2026-05-20",
+          "status": "pago"
+        }
       ]
     },
     "70182543102": {
@@ -300,9 +377,30 @@
       "doc": "70182543102",
       "desconto": 20,
       "faturas": [
-        {"mes": "07/2026", "ref": "jul/26", "semDesc": 284.86, "comDesc": 227.89, "venc": "2026-07-28", "status": "vencer"},
-        {"mes": "06/2026", "ref": "jun/26", "semDesc": 455.25, "comDesc": 364.20, "venc": "2026-06-30", "status": "pago"},
-        {"mes": "05/2026", "ref": "mai/26", "semDesc": 449.11, "comDesc": 359.29, "venc": "2026-05-29", "status": "pago"}
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 284.86,
+          "comDesc": 227.89,
+          "venc": "2026-07-28",
+          "status": "vencer"
+        },
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 455.25,
+          "comDesc": 364.2,
+          "venc": "2026-06-30",
+          "status": "pago"
+        },
+        {
+          "mes": "05/2026",
+          "ref": "mai/26",
+          "semDesc": 449.11,
+          "comDesc": 359.29,
+          "venc": "2026-05-29",
+          "status": "pago"
+        }
       ]
     }
   }

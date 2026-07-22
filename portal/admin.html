@@ -851,7 +851,7 @@ function showDash(){
   document.getElementById('badge-adm').classList.remove('hidden');
   document.getElementById('btn-sair').classList.remove('hidden');
   detectarModo();
-  loadData().then(renderAll);
+  loadData().then(()=>{ renderAll(); loadGerData(); });
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1195,57 +1195,29 @@ function renderUsinas(){
       </div>`}
       <!-- Produção individual por usina -->
       ${(()=>{
-        const gd = gerData && gerData.usinas && gerData.usinas[u.id];
-        const anoMes = new Date().toISOString().slice(0,7);
-        const d30lim = new Date(); d30lim.setDate(d30lim.getDate()-29);
-        let hoje_kwh=null, mes=null, d30v=null, media=null;
-        if(gd){
-          const h=gd.historico||{};
-          const hojeIso=new Date().toISOString().slice(0,10);
-          hoje_kwh = h[hojeIso]??0;
-          mes   = Object.entries(h).filter(([d])=>d.startsWith(anoMes)).reduce((s,[,v])=>s+(v||0),0);
-          d30v  = Object.entries(h).filter(([d])=>new Date(d+'T00:00:00')>=d30lim).reduce((s,[,v])=>s+(v||0),0);
-          media = gd.media_diaria_kwh;
-        } else {
-          mes=u.prod_mes; d30v=u.prod_30d; media=u.prod_media;
-        }
-        const fmt=v=>v!=null?(typeof v==='number'?v.toFixed(1):v)+' kWh':'—';
-        const cor=gd?gd.cor:'var(--teal)';
+        const gd  = gerData && gerData.usinas && gerData.usinas[u.id];
+        const cor = gd ? gd.cor : 'var(--teal)';
         return `<div class="usina-prod">
           <div class="usina-prod-title">Produção ${gd?`<span style="font-size:9px;color:${cor}">● ao vivo</span>`:''}</div>
-          <div class="usina-prod-stats">
-            <div class="usina-prod-stat">
-              <div class="usina-prod-stat-lbl">Hoje</div>
-              <div class="usina-prod-stat-val" style="color:${cor}">${hoje_kwh!=null?fmt(hoje_kwh):'—'}</div>
+          <!-- Stat grande + filtro lado a lado -->
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:14px;flex-wrap:wrap">
+            <div>
+              <div id="stat-val-${u.id}" style="font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:800;color:${cor};line-height:1">—</div>
+              <div id="stat-lbl-${u.id}" style="font-size:10px;color:var(--muted);margin-top:5px;font-family:'Barlow Condensed',sans-serif;letter-spacing:.5px">aguardando dados...</div>
             </div>
-            <div class="usina-prod-stat">
-              <div class="usina-prod-stat-lbl">Neste mês</div>
-              <div class="usina-prod-stat-val">${fmt(mes)}</div>
-            </div>
-            <div class="usina-prod-stat">
-              <div class="usina-prod-stat-lbl">Últimos 30 dias</div>
-              <div class="usina-prod-stat-val">${fmt(d30v)}</div>
-            </div>
-          </div>
-          ${gd&&Object.keys(gd.historico||{}).length?`
-          <div class="pu-ctrl">
-            <div style="display:flex;gap:5px">
-              <button class="pu-pbtn pu-${u.id}" onclick="setUsinaPeriod('${u.id}',7,this)">7d</button>
-              <button class="pu-pbtn pu-${u.id} pu-active" onclick="setUsinaPeriod('${u.id}',30,this)">30d</button>
-              <button class="pu-pbtn pu-${u.id}" onclick="setUsinaPeriod('${u.id}',90,this)">90d</button>
-              <button class="pu-pbtn pu-${u.id}" onclick="setUsinaPeriod('${u.id}',365,this)">12m</button>
-            </div>
-            <div class="pu-nav-row">
-              <button class="pu-nav" onclick="navUsinaDays('${u.id}',-1)">‹</button>
-              <span id="prd-lbl-${u.id}" style="font-size:10px;color:var(--muted);min-width:120px;text-align:center"></span>
-              <button class="pu-nav" id="prd-next-${u.id}" onclick="navUsinaDays('${u.id}',1)">›</button>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+              <input type="date" id="dt-from-${u.id}" class="usina-filter-input" title="De">
+              <span style="font-size:11px;color:var(--muted)">→</span>
+              <input type="date" id="dt-to-${u.id}" class="usina-filter-input" title="Até">
+              <button onclick="filtrarUsinaChart('${u.id}')" class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 12px">Filtrar</button>
+              <button onclick="resetUsinaChart('${u.id}')" class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 8px;opacity:.6" title="Limpar filtro">✕</button>
             </div>
           </div>
+          <!-- Gráfico sempre visível -->
           <div class="usina-chart-box">
             <canvas id="chart-${u.id}" style="max-height:185px"></canvas>
-            <div id="nodata-${u.id}" style="display:none;text-align:center;padding:28px 0;color:var(--muted);font-size:11px">Sem dados para o período</div>
-          </div>`
-          :`<div class="usina-chart-ph">Sem dados de geração ainda</div>`}
+            <div id="nodata-${u.id}" style="display:none;text-align:center;padding:30px 0;color:var(--muted);font-size:11px">Sem dados de geração ainda</div>
+          </div>
         </div>`;
       })()}
     </div>`).join('');
@@ -1594,7 +1566,7 @@ function removerCliente(i){
 // ═══════════════════════════════════════════════════════
 let gerData = null;
 const usinaCharts  = {};
-const usinaPeriods = {}; // {id: {days:30, endDate:'YYYY-MM-DD'}}
+const usinaFilters = {}; // {id: {from:'YYYY-MM-DD'|null, to:'YYYY-MM-DD'|null}}
 
 // Converte #rrggbb → rgba(r,g,b,a)
 function hexRgba(hex, a){
@@ -1614,130 +1586,136 @@ async function loadGerData(){
 }
 
 function initAllUsinaCharts(){
-  if(!gerData) return;
-  D.usinas.forEach(u=>{
-    if(!usinaPeriods[u.id]) usinaPeriods[u.id]={days:30, endDate:new Date().toISOString().slice(0,10)};
-    renderUsinaChart(u.id);
-  });
+  D.usinas.forEach(u=>renderUsinaChart(u.id));
 }
 
 function renderUsinaChart(id){
-  const gd = gerData && gerData.usinas && gerData.usinas[id];
-  const canvas = document.getElementById('chart-'+id);
-  const nodata = document.getElementById('nodata-'+id);
-  if(!canvas || !gd) return;
+  const gd     = gerData && gerData.usinas && gerData.usinas[id];
+  const canvas  = document.getElementById('chart-'+id);
+  const nodata  = document.getElementById('nodata-'+id);
+  const statVal = document.getElementById('stat-val-'+id);
+  const statLbl = document.getElementById('stat-lbl-'+id);
+  if(!canvas) return;
 
-  const p = usinaPeriods[id] || {days:30, endDate:new Date().toISOString().slice(0,10)};
-  const end = new Date(p.endDate+'T00:00:00');
-  const datas = [];
-  for(let i=p.days-1; i>=0; i--){
-    const d=new Date(end); d.setDate(d.getDate()-i);
-    datas.push(d.toISOString().slice(0,10));
+  const hojeIso = new Date().toISOString().slice(0,10);
+  const f       = usinaFilters[id] || {from:null, to:null};
+
+  // Sem dados de geração ainda
+  if(!gd || !Object.keys(gd.historico||{}).length){
+    canvas.style.display = 'none';
+    if(nodata) { nodata.style.display='block'; nodata.textContent='Sem dados de geração ainda'; }
+    if(statVal) statVal.textContent = '—';
+    if(statLbl) statLbl.textContent = 'aguardando integração';
+    return;
   }
 
-  const hist   = gd.historico || {};
+  const hist = gd.historico || {};
+  const cor  = gd.cor || '#4ecde4';
+
+  // Montar série de datas
+  let datas = [];
+  if(f.from || f.to){
+    // Modo filtro: todas as datas entre from e to
+    const dtFrom = f.from || Object.keys(hist).sort()[0] || hojeIso;
+    const dtTo   = f.to   || hojeIso;
+    const cur = new Date(dtFrom+'T00:00:00');
+    const end = new Date(dtTo  +'T00:00:00');
+    while(cur <= end){ datas.push(cur.toISOString().slice(0,10)); cur.setDate(cur.getDate()+1); }
+  } else {
+    // Padrão: últimos 30 dias (ou toda a história se < 30 dias)
+    const allDates = Object.keys(hist).sort();
+    const earliest = allDates[0] || hojeIso;
+    const startDefault = new Date(hojeIso+'T00:00:00'); startDefault.setDate(startDefault.getDate()-29);
+    const start = earliest > startDefault.toISOString().slice(0,10) ? earliest : startDefault.toISOString().slice(0,10);
+    const cur = new Date(start+'T00:00:00');
+    const end = new Date(hojeIso+'T00:00:00');
+    while(cur <= end){ datas.push(cur.toISOString().slice(0,10)); cur.setDate(cur.getDate()+1); }
+  }
+
   const values = datas.map(d=>hist[d]||0);
-  const labels = datas.map(d=>{ const[,m,day]=d.split('-'); return day+'/'+m; });
-  const temDados = values.some(v=>v>0);
+  const labels = datas.map(d=>{ const[,m,day]=d.split('-'); return `${day}/${m}`; });
 
-  canvas.style.display = temDados ? 'block' : 'none';
-  if(nodata) nodata.style.display = temDados ? 'none' : 'block';
+  // Atualizar stat acima do gráfico
+  if(statVal && statLbl){
+    if(f.from || f.to){
+      const total = values.reduce((s,v)=>s+v,0);
+      statVal.textContent = total.toFixed(1)+' kWh';
+      const dtFrom = f.from || datas[0];
+      const dtTo   = f.to   || datas[datas.length-1];
+      statLbl.textContent = `${dtBR(dtFrom)} → ${dtBR(dtTo)}`;
+    } else {
+      const hojeKwh = hist[hojeIso] ?? 0;
+      statVal.textContent = hojeKwh.toFixed(1)+' kWh';
+      statLbl.textContent = 'hoje · '+dtBR(hojeIso);
+    }
+  }
 
-  // Label de período
-  const lbl = document.getElementById('prd-lbl-'+id);
-  if(lbl) lbl.textContent = labels[0]+' → '+labels[labels.length-1];
-
-  // Seta direita: desabilita se já estamos em "hoje"
-  const hojeIso = new Date().toISOString().slice(0,10);
-  const nextBtn = document.getElementById('prd-next-'+id);
-  if(nextBtn) nextBtn.style.opacity = p.endDate >= hojeIso ? '.25' : '1';
-
-  if(!temDados) return;
+  // Sempre mostrar gráfico (linha plana se zeros)
+  canvas.style.display = 'block';
+  if(nodata) nodata.style.display = 'none';
 
   if(usinaCharts[id]){ usinaCharts[id].destroy(); delete usinaCharts[id]; }
 
-  const ctx = canvas.getContext('2d');
-  const cor = gd.cor || '#4ecde4';
-
-  // Gradiente suave sob a linha
-  const grad = ctx.createLinearGradient(0, 0, 0, 200);
-  grad.addColorStop(0,   hexRgba(cor, 0.38));
-  grad.addColorStop(0.6, hexRgba(cor, 0.08));
-  grad.addColorStop(1,   hexRgba(cor, 0.0));
+  const ctx  = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,200);
+  grad.addColorStop(0,    hexRgba(cor, 0.36));
+  grad.addColorStop(0.65, hexRgba(cor, 0.07));
+  grad.addColorStop(1,    hexRgba(cor, 0.0));
 
   usinaCharts[id] = new Chart(ctx, {
-    type: 'line',
-    data: {
+    type:'line',
+    data:{
       labels,
-      datasets: [{
-        data:   values,
+      datasets:[{
+        data: values,
         borderColor:     cor,
         backgroundColor: grad,
         borderWidth: 2,
-        tension: 0.42,           // curva suave
+        tension: 0.42,
         fill: true,
-        pointRadius:      values.length > 60 ? 0 : 3,
-        pointHoverRadius: 6,
-        pointBackgroundColor: cor,
-        pointBorderColor:    'transparent',
+        pointRadius:           values.length > 60 ? 0 : 3,
+        pointHoverRadius:      6,
+        pointBackgroundColor:  cor,
+        pointBorderColor:      'transparent',
         pointHoverBorderColor: '#fff',
         pointHoverBorderWidth: 1.5,
       }]
     },
     options:{
-      responsive: true,
-      maintainAspectRatio: true,
-      interaction: {mode:'index', intersect:false},
+      responsive:true, maintainAspectRatio:true,
+      interaction:{mode:'index', intersect:false},
       plugins:{
-        legend: {display:false},
+        legend:{display:false},
         tooltip:{
           backgroundColor:'rgba(10,16,32,.97)',
-          titleColor:'#c8d4e8',
-          bodyColor: cor,
-          borderColor: hexRgba(cor,.25),
-          borderWidth: 1,
-          padding: 10,
-          callbacks:{
-            title: items => items[0].label,
-            label: ctx  => '  '+ctx.parsed.y.toFixed(2)+' kWh',
-          }
+          titleColor:'#c8d4e8', bodyColor:cor,
+          borderColor:hexRgba(cor,.25), borderWidth:1, padding:10,
+          callbacks:{ label:c=>'  '+c.parsed.y.toFixed(2)+' kWh' }
         }
       },
       scales:{
-        x:{
-          ticks:{color:'#8b9cb6', font:{size:9,family:"'Barlow Condensed',sans-serif"}, maxRotation:0, maxTicksLimit:12},
-          grid:{color:'rgba(255,255,255,.03)'},
-          border:{color:'rgba(255,255,255,.07)'}
-        },
-        y:{
-          ticks:{color:'#8b9cb6', font:{size:9}, callback:v=>v===0?'0':v.toFixed(0)},
-          grid:{color:'rgba(255,255,255,.04)'},
-          border:{color:'rgba(255,255,255,.07)'},
-          beginAtZero:true
-        }
+        x:{ ticks:{color:'#8b9cb6',font:{size:9,family:"'Barlow Condensed',sans-serif"},maxRotation:0,maxTicksLimit:12},
+            grid:{color:'rgba(255,255,255,.03)'}, border:{color:'rgba(255,255,255,.07)'} },
+        y:{ ticks:{color:'#8b9cb6',font:{size:9},callback:v=>v===0?'0':v.toFixed(0)},
+            grid:{color:'rgba(255,255,255,.04)'}, border:{color:'rgba(255,255,255,.07)'},
+            beginAtZero:true }
       }
     }
   });
 }
 
-function setUsinaPeriod(id, days, btn){
-  if(!usinaPeriods[id]) usinaPeriods[id]={};
-  usinaPeriods[id].days    = days;
-  usinaPeriods[id].endDate = new Date().toISOString().slice(0,10);
-  document.querySelectorAll('.pu-'+id).forEach(b=>b.classList.remove('pu-active'));
-  if(btn) btn.classList.add('pu-active');
+function filtrarUsinaChart(id){
+  const from = document.getElementById('dt-from-'+id)?.value || null;
+  const to   = document.getElementById('dt-to-'+id)?.value   || null;
+  usinaFilters[id] = {from, to};
   renderUsinaChart(id);
 }
 
-function navUsinaDays(id, dir){
-  if(!usinaPeriods[id]) usinaPeriods[id]={days:30, endDate:new Date().toISOString().slice(0,10)};
-  const p = usinaPeriods[id];
-  const end = new Date(p.endDate+'T00:00:00');
-  end.setDate(end.getDate() + dir * p.days); // navega pelo período selecionado
-  const novo = end.toISOString().slice(0,10);
-  const hoje = new Date().toISOString().slice(0,10);
-  if(novo > hoje) return;
-  p.endDate = novo;
+function resetUsinaChart(id){
+  usinaFilters[id] = {from:null, to:null};
+  const f = document.getElementById('dt-from-'+id);
+  const t = document.getElementById('dt-to-'+id);
+  if(f) f.value=''; if(t) t.value='';
   renderUsinaChart(id);
 }
 

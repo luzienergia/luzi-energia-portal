@@ -364,6 +364,32 @@ a{color:inherit;text-decoration:none}
   animation:toastIn .3s ease;pointer-events:none}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── MASTER-DETAIL CLIENTES */
+.cl-layout{display:flex;gap:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;min-height:560px}
+.cl-sidebar{width:240px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column}
+.cl-sidebar-hdr{padding:12px 14px;border-bottom:1px solid var(--border)}
+.cl-sidebar-list{flex:1;overflow-y:auto}
+.cl-sidebar-item{padding:13px 16px;border-bottom:1px solid rgba(26,45,80,.35);cursor:pointer;transition:all .15s;border-left:3px solid transparent}
+.cl-sidebar-item:hover{background:var(--bg3)}
+.cl-sidebar-item.active{background:rgba(78,205,228,.07);border-left-color:var(--teal)}
+.cl-sidebar-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px}
+.cl-sidebar-uc{font-size:10px;color:var(--muted);font-family:monospace;margin-top:2px}
+.cl-detail-pane{flex:1;overflow-y:auto;background:var(--bg)}
+.cl-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px}
+
+/* ── USINA PRODUÇÃO */
+.usina-prod{padding:16px 20px;border-top:1px solid var(--border);background:rgba(8,15,30,.4)}
+.usina-prod-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.usina-prod-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.usina-prod-stat{background:var(--bg2);border-radius:8px;padding:12px 14px}
+.usina-prod-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700}
+.usina-prod-stat-val{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;color:var(--teal);margin-top:4px}
+.usina-chart-box{background:var(--bg2);border:1px dashed rgba(78,205,228,.2);border-radius:8px;padding:16px}
+.usina-filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.usina-filter-input{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:'Barlow',sans-serif;outline:none}
+.usina-filter-input:focus{border-color:var(--teal)}
+.usina-chart-ph{height:140px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;line-height:1.7}
+
 @media(max-width:700px){
   .dash-nav{padding:0 12px}
   .tpane{padding:18px 14px}
@@ -373,6 +399,9 @@ a{color:inherit;text-decoration:none}
   .form-group.full{grid-column:span 1}
   .pipeline-steps{flex-direction:column}
   .ps{border-radius:8px!important;border-left:1px solid var(--border)!important;margin-bottom:4px}
+  .cl-layout{flex-direction:column}
+  .cl-sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);max-height:220px}
+  .usina-prod-stats{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -415,7 +444,6 @@ a{color:inherit;text-decoration:none}
     <button class="dtab active" onclick="setTab('vg')">📋 Cobranças</button>
     <button class="dtab" onclick="setTab('usinas')">⚡ Usinas &amp; Rateios</button>
     <button class="dtab" onclick="setTab('clientes')">👥 Gestão de Clientes</button>
-    <button class="dtab" onclick="setTab('producao')">🏭 Produção</button>
   </nav>
 
   <!-- COBRANÇAS -->
@@ -447,15 +475,15 @@ a{color:inherit;text-decoration:none}
 
   <!-- CLIENTES -->
   <div id="tab-clientes" class="tpane">
-    <div style="display:flex;align-items:center;margin-bottom:20px">
-      <button class="btn-add" onclick="abrirModal()">＋ Adicionar cliente</button>
+    <div class="cl-layout">
+      <div class="cl-sidebar">
+        <div class="cl-sidebar-hdr">
+          <button class="btn-add" onclick="abrirModal()" style="margin:0;font-size:11px;padding:8px 14px;display:inline-flex">＋ Adicionar</button>
+        </div>
+        <div class="cl-sidebar-list" id="cl-sidebar-list"></div>
+      </div>
+      <div class="cl-detail-pane" id="cl-detail-pane"></div>
     </div>
-    <div class="cl-grid" id="cl-grid"></div>
-  </div>
-
-  <!-- PRODUÇÃO -->
-  <div id="tab-producao" class="tpane">
-    <div class="prod-grid" id="prod-grid"></div>
   </div>
 </div>
 
@@ -519,7 +547,9 @@ a{color:inherit;text-decoration:none}
       <div class="form-group"><label class="form-label">Nome da usina</label><input class="form-input" id="fu-nome" placeholder="Ex: Usina Cartório"></div>
       <div class="form-group"><label class="form-label">ID interno (sem espaços)</label><input class="form-input" id="fu-id" placeholder="Ex: cartorio"></div>
       <div class="form-group"><label class="form-label">UC Equatorial</label><input class="form-input" id="fu-uc" placeholder="70296501229"></div>
-      <div class="form-group"><label class="form-label">Produção média (kWh/mês)</label><input class="form-input" id="fu-prod" type="number" placeholder="1500"></div>
+      <div class="form-group"><label class="form-label">Média últ. 12 meses (kWh)</label><input class="form-input" id="fu-prod" type="number" placeholder="1500"></div>
+      <div class="form-group"><label class="form-label">Prod. últimos 30 dias (kWh)</label><input class="form-input" id="fu-prod30d" type="number" placeholder="0"></div>
+      <div class="form-group"><label class="form-label">Prod. neste mês (kWh)</label><input class="form-input" id="fu-prod-mes" type="number" placeholder="0"></div>
       <div class="form-group full"><label class="form-label">Localização</label><input class="form-input" id="fu-loc" placeholder="Ex: Anápolis – GO"></div>
       <div class="form-group full"><label class="form-label">Status</label>
         <select class="form-select" id="fu-status">
@@ -703,20 +733,20 @@ function autoSave(delay=400) {
 const DATA_BASE = {
   atualizado: new Date().toISOString(),
   usinas: [
-    { id:'cartorio', nome:'Usina Cartório', uc:'20393118', uc_billing:'70296501229', loc:'Anápolis — GO', prod_media:2200, status:'operando',
+    { id:'cartorio', nome:'Usina Cartório', uc:'20393118', uc_billing:'70296501229', loc:'Anápolis — GO', prod_media:2200, prod_30d:null, prod_mes:null, status:'operando',
       rateio:[
         {uc:'10029467606',uc_billing:'371372701262',nome:'Apto 100',    pct:44},
         {uc:'21151635',   uc_billing:'77762501286', nome:'Casa Neneto', pct:36},
         {uc:'21307209',   uc_billing:'79163601288', nome:'Térreo',      pct:20},
       ]},
-    { id:'escola', nome:'Usina Escola', uc:'20760840', uc_billing:'73940201205', loc:'Anápolis — GO', prod_media:500, status:'operando',
+    { id:'escola', nome:'Usina Escola', uc:'20760840', uc_billing:'73940201205', loc:'Anápolis — GO', prod_media:500, prod_30d:null, prod_mes:null, status:'operando',
       rateio:[
         {uc:'10027980845',uc_billing:'365716101232',nome:'Casa Leandro',   pct:75},
         {uc:'10040035296',uc_billing:'430857301280',nome:'Firma Marrula',  pct:25},
       ]},
-    { id:'predio', nome:'Usina Prédio', uc:null, loc:'Anápolis — GO', prod_media:null, status:'em construção', rateio:[] },
-    { id:'abadiania', nome:'Usina Abadiânia', uc:null, loc:'Abadiânia — GO', prod_media:null, status:'em construção', rateio:[] },
-    { id:'chacara', nome:'Usina Chácara', uc:'70977001259', loc:'GO', prod_media:null, status:'em montagem', rateio:[] },
+    { id:'predio', nome:'Usina Prédio', uc:null, loc:'Anápolis — GO', prod_media:null, prod_30d:null, prod_mes:null, status:'em construção', rateio:[] },
+    { id:'abadiania', nome:'Usina Abadiânia', uc:null, loc:'Abadiânia — GO', prod_media:null, prod_30d:null, prod_mes:null, status:'em construção', rateio:[] },
+    { id:'chacara', nome:'Usina Chácara', uc:'70977001259', loc:'GO', prod_media:null, prod_30d:null, prod_mes:null, status:'em montagem', rateio:[] },
   ],
   clientes: [
     { nome:'Apto 100', uc:'371372701262', tipo:'proprio', cliente:'Luiz (próprio)', doc:'', wpp:'5562999741225', desc:null, dg:14, acao:'equatorial_direto', usina:'cartorio', metodo:'planilha_injecao', contrato:null, obs:'Apartamento de Luiz.' },
@@ -865,6 +895,12 @@ const R$=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 const dtBR=iso=>{const[y,m,d]=iso.split('-');return`${d}/${m}/${y}`};
 function hoje0(){const d=new Date();d.setHours(0,0,0,0);return d;}
 function diasAte(iso){const v=new Date(iso);v.setHours(0,0,0,0);return Math.round((v-hoje0())/86400000);}
+// Status dinâmico: se 'vencer' mas data já passou → 'vencido'
+function computeStatus(f){
+  if(f.status==='pago'||f.status==='cancelado') return f.status;
+  const h=hoje0(), v=new Date(f.venc+'T00:00:00'); v.setHours(0,0,0,0);
+  return v<h?'vencido':'vencer';
+}
 function toast(msg,dur=2500){
   const t=document.createElement('div');t.className='toast';t.textContent=msg;
   document.body.appendChild(t);setTimeout(()=>t.remove(),dur);
@@ -903,16 +939,15 @@ function renderAll(){
   renderCobrancas();
   renderUsinas();
   renderClientes();
-  renderProducao();
 }
 
 // ── Sumário (compacto no topo de Cobranças)
 function renderSumario(){
   const all=Object.values(FATURAS_DB).flatMap(c=>c.faturas);
-  const emAberto=all.filter(f=>f.status==='vencer').length;
-  const pagos=all.filter(f=>f.status==='pago').length;
-  const vencidos=all.filter(f=>f.status==='vencido').length;
-  const totalAberto=Object.values(FATURAS_DB).flatMap(c=>c.faturas).filter(f=>f.status==='vencer').reduce((s,f)=>s+f.comDesc,0);
+  const emAberto=all.filter(f=>computeStatus(f)==='vencer').length;
+  const pagos=all.filter(f=>computeStatus(f)==='pago').length;
+  const vencidos=all.filter(f=>computeStatus(f)==='vencido').length;
+  const totalAberto=all.filter(f=>computeStatus(f)==='vencer').reduce((s,f)=>s+f.comDesc,0);
   document.getElementById('sum-row').innerHTML=`
     <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Em aberto</div><div class="sc-val c-yellow" style="font-size:22px">${emAberto}</div><div style="font-size:10px;color:var(--muted)">${R$(totalAberto)}</div></div>
     <div class="sc" style="padding:12px 16px"><div class="sc-lbl">Pagos</div><div class="sc-val c-green" style="font-size:22px">${pagos}</div></div>
@@ -932,9 +967,9 @@ function renderCobrancas(filtro){
       all.push({...f, clienteNome:cli.nome, clienteDoc:cli.doc, clienteUC:cli.uc});
     });
   });
-  if(cobFiltro==='aberto')   all=all.filter(f=>f.status==='vencer');
-  else if(cobFiltro==='pago')    all=all.filter(f=>f.status==='pago');
-  else if(cobFiltro==='vencido') all=all.filter(f=>f.status==='vencido');
+  if(cobFiltro==='aberto')     all=all.filter(f=>computeStatus(f)==='vencer');
+  else if(cobFiltro==='pago')      all=all.filter(f=>computeStatus(f)==='pago');
+  else if(cobFiltro==='vencido')   all=all.filter(f=>computeStatus(f)==='vencido');
   else if(cobFiltro==='cancelado') all=[];
 
   all.sort((a,b)=>b.venc.localeCompare(a.venc));
@@ -958,8 +993,9 @@ function renderCobrancas(filtro){
     const [y,m]=k.split('-');
     html+=`<div class="cob-group-hdr">${meses[+m]} ${y}</div>`;
     groups[k].forEach(f=>{
-      const sLabel=f.status==='pago'?'Pago':f.status==='vencer'?'Em aberto':'Vencido';
-      const sCls=f.status==='pago'?'cb-pago':f.status==='vencer'?'cb-aberto':'cb-vencido';
+      const cs=computeStatus(f);
+      const sLabel=cs==='pago'?'Pago':cs==='vencer'?'Em aberto':'Vencido';
+      const sCls=cs==='pago'?'cb-pago':cs==='vencer'?'cb-aberto':'cb-vencido';
       html+=`<div class="cob-row">
         <div class="cob-ico">📄</div>
         <div class="cob-info">
@@ -1097,12 +1133,13 @@ function toggleUC(uc){
 
 // ── Usinas & Rateios
 function renderUsinas(){
+  const ucDisp=u=>(u.uc_billing||u.uc)||null;
   document.getElementById('usinas-content').innerHTML=D.usinas.map((u,ui)=>`
     <div class="usina-blk">
       <div class="usina-hdr">
         <div>
           <div class="usina-nome">⚡ <span>${u.nome}</span></div>
-          <div class="usina-sub">${u.loc}${u.uc?' · UC '+u.uc:''} · Produção média: ${u.prod_media?u.prod_media+' kWh/mês':'em implantação'}</div>
+          <div class="usina-sub">${u.loc}${ucDisp(u)?' · UC '+ucDisp(u):''}</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span class="usina-badge ${u.status==='operando'?'op':'nb'}">${u.status}</span>
@@ -1141,6 +1178,36 @@ function renderUsinas(){
         Nenhuma UC vinculada a esta usina ainda.
         ${u.status!=='operando'?'<br><em>Usina ainda não está em operação.</em>':''}
       </div>`}
+      <!-- Produção -->
+      <div class="usina-prod">
+        <div class="usina-prod-title">Produção</div>
+        <div class="usina-prod-stats">
+          <div class="usina-prod-stat">
+            <div class="usina-prod-stat-lbl">Últimos 30 dias</div>
+            <div class="usina-prod-stat-val">${u.prod_30d!=null?u.prod_30d+' kWh':'—'}</div>
+          </div>
+          <div class="usina-prod-stat">
+            <div class="usina-prod-stat-lbl">Neste mês</div>
+            <div class="usina-prod-stat-val">${u.prod_mes!=null?u.prod_mes+' kWh':'—'}</div>
+          </div>
+          <div class="usina-prod-stat">
+            <div class="usina-prod-stat-lbl">Média 12 meses</div>
+            <div class="usina-prod-stat-val">${u.prod_media!=null?u.prod_media+' kWh':'—'}</div>
+          </div>
+        </div>
+        <div class="usina-chart-box">
+          <div class="usina-filter-row">
+            <span style="font-size:11px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px">PERÍODO:</span>
+            <input type="date" class="usina-filter-input" title="De">
+            <input type="date" class="usina-filter-input" title="Até">
+            <button class="btn-act btn-act-ghost" style="font-size:10px;padding:5px 10px">🔍 Filtrar</button>
+          </div>
+          <div class="usina-chart-ph">
+            📊 Gráfico de geração<br>
+            <span style="font-size:10px;opacity:.5">Disponível após integração com inversor (Growatt/Hoymiles)</span>
+          </div>
+        </div>
+      </div>
     </div>`).join('');
 }
 
@@ -1151,12 +1218,14 @@ function abrirModalUsina(idx=null){
   editUsinaIdx = idx;
   const u = idx!==null ? D.usinas[idx] : {};
   document.getElementById('modal-usina-title').textContent = idx!==null ? 'Editar usina' : 'Adicionar usina';
-  document.getElementById('fu-nome').value  = u.nome||'';
-  document.getElementById('fu-id').value    = u.id||'';
-  document.getElementById('fu-uc').value    = u.uc||'';
-  document.getElementById('fu-prod').value  = u.prod_media||'';
-  document.getElementById('fu-loc').value   = u.loc||'';
-  document.getElementById('fu-status').value= u.status||'em construção';
+  document.getElementById('fu-nome').value   = u.nome||'';
+  document.getElementById('fu-id').value     = u.id||'';
+  document.getElementById('fu-uc').value     = u.uc||'';
+  document.getElementById('fu-prod').value   = u.prod_media!=null?u.prod_media:'';
+  document.getElementById('fu-prod30d').value= u.prod_30d!=null?u.prod_30d:'';
+  document.getElementById('fu-prod-mes').value= u.prod_mes!=null?u.prod_mes:'';
+  document.getElementById('fu-loc').value    = u.loc||'';
+  document.getElementById('fu-status').value = u.status||'em construção';
   // Desabilita edição do ID em modo edição
   document.getElementById('fu-id').disabled = idx!==null;
   renderRateioRows(u.rateio||[]);
@@ -1243,7 +1312,9 @@ function salvarUsina(){
     nome,
     uc:          document.getElementById('fu-uc').value.trim()||null,
     loc:         document.getElementById('fu-loc').value.trim(),
-    prod_media:  document.getElementById('fu-prod').value ? +document.getElementById('fu-prod').value : null,
+    prod_media:  document.getElementById('fu-prod').value     ? +document.getElementById('fu-prod').value     : null,
+    prod_30d:    document.getElementById('fu-prod30d').value  ? +document.getElementById('fu-prod30d').value  : null,
+    prod_mes:    document.getElementById('fu-prod-mes').value ? +document.getElementById('fu-prod-mes').value : null,
     status:      document.getElementById('fu-status').value,
     rateio:      coletarRateioModal(),
   };
@@ -1288,78 +1359,108 @@ function salvarRateio(usina_id){
   toast('✅ Rateio salvo!');
 }
 
-// ── Gestão de Clientes
-let expandedCliente = null;
+// ── Gestão de Clientes (master-detail)
+let selectedCliente = null;
 const chartsAdm = {};
 
 function renderClientes(){
-  const grid = document.getElementById('cl-grid');
-  grid.innerHTML='';
-  D.clientes.forEach((c,i)=>{
-    const wrapper=document.createElement('div');
-    wrapper.id=`cl-wrap-${i}`;
-    wrapper.innerHTML=`
-      <div class="cl-card${expandedCliente===i?' expanded':''}" id="cl-card-${i}">
-        <div class="cl-card-nome">${c.nome}</div>
-        <div class="cl-card-uc">UC ${c.uc}</div>
-        <div class="cl-card-row"><span>Cliente</span><strong>${c.cliente}</strong></div>
-        <div class="cl-card-row"><span>Tipo</span><strong>${c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio'}</strong></div>
-        <div class="cl-card-row"><span>Desconto</span><strong class="c-teal">${c.desc!=null?c.desc+'%':'—'}</strong></div>
-        <div class="cl-card-row"><span>Usina</span><strong>${c.usina||'—'}</strong></div>
-        <div class="cl-card-row"><span>Contrato</span><strong>${c.contrato?'✅ Vinculado':'—'}</strong></div>
-        <div class="cl-card-actions">
-          <button class="btn-editar" onclick="toggleClienteExpand(${i})">📊 Histórico</button>
-          <button class="btn-editar" onclick="abrirModal(${i})" style="flex:0;padding:6px 10px">✏️</button>
-          <button class="btn-remover" onclick="removerCliente(${i})">✕</button>
-        </div>
+  const sidebar = document.getElementById('cl-sidebar-list');
+  if(!sidebar) return;
+  sidebar.innerHTML = D.clientes.map((c,i)=>{
+    const fdb = Object.values(FATURAS_DB).find(f=>f.uc===c.uc||f.doc===c.doc);
+    const ultima = fdb&&fdb.faturas.length>0 ? fdb.faturas[0] : null;
+    const cs = ultima ? computeStatus(ultima) : null;
+    const dot = cs==='vencer'?'🟡':cs==='vencido'?'🔴':cs==='pago'?'🟢':'⚪';
+    return `<div class="cl-sidebar-item${selectedCliente===i?' active':''}" onclick="selectCliente(${i})">
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:11px">${dot}</span>
+        <span class="cl-sidebar-name">${c.nome}</span>
       </div>
-      ${expandedCliente===i?renderClienteExpand(c,i):''}`;
-    grid.appendChild(wrapper);
-    if(expandedCliente===i) renderChartAdm(c,i);
-  });
+      <div class="cl-sidebar-uc">UC ${c.uc}</div>
+    </div>`;
+  }).join('');
+  renderDetailPanel();
 }
 
-function toggleClienteExpand(i){
-  expandedCliente = expandedCliente===i ? null : i;
-  if(chartsAdm[i]){chartsAdm[i].destroy();delete chartsAdm[i];}
+function selectCliente(i){
+  if(chartsAdm[selectedCliente]!==undefined){chartsAdm[selectedCliente].destroy();delete chartsAdm[selectedCliente];}
+  selectedCliente = (selectedCliente===i) ? null : i;
   renderClientes();
 }
 
-function renderClienteExpand(c,i){
-  // Encontra faturas pelo UC ou doc
-  const fdb = Object.values(FATURAS_DB).find(f=>f.uc===c.uc||f.doc===c.doc);
-  if(!fdb||!fdb.faturas||fdb.faturas.length===0){
-    return `<div class="cl-expand"><div class="cl-expand-inner" style="color:var(--muted);font-size:13px;text-align:center;padding:24px">
-      Nenhuma fatura registrada para esta UC ainda.
-    </div></div>`;
-  }
-  const faturas=fdb.faturas;
-  const totalSem=faturas.reduce((s,f)=>s+f.semDesc,0);
-  const totalCom=faturas.reduce((s,f)=>s+f.comDesc,0);
-  const eco=totalSem-totalCom;
-  const fatRows=faturas.map(f=>{
-    const sCls=f.status==='pago'?'cb-pago':f.status==='vencer'?'cb-aberto':'cb-vencido';
-    const sLbl=f.status==='pago'?'Pago':f.status==='vencer'?'Em aberto':'Vencido';
-    return `<div class="fat-row-adm">
-      <span class="fat-mes-adm">${f.mes}</span>
-      <span class="fat-status-adm ${sCls}">${sLbl}</span>
-      <span style="font-size:11px;color:var(--muted);margin-left:4px">venc. ${dtBR(f.venc)}</span>
-      <span class="fat-valor-adm c-teal">${R$(f.comDesc)}</span>
-      <span style="font-size:10px;color:var(--muted);margin-left:4px">c/ desc.</span>
+function renderDetailPanel(){
+  const panel = document.getElementById('cl-detail-pane');
+  if(!panel) return;
+  if(selectedCliente===null||!D.clientes[selectedCliente]){
+    panel.innerHTML=`<div class="cl-empty">
+      <div style="font-size:40px">👈</div>
+      <div style="color:var(--muted);font-size:14px">Selecione um cliente à esquerda</div>
     </div>`;
-  }).join('');
-  return `<div class="cl-expand">
-    <div class="cl-expand-inner">
-      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Economia total</div><div class="sc-val c-green" style="font-size:20px">${R$(eco)}</div></div>
-        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Total pago Luzi</div><div class="sc-val c-teal" style="font-size:20px">${R$(totalCom)}</div></div>
-        <div class="sc" style="flex:1;padding:10px 14px;min-width:120px"><div class="sc-lbl">Sem desconto seria</div><div class="sc-val" style="font-size:20px;color:var(--muted)">${R$(totalSem)}</div></div>
+    return;
+  }
+  const c = D.clientes[selectedCliente];
+  const i = selectedCliente;
+  const {icone,cor,legenda,st,diasFat,nextFat} = getUCStatus(c);
+  const tipoBadge = c.tipo==='cliente_ativo'?'tb-ativo':c.tipo==='pass_through'?'tb-pass':'tb-prop';
+  const tipoLabel = c.tipo==='cliente_ativo'?'Ativo':c.tipo==='pass_through'?'Repasse':'Próprio';
+  const fdb = Object.values(FATURAS_DB).find(f=>f.uc===c.uc||f.doc===c.doc);
+  const temFaturas = !!(fdb&&fdb.faturas&&fdb.faturas.length>0);
+  let totalSem=0, totalCom=0, fatRows='';
+  if(temFaturas){
+    totalSem=fdb.faturas.reduce((s,f)=>s+f.semDesc,0);
+    totalCom=fdb.faturas.reduce((s,f)=>s+f.comDesc,0);
+    fatRows=fdb.faturas.map(f=>{
+      const cs=computeStatus(f);
+      const sCls=cs==='pago'?'cb-pago':cs==='vencer'?'cb-aberto':'cb-vencido';
+      const sLbl=cs==='pago'?'Pago':cs==='vencer'?'Em aberto':'Vencido';
+      return `<div class="fat-row-adm">
+        <span class="fat-mes-adm">${f.mes}</span>
+        <span class="fat-status-adm ${sCls}">${sLbl}</span>
+        <span style="font-size:11px;color:var(--muted)">venc. ${dtBR(f.venc)}</span>
+        <span class="fat-valor-adm c-teal">${R$(f.comDesc)}</span>
+      </div>`;
+    }).join('');
+  } else {
+    fatRows='<div style="color:var(--muted);font-size:12px;padding:10px 0">Nenhuma fatura registrada ainda.</div>';
+  }
+  if(chartsAdm[i]){chartsAdm[i].destroy();delete chartsAdm[i];}
+  panel.innerHTML=`<div style="padding:22px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:22px">${icone} ${c.nome}</div>
+        <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">UC ${c.uc}</div>
       </div>
-      <div class="chart-wrap-adm"><canvas id="chart-adm-${i}"></canvas></div>
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Histórico de faturas</div>
-      ${fatRows}
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span class="uc-tipo-badge ${tipoBadge}">${tipoLabel}</span>
+        <button class="btn-editar" onclick="abrirModal(${i})">✏️ Editar</button>
+        <button class="btn-remover" onclick="removerCliente(${i})">✕</button>
+      </div>
+    </div>
+    <div class="detail-grid" style="margin-bottom:18px">
+      <div class="dg-item"><div class="dg-lbl">Cliente</div><div class="dg-val">${c.cliente||'—'}</div></div>
+      <div class="dg-item"><div class="dg-lbl">CPF / CNPJ</div><div class="dg-val" style="font-size:12px;font-family:monospace">${c.doc?fmtDoc(c.doc):'—'}</div></div>
+      <div class="dg-item"><div class="dg-lbl">Desconto</div><div class="dg-val-big">${c.desc!=null?c.desc+'%':'—'}</div></div>
+      <div class="dg-item"><div class="dg-lbl">Usina</div><div class="dg-val">${c.usina||'—'}</div></div>
+      <div class="dg-item"><div class="dg-lbl">Próx. fatura</div><div class="dg-val" style="font-size:12px">${nextFat.toLocaleDateString('pt-BR')} ${diasFat===0?'(hoje)':diasFat>0?'(em '+diasFat+'d)':'('+-diasFat+'d atrás)'}</div></div>
+      <div class="dg-item"><div class="dg-lbl">Método</div><div class="dg-val" style="font-size:12px;text-transform:capitalize">${(c.metodo||'—').replace(/_/g,' ')}</div></div>
+    </div>
+    ${c.obs?`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--muted)"><em>${c.obs}</em></div>`:''}
+    ${temFaturas?`
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <div class="sc" style="flex:1;padding:10px 14px;min-width:100px"><div class="sc-lbl">Economia total</div><div class="sc-val c-green" style="font-size:18px">${R$(totalSem-totalCom)}</div></div>
+      <div class="sc" style="flex:1;padding:10px 14px;min-width:100px"><div class="sc-lbl">Pago Luzi</div><div class="sc-val c-teal" style="font-size:18px">${R$(totalCom)}</div></div>
+      <div class="sc" style="flex:1;padding:10px 14px;min-width:100px"><div class="sc-lbl">Sem desconto</div><div class="sc-val" style="font-size:18px;color:var(--muted)">${R$(totalSem)}</div></div>
+    </div>
+    <div class="sec-hdr"><div class="sec-ttl">Consumo mensal</div><div class="sec-ln"></div></div>
+    <div class="chart-wrap-adm" style="margin-bottom:16px"><canvas id="chart-adm-${i}"></canvas></div>`:''}
+    <div class="sec-hdr" style="margin-top:4px"><div class="sec-ttl">Faturas</div><div class="sec-ln"></div></div>
+    <div style="margin-top:10px">${fatRows}</div>
+    <div class="detail-actions">
+      ${c.wpp?`<button class="btn-act btn-act-teal" onclick="window.open('https://wa.me/${c.wpp}','_blank')">💬 WhatsApp</button>`:''}
+      ${c.contrato?`<button class="btn-act btn-act-ghost" onclick="window.open('${c.contrato}','_blank')">📄 Contrato</button>`:''}
     </div>
   </div>`;
+  if(temFaturas) setTimeout(()=>renderChartAdm(c,i),80);
 }
 
 function renderChartAdm(c,i){
@@ -1389,29 +1490,6 @@ function renderChartAdm(c,i){
       }
     }
   });
-}
-
-// ── Produção
-function renderProducao(){
-  document.getElementById('prod-grid').innerHTML=D.usinas.map(u=>`
-    <div class="prod-card">
-      <div class="prod-nome">⚡ <span>${u.nome}</span></div>
-      <div class="prod-loc">📍 ${u.loc}${u.uc?' · UC '+u.uc:''}</div>
-      <div class="prod-stats">
-        <div class="ps-stat"><div class="ps-stat-lbl">Prod. média</div>
-          <div class="ps-stat-val c-teal">${u.prod_media?u.prod_media+' kWh':'—'}</div></div>
-        <div class="ps-stat"><div class="ps-stat-lbl">Status</div>
-          <div class="ps-stat-val" style="font-size:15px">${u.status==='operando'?'🟢 Operando':u.status==='em montagem'?'🟡 Em montagem':'🔵 Em construção'}</div></div>
-        <div class="ps-stat"><div class="ps-stat-lbl">Clientes</div>
-          <div class="ps-stat-val">${u.rateio?u.rateio.length:0}</div></div>
-        <div class="ps-stat"><div class="ps-stat-lbl">Tipo</div>
-          <div class="ps-stat-val" style="font-size:14px">Solo</div></div>
-      </div>
-      <div class="prod-int">
-        <strong>🔌 Integração com inversor</strong>
-        ${u.status==='operando'?'Dados em tempo real após integração Growatt/Hoymiles.':'Disponível quando a usina entrar em operação.'}
-      </div>
-    </div>`).join('');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1464,6 +1542,8 @@ function salvarCliente(){
 }
 function removerCliente(i){
   if(!confirm('Remover "'+D.clientes[i].nome+'"?')) return;
+  if(selectedCliente===i) selectedCliente=null;
+  else if(selectedCliente!==null&&selectedCliente>i) selectedCliente--;
   D.clientes.splice(i,1);
   renderAll();
   autoSave(200);

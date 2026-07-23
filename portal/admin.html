@@ -1163,15 +1163,13 @@ function renderUsinas(){
         <table class="rt">
           <thead><tr>
             <th>UC consumidora</th>
-            <th>UC Equatorial (rateio)</th>
-            <th>UC Faturamento</th>
+            <th>UC EQUATORIAL</th>
             <th>% Créditos</th>
             <th style="width:120px">Barra</th>
           </tr></thead>
           <tbody>${u.rateio.map((r,ri)=>`<tr>
             <td>${r.nome}</td>
-            <td class="td-mono">${r.uc}</td>
-            <td class="td-mono">${r.uc_billing||'—'}</td>
+            <td class="td-mono">${r.uc_billing||r.uc||'—'}</td>
             <td>
               <input class="pct-input" type="number" min="0" max="100"
                 value="${r.pct}" id="pct-${u.id}-${ri}"
@@ -1224,10 +1222,8 @@ function renderRateioRows(rateio){
     <div class="form-grid" id="rrow-${i}" style="margin-bottom:8px;padding:12px;background:var(--bg3);border-radius:8px;border:1px solid var(--border)">
       <div class="form-group"><label class="form-label" style="font-size:10px">UC consumidora</label>
         <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-nome-${i}" value="${r.nome||''}"></div>
-      <div class="form-group"><label class="form-label" style="font-size:10px">UC Equatorial</label>
-        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-uc-${i}" value="${r.uc||''}"></div>
-      <div class="form-group"><label class="form-label" style="font-size:10px">UC Faturamento</label>
-        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-ucb-${i}" value="${r.uc_billing||''}"></div>
+      <div class="form-group"><label class="form-label" style="font-size:10px">UC EQUATORIAL</label>
+        <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-ucb-${i}" value="${r.uc_billing||r.uc||''}"></div>
       <div class="form-group"><label class="form-label" style="font-size:10px">% Créditos</label>
         <input class="form-input" style="padding:8px 10px;font-size:13px" type="number" min="0" max="100" id="rr-pct-${i}" value="${r.pct||0}"></div>
       <div class="form-group" style="display:flex;align-items:flex-end">
@@ -1245,9 +1241,7 @@ function addRateioRow(){
   div.innerHTML=`
     <div class="form-group"><label class="form-label" style="font-size:10px">UC consumidora</label>
       <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-nome-${i}" value=""></div>
-    <div class="form-group"><label class="form-label" style="font-size:10px">UC Equatorial</label>
-      <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-uc-${i}" value=""></div>
-    <div class="form-group"><label class="form-label" style="font-size:10px">UC Faturamento</label>
+    <div class="form-group"><label class="form-label" style="font-size:10px">UC EQUATORIAL</label>
       <input class="form-input" style="padding:8px 10px;font-size:13px" id="rr-ucb-${i}" value=""></div>
     <div class="form-group"><label class="form-label" style="font-size:10px">% Créditos</label>
       <input class="form-input" style="padding:8px 10px;font-size:13px" type="number" min="0" max="100" id="rr-pct-${i}" value="0"></div>
@@ -1277,10 +1271,9 @@ function coletarRateioModal(){
   const rows = document.querySelectorAll('[id^="rrow-"]');
   return Array.from(rows).map((_,i)=>({
     nome: (document.getElementById(`rr-nome-${i}`)?.value||'').trim(),
-    uc:   (document.getElementById(`rr-uc-${i}`)?.value||'').trim(),
     uc_billing: (document.getElementById(`rr-ucb-${i}`)?.value||'').trim()||null,
     pct:  +(document.getElementById(`rr-pct-${i}`)?.value||0),
-  })).filter(r=>r.nome||r.uc);
+  })).filter(r=>r.nome||r.uc_billing);
 }
 
 function salvarUsina(){

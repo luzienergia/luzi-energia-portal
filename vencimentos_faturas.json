@@ -1,0 +1,53 @@
+{
+  "clientes": [
+    {
+      "nome": "Térreo",
+      "uc": "79163601288",
+      "vencimento": "2026-07-21",
+      "mes_referencia": "07/2026",
+      "valor_boleto": 755.98
+    },
+    {
+      "nome": "Apto 100",
+      "uc": "371372701262",
+      "vencimento": "2026-07-21",
+      "mes_referencia": "07/2026",
+      "valor_boleto": 916.88
+    },
+    {
+      "nome": "Firma Marrula",
+      "uc": "430857301280",
+      "vencimento": "2026-07-28",
+      "mes_referencia": "07/2026",
+      "valor_boleto": 227.89
+    },
+    {
+      "nome": "Cartório",
+      "uc": "70296501229",
+      "vencimento": "2026-07-10",
+      "mes_referencia": "06/2026",
+      "valor_boleto": 1030.57
+    },
+    {
+      "nome": "Casa Neneto",
+      "uc": "77762501286",
+      "vencimento": "2026-07-13",
+      "mes_referencia": "06/2026",
+      "valor_boleto": 509.04
+    },
+    {
+      "nome": "Escola",
+      "uc": "73940201205",
+      "vencimento": "2026-07-13",
+      "mes_referencia": "06/2026",
+      "valor_boleto": 668.38
+    },
+    {
+      "nome": "Casa Leandro",
+      "uc": "365716101232",
+      "vencimento": "2026-07-23",
+      "mes_referencia": "06/2026",
+      "valor_boleto": 1069.25
+    }
+  ]
+}

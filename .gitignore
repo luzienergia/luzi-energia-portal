@@ -1,0 +1,43 @@
+# Credenciais — NUNCA commitar
+.env
+*.env
+tokens.json
+tsun_token.json
+
+# Sessões de browser (Playwright / Chrome)
+Inversores/sessions/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Arquivos temporários e de debug
+*.log
+captcha_*.png
+debug_*.json
+
+# Backups de site (pastas de versão antiga)
+luzienergia_site/
+luzienergia_site\ 2/
+luzienergia_site\ 3/
+luzienergia_v2/
+luzienergia_v3/
+*.zip
+painel_clientes.html
+portal_luzi.html
+
+# Scripts de teste
+Inversores/teste_*.py
+Inversores/debug_*.py
+Inversores/diagnostico.py
+Inversores/buscar_tsun_api.sh
+
+# Scripts de deploy temporários
+luzi_deploy.command
+publicar_portal.command
+rodar_*.command
+git_push_inversores.sh
+patch_skill_rotina.py

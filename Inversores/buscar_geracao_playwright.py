@@ -38,12 +38,14 @@ load_dotenv(ENV_FILE)
 
 TSUN_USERNAME     = os.getenv("TSUN_USERNAME", "")
 TSUN_PASSWORD     = os.getenv("TSUN_PASSWORD", "")
+TSUN_GATEWAY_SN   = os.getenv("TSUN_GATEWAY_SN", "")   # SN do data logger da Escola
 SUNGROW_USERNAME  = os.getenv("SUNGROW_USERNAME", "")
 SUNGROW_PASSWORD  = os.getenv("SUNGROW_PASSWORD", "")
 
 # Diretórios de sessão persistente (cookies salvos entre execuções)
 TSUN_SESSION_DIR     = BASE_DIR / "sessions" / "tsun"
 SUNGROW_SESSION_DIR  = BASE_DIR / "sessions" / "sungrow"
+TSUN_TOKEN_FILE      = BASE_DIR / "sessions" / "tsun_token.json"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -115,61 +117,284 @@ def _tsun_drag_slider(page) -> bool:
         return False
 
 
-def _tsun_do_login(page, username: str, password: str) -> str | None:
+def _tsun_save_token(token: str):
+    """Persiste token OAuth2 em disco para reutilização sem browser."""
+    TSUN_TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(TSUN_TOKEN_FILE, "w") as f:
+        json.dump({"token": token, "saved_at": time.time()}, f)
+
+
+def _tsun_load_token() -> str | None:
+    """Carrega token salvo se tiver menos de 22 horas (expira em ~24h)."""
+    if not TSUN_TOKEN_FILE.exists():
+        return None
+    try:
+        with open(TSUN_TOKEN_FILE) as f:
+            d = json.load(f)
+        age_h = (time.time() - d.get("saved_at", 0)) / 3600
+        if age_h < 22:
+            return d.get("token")
+    except Exception:
+        pass
+    return None
+
+
+def _tsun_api_fetch(token: str) -> dict | None:
     """
-    Preenche o formulário de login TSUN, resolve o captcha e retorna
-    o access_token OAuth2 interceptado da resposta de rede.
+    Busca geração via API direta usando Bearer token OAuth2 (POST, não GET).
+    O portal TSUN usa POST em todos os endpoints de dados.
     """
-    token_box: dict = {"token": None}
+    if not _requests:
+        return None
+
+    hdrs = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Accept": "application/json, */*",
+        "Origin": TSUN_BASE,
+        "Referer": f"{TSUN_BASE}/",
+    }
+
+    def _post(path, body=None, params=None):
+        """POST helper com debug."""
+        url = f"{TSUN_BASE}{path}"
+        try:
+            r = _requests.post(url, headers=hdrs, json=body or {}, params=params, timeout=12)
+            preview = r.text[:200].strip()
+            print(f"   🔍 POST {path} → HTTP {r.status_code} | {preview[:120]!r}")
+            if r.status_code == 200 and preview:
+                return r.json()
+        except Exception as e:
+            print(f"   ⚠️  POST {path}: {e}")
+        return None
+
+    # ── Passo 1: Listar dispositivos (terminal user acessa por device-monitor) ──
+    devices = []
+    dev_resp = _post("/device-s/device-monitor/list",
+                     body={"language": "en"},
+                     params={"pageNum": 1, "pageSize": 50})
+    if dev_resp:
+        data = dev_resp.get("data") or dev_resp.get("result") or {}
+        recs = (data.get("records") or data.get("list") or data.get("rows")
+                if isinstance(data, dict) else data if isinstance(data, list) else [])
+        devices = recs or dev_resp.get("rows") or []
+        if devices:
+            print(f"   ✅ {len(devices)} dispositivo(s) encontrado(s)")
+
+    # ── Passo 1b: se device-monitor/list não retornou, tentar por station (POST) ──
+    stations = []
+    if not devices:
+        st_resp = _post("/station-s/station/query/day/overview",
+                        body={"language": "en",
+                              "date": date.today().strftime("%Y-%m-%d")})
+        if st_resp:
+            data = st_resp.get("data") or {}
+            # Tentar extrair kWh direto do overview
+            _tsun_extract_energy("/station-s/station/query/day/overview", st_resp, {})
+            hoje_kwh_overview = None
+            for k in ["todayEnergy", "dailyEnergy", "dayEnergy", "eToday", "generationToday"]:
+                if data.get(k) is not None:
+                    try:
+                        kwh = float(data[k])
+                        if kwh > 10_000:
+                            kwh /= 1000.0
+                        if 0 < kwh < 5000:
+                            hoje_kwh_overview = kwh
+                            print(f"   ✅ TSUN day/overview: {kwh:.3f} kWh")
+                            break
+                    except Exception:
+                        pass
+            if hoje_kwh_overview:
+                return {"hoje_kwh": hoje_kwh_overview,
+                        "estacoes": [{"nome": "Escola", "hoje_kwh": hoje_kwh_overview}]}
+
+    if not devices and not stations:
+        print("   ⚠️  TSUN API: nenhum dispositivo ou estação encontrado via POST")
+        return None
+
+    # ── Passo 2: Extrair Etdy_ge0 diretamente dos dados do list ──────────────
+    # O endpoint current-data não é acessível para usuários terminais (roleId=-1),
+    # mas o list já retorna characteristicValueMap.Etdy_ge0 (geração do dia em kWh).
+    gw_sn = TSUN_GATEWAY_SN
+    hoje_total = 0.0
+    estacoes   = []
+
+    for dev in devices:
+        # Filtra inversores (tipo 15) do gateway da Escola
+        if dev.get("deviceType") != 15:
+            continue
+        if gw_sn and dev.get("gatewaySn") != gw_sn:
+            continue
+        cvm  = dev.get("characteristicValueMap") or {}
+        nome = dev.get("deviceSn") or "?"
+        raw  = cvm.get("Etdy_ge0")
+        if raw is None:
+            continue
+        try:
+            kwh = float(raw)
+        except (ValueError, TypeError):
+            continue
+        if kwh > 10_000:
+            kwh /= 1000.0   # Wh → kWh
+        if 0 <= kwh < 5000:
+            hoje_total += kwh
+            alert = (dev.get("alertNames") or [])
+            print(f"   📊 TSUN {nome}: Etdy_ge0={kwh:.3f} kWh  alert={alert}")
+            estacoes.append({"nome": nome, "hoje_kwh": kwh})
+
+    if estacoes:
+        print(f"   ✅ TSUN total: {hoje_total:.3f} kWh  ({len(estacoes)} microinversor(es))")
+        return {"hoje_kwh": hoje_total, "estacoes": estacoes}
+
+    # Se não encontrou pelo gatewaySn, tentar qualquer tipo-15 com siteId≥0
+    for dev in devices:
+        if dev.get("deviceType") != 15:
+            continue
+        if (dev.get("siteId") or -1) < 0:
+            continue
+        cvm = dev.get("characteristicValueMap") or {}
+        raw = cvm.get("Etdy_ge0")
+        if raw is None:
+            continue
+        try:
+            kwh = float(raw)
+        except (ValueError, TypeError):
+            continue
+        if kwh > 10_000:
+            kwh /= 1000.0
+        if 0 <= kwh < 5000:
+            hoje_total += kwh
+            nome = dev.get("deviceSn") or "?"
+            estacoes.append({"nome": nome, "hoje_kwh": kwh})
+            print(f"   📊 TSUN fallback {nome}: {kwh:.3f} kWh")
+
+    if estacoes:
+        print(f"   ✅ TSUN fallback total: {hoje_total:.3f} kWh")
+        return {"hoje_kwh": hoje_total, "estacoes": estacoes}
+
+    return None
+
+
+def _tsun_do_login(page, username: str, password: str) -> dict:
+    """
+    Faz login no TSUN via browser: resolve slider AWSC, captura token OAuth2 e
+    intercepta dados de energia que o portal carrega após o login.
+    Retorna dict {"token": str|None, "today_kwh": float|None}.
+    """
+    captured: dict = {"token": None, "today_kwh": None}
 
     def _on_response(response):
-        if "oauth2-s/oauth/token" in response.url:
+        url = response.url
+        # Capturar token OAuth2
+        if "oauth2-s/oauth/token" in url:
             try:
                 data = response.json()
                 t = data.get("access_token")
                 if t:
-                    token_box["token"] = t
+                    captured["token"] = t
+                    _tsun_save_token(t)   # salvar imediatamente
+                    print("   💾 Token salvo em disco")
+            except Exception:
+                pass
+        # Ignorar assets estáticos
+        elif any(s in url for s in (".js", ".css", ".png", ".ico", ".woff", ".svg", ".ttf", ".map")):
+            pass
+        else:
+            # Logar TODAS as chamadas de API do portal para descobrir os endpoints corretos
+            rel = url.replace(TSUN_BASE, "").split("?")[0]
+            try:
+                body = response.body()
+                body_preview = body[:120].decode("utf-8", errors="replace").strip()
+                print(f"   📡 API: {rel} [{response.status}] {body_preview!r}")
+                data = response.json()
+                _tsun_extract_energy(url, data, captured)
             except Exception:
                 pass
 
     page.on("response", _on_response)
 
-    page.goto(f"{TSUN_BASE}/login", wait_until="networkidle")
+    page.goto(f"{TSUN_BASE}/login", wait_until="load", timeout=60_000)
 
-    # Clicar na aba "邮箱" (Email) — índice 1 entre as 3 abas
+    # Aba "邮箱" (Email)
     tabs = page.locator('[role="tab"]')
     if tabs.count() >= 2:
         tabs.nth(1).click()
     time.sleep(0.4)
 
-    # Preencher credenciais
     page.fill('input[placeholder="邮箱"]', username)
     page.fill('input[type="password"]', password)
 
     # Resolver slider
     ok = _tsun_drag_slider(page)
     if not ok:
-        # Tentar uma segunda vez (às vezes o slider precisa de retry)
         time.sleep(1)
         ok = _tsun_drag_slider(page)
         if not ok:
-            return None
+            return captured
 
-    # Clicar em "登 录" (Login)
+    # Submeter login e aguardar redirecionamento para dashboard
     page.click('button:has-text("登")')
-    time.sleep(3.5)
 
-    # Fechar dialog "终端用户不允许登录" (usuário final não pode usar web portal)
-    # O token OAuth2 já foi capturado antes do dialog aparecer
+    # Fase 1: aguardar token OAuth2 (até 15s)
+    t0 = time.time()
+    while time.time() - t0 < 15 and not captured["token"]:
+        time.sleep(0.4)
+
+    # Fechar dialog "终端用户不允许登录" se aparecer (antes de aguardar dados)
+    time.sleep(1.5)
     for sel in ['button:has-text("确定")', 'button:has-text("确 定")', 'button:has-text("OK")']:
         try:
             if page.locator(sel).count() > 0:
                 page.click(sel)
+                print("   ℹ️  TSUN: dialog fechado — aguardando dashboard...")
                 break
         except Exception:
             pass
 
-    return token_box.get("token")
+    # Fase 2: aguardar dados de energia via interceptor (mais 10s após fechar dialog)
+    t1 = time.time()
+    while time.time() - t1 < 10:
+        if captured["today_kwh"] is not None:
+            break
+        time.sleep(0.5)
+
+    # Fase 3: DOM scraping — o portal exibe os dados visualmente mesmo para terminal users
+    if captured["today_kwh"] is None:
+        print("   ℹ️  TSUN: interceptor sem dados — tentando DOM scraping...")
+        try:
+            # Garantir que estamos no dashboard (não na tela de login)
+            cur_url = page.url
+            print(f"   🌐 URL: {cur_url}")
+            if "login" in cur_url.lower():
+                page.goto(f"{TSUN_BASE}/", wait_until="load", timeout=30_000)
+                time.sleep(5)
+
+            dom_text = page.evaluate("() => document.body.innerText") or ""
+            print(f"   📄 DOM preview: {dom_text[:400]!r}")
+
+            # Padrões usados em portais chineses de solar
+            dom_patterns = [
+                r'今日发电[量]*\s*[:：]?\s*([\d.]+)\s*(?:kWh|度)',
+                r'日发电[量]*\s*[:：]?\s*([\d.]+)',
+                r'([\d]{1,4}\.[\d]{1,3})\s*kWh',
+                r'([\d]{1,4}\.[\d]{1,3})\s*度',
+            ]
+            for pat in dom_patterns:
+                for m in re.findall(pat, dom_text, re.IGNORECASE):
+                    try:
+                        kwh = float(m)
+                        if 0 < kwh < 5000:
+                            captured["today_kwh"] = kwh
+                            print(f"   🎯 TSUN DOM: {kwh:.3f} kWh (padrão: {pat})")
+                            break
+                    except ValueError:
+                        pass
+                if captured["today_kwh"] is not None:
+                    break
+        except Exception as e:
+            print(f"   ⚠️  TSUN DOM scraping erro: {e}")
+
+    return captured
 
 
 
@@ -215,41 +440,37 @@ def _tsun_extract_energy(url: str, data, captured: dict):
 
 def tsun_fetch_playwright(username: str = "", password: str = "") -> dict | None:
     """
-    Login TSUN com sessão persistente + slider captcha.
-    Intercepta TODAS as respostas JSON do portal enquanto carrega,
-    extrai dados de geração sem precisar conhecer o endpoint exato.
+    Busca geração TSUN (Escola):
+    1. Tenta API direta com token OAuth2 salvo em disco (sem abrir browser)
+    2. Se token ausente/expirado: abre browser → resolve captcha → salva token → API direta
     Retorna { "hoje_kwh": float, "estacoes": [...] } ou None.
     """
-    try:
-        from playwright.sync_api import sync_playwright
-    except ImportError:
-        print("❌ playwright não instalado. Execute: pip install playwright && playwright install chromium")
-        return None
-
     u = username or TSUN_USERNAME
     pw = password or TSUN_PASSWORD
     if not u or not pw:
         print("⚠️  TSUN credenciais não configuradas em Inversores/.env")
         return None
 
-    print("🔌 TSUN (escola): conectando via Playwright...")
+    print("🔌 TSUN (escola): verificando token salvo...")
+
+    # ── Caminho rápido: token em disco ─────────────────────────────────────────
+    cached_token = _tsun_load_token()
+    if cached_token:
+        print("   ✅ Token em cache — chamando API diretamente (sem browser)")
+        result = _tsun_api_fetch(cached_token)
+        if result:
+            return result
+        print("   ⚠️  Token expirado ou API falhou — renovando via browser...")
+
+    # ── Caminho lento: browser para novo token ──────────────────────────────────
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("❌ playwright não instalado. Execute: pip install playwright && playwright install chromium")
+        return None
+
+    print("🔌 TSUN (escola): abrindo browser para novo login...")
     TSUN_SESSION_DIR.mkdir(parents=True, exist_ok=True)
-
-    captured: dict = {"today_kwh": None}
-
-    def _on_response(response):
-        url = response.url
-        # Ignorar recursos estáticos
-        if any(s in url for s in (".js", ".css", ".png", ".jpg", ".ico", ".woff", ".svg")):
-            return
-        ct = response.headers.get("content-type", "")
-        if "json" not in ct:
-            return
-        try:
-            data = response.json()
-            _tsun_extract_energy(url, data, captured)
-        except Exception:
-            pass
 
     with sync_playwright() as p:
         ctx = p.chromium.launch_persistent_context(
@@ -267,54 +488,65 @@ def tsun_fetch_playwright(username: str = "", password: str = "") -> dict | None
             "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
         )
 
-        # Interceptar ANTES de qualquer navegação
-        page.on("response", _on_response)
+        page.goto(f"{TSUN_BASE}/", wait_until="load", timeout=60_000)
+        time.sleep(2)
 
-        page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
-        time.sleep(1.5)
+        # Detectar login pelo conteúdo DOM — a URL pode ser "/" mesmo na tela de login
+        page_text = page.evaluate("() => document.body.innerText") or ""
+        on_login = (
+            "/login" in page.url
+            or "login" in page.url.lower()
+            or ("登" in page_text and "邮箱" in page_text)   # formulário em chinês
+            or (len(page_text.strip()) < 600 and "TSUN" in page_text)
+        )
 
-        if "/login" in page.url or "login" in page.url.lower():
-            print("   ℹ️  TSUN: sem sessão — fazendo login...")
-            token = _tsun_do_login(page, u, pw)
-            if not token:
+        login_result: dict = {}
+        if on_login:
+            print("   ℹ️  TSUN: sem sessão — fazendo login (browser)...")
+            login_result = _tsun_do_login(page, u, pw)
+            if not login_result.get("token"):
                 print("❌ TSUN: falha no login (captcha ou credenciais)")
                 ctx.close()
                 return None
-            print("   ✅ TSUN: login OK")
-            # Navegar para o dashboard — as APIs serão chamadas automaticamente
-            page.goto(f"{TSUN_BASE}/", wait_until="networkidle")
-            time.sleep(3)
+            print("   ✅ TSUN: token obtido e salvo")
         else:
-            print("   ℹ️  TSUN: sessão ativa")
+            # Sessão ativa — interceptar as chamadas de API que o portal faz ao carregar
+            print("   ℹ️  TSUN: sessão ativa — aguardando API do portal...")
+            captured_live: dict = {"today_kwh": None}
 
-        # Se ainda não capturou, navegar por algumas rotas do SPA para triggar as APIs
-        if captured["today_kwh"] is None:
-            for route in ["/home", "/station/list", "/dashboard", "/overview"]:
+            def _live_intercept(response):
+                if any(s in response.url for s in (".js", ".css", ".png", ".ico", ".woff")):
+                    return
                 try:
-                    page.goto(f"{TSUN_BASE}{route}", wait_until="networkidle")
-                    time.sleep(2)
-                    if captured["today_kwh"] is not None:
-                        break
+                    _tsun_extract_energy(response.url, response.json(), captured_live)
                 except Exception:
-                    continue
+                    pass
 
-        # Último recurso: DOM scraping
-        if captured["today_kwh"] is None:
-            body = page.evaluate("() => document.body.innerText") or ""
-            matches = re.findall(r"([\d]+\.?\d*)\s*(?:kWh|度|kwh)", body)
-            if matches:
-                captured["today_kwh"] = float(matches[0])
-                print(f"   📊 TSUN (DOM): {captured['today_kwh']:.3f} kWh")
+            page.on("response", _live_intercept)
+            page.goto(f"{TSUN_BASE}/", wait_until="load", timeout=60_000)
+            time.sleep(10)
+            login_result = {"token": None, "today_kwh": captured_live.get("today_kwh")}
 
         ctx.close()
 
-    kwh = captured.get("today_kwh")
-    if kwh is None:
-        print("❌ TSUN: nenhum dado de geração encontrado")
-        return None
+    # token do login OU do cache (caso sessão ativa sem novo login)
+    new_token   = login_result.get("token") or cached_token
+    energy_now  = login_result.get("today_kwh")
 
-    print(f"   📊 TSUN Escola: hoje={kwh:.3f} kWh")
-    return {"hoje_kwh": kwh, "estacoes": [{"nome": "Escola", "hoje_kwh": kwh}]}
+    # Se o interceptor capturou dados de energia direto do portal, usar
+    if energy_now and energy_now > 0:
+        print(f"   ✅ TSUN (portal): {energy_now:.3f} kWh capturado via interceptor do browser")
+        return {"hoje_kwh": energy_now, "estacoes": [{"nome": "Escola", "hoje_kwh": energy_now}]}
+
+    # Tentar API direta com o novo token
+    if new_token:
+        result = _tsun_api_fetch(new_token)
+        if result:
+            return result
+        print("   ⚠️  Token novo mas API ainda vazia — endpoints podem diferir do esperado")
+
+    print("❌ TSUN: nenhum dado de geração obtido")
+    return None
 
 
 
@@ -332,7 +564,7 @@ def _sungrow_read_plant_list(page) -> list[dict]:
     Navega para #/plantList e extrai a geração de hoje de cada usina.
     O portal mostra os valores em '度' (kWh em chinês).
     """
-    page.goto(f"{SUNGROW_BASE}/#/plantList", wait_until="networkidle")
+    page.goto(f"{SUNGROW_BASE}/#/plantList", wait_until="load", timeout=60_000)
     time.sleep(3)
 
     body = page.evaluate("() => document.body.innerText") or ""
@@ -380,7 +612,7 @@ def _sungrow_read_plant_list(page) -> list[dict]:
 
 def _sungrow_login(page, username: str, password: str) -> bool:
     """Tenta fazer login no iSolarCloud. Retorna True se bem-sucedido."""
-    page.goto(SUNGROW_BASE, wait_until="networkidle")
+    page.goto(SUNGROW_BASE, wait_until="load", timeout=60_000)
     time.sleep(2)
 
     # Se não redirecionou para login, já está logado
@@ -439,7 +671,7 @@ def sungrow_fetch_playwright(username: str = "", password: str = "") -> dict | N
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
 
         # Checar sessão
-        page.goto(f"{SUNGROW_BASE}/#/plantList", wait_until="networkidle")
+        page.goto(f"{SUNGROW_BASE}/#/plantList", wait_until="load", timeout=60_000)
         time.sleep(2)
 
         if "/login" in page.url or "login" in page.url.lower():

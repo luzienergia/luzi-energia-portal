@@ -1,274 +1,275 @@
 {
-  "atualizado": "2026-08-05T08:10:17.727331",
+  "atualizado": "2026-08-07T18:00:18.675235",
   "usinas": [
     {
       "id": "cartorio",
       "nome": "Usina Cartório",
-      "uc": "20393118",
-      "uc_billing": "70296501229",
-      "loc": "Anápolis — GO",
-      "prod_media": 2200,
+      "uc": "70296501229",
+      "localizacao": "Anápolis - GO",
       "status": "operando",
-      "rateio": [
-        {
-          "uc": "10029467606",
-          "uc_billing": "371372701262",
-          "nome": "Apto 100",
-          "pct": 44
-        },
-        {
-          "uc": "21151635",
-          "uc_billing": "77762501286",
-          "nome": "Casa Neneto",
-          "pct": 36
-        },
-        {
-          "uc": "21307209",
-          "uc_billing": "79163601288",
-          "nome": "Térreo",
-          "pct": 20
-        }
+      "clientes_rateio": [
+        "371372701262",
+        "77762501286",
+        "79163601288"
       ]
     },
     {
       "id": "escola",
       "nome": "Usina Escola",
-      "uc": "20760840",
-      "loc": "Anápolis — GO",
-      "prod_media": 2000,
-      "prod_30d": null,
-      "prod_mes": null,
+      "uc": "73940201205",
+      "localizacao": "Anápolis - GO",
       "status": "operando",
-      "rateio": [
-        {
-          "nome": "Casa Leandro",
-          "uc": "10027980845",
-          "uc_billing": "365716101232",
-          "pct": 75
-        },
-        {
-          "nome": "Firma Marrula",
-          "uc": "10040035296",
-          "uc_billing": "430857301280",
-          "pct": 25
-        }
+      "clientes_rateio": [
+        "365716101232",
+        "430857301280"
       ]
     },
     {
       "id": "predio",
-      "nome": "Usina Prédio",
+      "nome": "Usina Prédio Familiar",
       "uc": null,
-      "loc": "Anápolis — GO",
-      "prod_media": null,
-      "status": "em construção",
-      "rateio": []
+      "localizacao": "Anápolis - GO",
+      "status": "em construção (previsão ago/2026)",
+      "clientes_rateio": []
     },
     {
       "id": "abadiania",
       "nome": "Usina Abadiânia",
       "uc": null,
-      "loc": "Abadiânia — GO",
-      "prod_media": null,
+      "localizacao": "Abadiânia - GO",
       "status": "em construção",
-      "rateio": []
+      "clientes_rateio": []
     },
     {
       "id": "chacara",
       "nome": "Usina Chácara",
       "uc": "70977001259",
-      "loc": "GO",
-      "prod_media": null,
-      "status": "em montagem",
-      "rateio": []
-    },
-    {
-      "id": "gama_1",
-      "nome": "Usina Gama — SAJ",
-      "uc": null,
-      "loc": "Anápolis — GO",
-      "prod_media": null,
-      "status": "operando",
-      "rateio": []
-    },
-    {
-      "id": "gama_2",
-      "nome": "Usina Gama — Sungrow",
-      "uc": null,
-      "loc": "Anápolis — GO",
-      "prod_media": null,
-      "status": "operando",
-      "rateio": []
+      "localizacao": "GO",
+      "status": "em montagem — autoconsumo próprio de Luiz",
+      "clientes_rateio": []
     }
   ],
   "clientes": [
     {
       "nome": "Apto 100",
+      "nome_painel": null,
+      "nome_cliente": "Luiz (próprio)",
       "uc": "371372701262",
-      "tipo": "proprio",
-      "cliente": "Luiz (próprio)",
-      "doc": "",
-      "wpp": "5562999741225",
-      "desc": null,
-      "dg": 14,
-      "acao": "equatorial_direto",
-      "usina": "cartorio",
-      "metodo": "planilha_injecao",
-      "contrato": null,
-      "obs": "Apartamento de Luiz."
+      "tipo_uc": "proprio",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "",
+      "whatsapp_contato": "Eu",
+      "whatsapp_numero": "",
+      "desconto_pct": null,
+      "metodo_calculo": "planilha_injecao",
+      "fonte_energia": "usina_cartorio",
+      "consumo_medio_kwh": 850,
+      "dia_geracao_fatura": 14,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Apartamento onde Luiz mora (1º andar do prédio familiar). Agosto/2026: usina própria do prédio entra em operação."
     },
     {
       "nome": "Apto 300",
+      "nome_painel": null,
+      "nome_cliente": "Dindinho (tio de Luiz)",
       "uc": "371377601286",
-      "tipo": "proprio",
-      "cliente": "Dindinho (tio)",
-      "doc": "",
-      "wpp": "",
-      "desc": null,
-      "dg": 14,
-      "acao": "equatorial_direto",
-      "usina": null,
-      "metodo": "sem_rateio",
-      "contrato": null,
-      "obs": "Tio de Luiz, 3º andar."
+      "tipo_uc": "proprio",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "",
+      "whatsapp_contato": "Dindinho",
+      "whatsapp_numero": "",
+      "desconto_pct": null,
+      "metodo_calculo": "sem_rateio",
+      "fonte_energia": null,
+      "consumo_medio_kwh": 750,
+      "dia_geracao_fatura": 14,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Tio de Luiz. Prédio familiar, 3º andar. Sem rateio — envia boleto Equatorial direto."
     },
     {
       "nome": "Cartório",
+      "nome_painel": "Cartório 2 Ofício de Notas",
+      "nome_cliente": "Kenia",
+      "razao_social": "Anapolis Cartorio Segundo Oficio de Nota",
+      "endereco": "RUA BARAO DE COTEGIPE 341",
+      "cep": "75025010",
       "uc": "70296501229",
-      "tipo": "cliente_ativo",
-      "cliente": "Kenia",
-      "doc": "02790574000136",
-      "wpp": "5562992151600",
-      "desc": 15,
-      "dg": 24,
-      "acao": "luzi_boleto_e_png",
-      "usina": "cartorio",
-      "metodo": "autoconsumo",
-      "contrato": "contratos/cartorio.pdf",
-      "obs": "Usina própria."
+      "tipo_uc": "cliente_ativo",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "02790574000136",
+      "whatsapp_contato": "Kenia Cartorio",
+      "whatsapp_numero": "5562992151600",
+      "desconto_pct": 15,
+      "metodo_calculo": "autoconsumo",
+      "fonte_energia": "autoconsumo",
+      "inversor_plataforma": "saj_elekeeper",
+      "inversor_usina_id": "cartorio",
+      "consumo_medio_kwh": 700,
+      "dia_geracao_fatura": 24,
+      "acao_boleto": "luzi_boleto_e_png",
+      "observacoes": "Usina própria. Microinversores SAJ — geração via elekeeper API (buscar_geracao.py). Dias sem log: usar média dos dias válidos."
     },
     {
       "nome": "Casa Leandro",
+      "nome_painel": "Casa Leandro Ribeiro",
+      "nome_cliente": "Leandro Ribeiro da Silva",
+      "razao_social": "Leandro Ribeiro da Silva",
+      "endereco": "RUA AV-8 0 QD 15 LT 17 RESIDENCIAL AN",
+      "cep": "75102040",
       "uc": "365716101232",
-      "tipo": "cliente_ativo",
-      "cliente": "Leandro Ribeiro",
-      "doc": "80372422187",
-      "wpp": "5562991136684",
-      "desc": 20,
-      "dg": 6,
-      "acao": "luzi_boleto_e_png",
-      "usina": "escola",
-      "metodo": "planilha_injecao",
-      "contrato": "contratos/casa_leandro.pdf",
-      "obs": "Contato: Luciana (tia)."
+      "tipo_uc": "cliente_ativo",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "80372422187",
+      "whatsapp_contato": "Luciana tia Leandro",
+      "whatsapp_numero": "5562991136684",
+      "desconto_pct": 20,
+      "metodo_calculo": "planilha_injecao",
+      "fonte_energia": "usina_escola",
+      "consumo_medio_kwh": 1200,
+      "dia_geracao_fatura": 6,
+      "acao_boleto": "luzi_boleto_e_png",
+      "observacoes": "Contato no WhatsApp é Luciana (tia), mas cliente é Leandro. Pode receber injeção de mais de uma usina — conferir UC na linha INJEÇÃO SCEE."
     },
     {
       "nome": "Casa Marrula",
+      "nome_painel": "Casa Miguel Hanna",
+      "nome_cliente": "Miguel Hanna",
       "uc": "398986101273",
-      "tipo": "pass_through",
-      "cliente": "Miguel Hanna",
-      "doc": "70182543102",
-      "wpp": "5562992903232",
-      "desc": null,
-      "dg": 19,
-      "acao": "equatorial_direto",
-      "usina": null,
-      "metodo": "sem_rateio",
-      "contrato": null,
-      "obs": "Sem usina vinculada ainda."
+      "tipo_uc": "pass_through",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "70182543102",
+      "whatsapp_contato": "Miguel Hanna Marrula",
+      "whatsapp_numero": "5562992903232",
+      "desconto_pct": null,
+      "metodo_calculo": "sem_rateio",
+      "fonte_energia": "usina_abadiania ou usina_predio (previsto)",
+      "consumo_medio_kwh": 500,
+      "dia_geracao_fatura": 19,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Mesmo contato que Firma Marrula (CPF e WhatsApp iguais). Sem usina vinculada ainda — quando usina Abadiânia ou Prédio ficarem prontas, muda para luzi_boleto_e_png."
     },
     {
       "nome": "Casa Neneto",
+      "nome_painel": "Apartamento Wagner Neto",
+      "nome_cliente": "Wagner Neto",
+      "razao_social": "Fortelo Distribuicao LTDA",
+      "endereco": "AV BRASILIA 0 QD2 LT5 SAO JORGE",
+      "cep": "75133060",
       "uc": "77762501286",
-      "tipo": "cliente_ativo",
-      "cliente": "Wagner Neto",
-      "doc": "02109687100",
-      "wpp": "5562999797036",
-      "desc": 20,
-      "dg": 23,
-      "acao": "luzi_boleto_e_png",
-      "usina": "cartorio",
-      "metodo": "planilha_injecao",
-      "contrato": "contratos/casa_neneto.pdf",
-      "obs": ""
+      "tipo_uc": "cliente_ativo",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "62432594000167",
+      "cpf_wagner": "02109687100",
+      "whatsapp_contato": "Neneto",
+      "whatsapp_numero": "5562999797036",
+      "desconto_pct": 20,
+      "metodo_calculo": "planilha_injecao",
+      "fonte_energia": "usina_cartorio",
+      "consumo_medio_kwh": 1000,
+      "dia_geracao_fatura": 23,
+      "acao_boleto": "luzi_boleto_e_png",
+      "observacoes": ""
     },
     {
       "nome": "Chácara",
+      "nome_painel": null,
+      "nome_cliente": "Luiz (próprio)",
       "uc": "70977001259",
-      "tipo": "proprio",
-      "cliente": "Luiz (próprio)",
-      "doc": "",
-      "wpp": "",
-      "desc": null,
-      "dg": 5,
-      "acao": "equatorial_direto",
-      "usina": "chacara",
-      "metodo": "autoconsumo",
-      "contrato": null,
-      "obs": "Autoconsumo próprio."
+      "tipo_uc": "proprio",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "",
+      "whatsapp_contato": "Eu",
+      "whatsapp_numero": "",
+      "desconto_pct": null,
+      "metodo_calculo": "autoconsumo",
+      "fonte_energia": "autoconsumo",
+      "consumo_medio_kwh": 500,
+      "dia_geracao_fatura": 5,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Imóvel e usina próprios de Luiz. Autoconsumo — Luiz mesmo paga."
     },
     {
       "nome": "Escola",
+      "nome_painel": "Mendes e Flor Educacional LTDA",
+      "nome_cliente": "Cleyton",
+      "razao_social": "Mendes e Flor Educacional LTDA",
+      "endereco": "RUA BARAO DE COTEGIPE 333 CENTRO",
+      "cep": "75025010",
       "uc": "73940201205",
-      "tipo": "cliente_ativo",
-      "cliente": "Cleyton",
-      "doc": "50802328000108",
-      "wpp": "5562985340915",
-      "desc": 20,
-      "dg": 11,
-      "acao": "luzi_boleto_e_png",
-      "usina": "escola",
-      "metodo": "autoconsumo",
-      "contrato": "contratos/escola.pdf",
-      "obs": "Geração informada manualmente."
+      "tipo_uc": "cliente_ativo",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "50802328000108",
+      "whatsapp_contato": "Cleyton Escola Centro",
+      "whatsapp_numero": "5562985340915",
+      "desconto_pct": 20,
+      "metodo_calculo": "autoconsumo",
+      "fonte_energia": "autoconsumo",
+      "inversor_plataforma": "tsun_talent",
+      "inversor_usina_id": "escola",
+      "consumo_medio_kwh": 350,
+      "dia_geracao_fatura": 11,
+      "acao_boleto": "luzi_boleto_e_png",
+      "observacoes": "Usina própria. Microinversores TSUN — geração via talent-monitoring.com API (buscar_geracao.py). Não precisa mais informar manualmente."
     },
     {
       "nome": "Firma Marrula",
+      "nome_painel": null,
+      "nome_cliente": "Miguel Hanna",
+      "endereco": "RUA RG-5 0 QD 09 LT 06 COND GAUDI",
+      "cep": "75102614",
       "uc": "430857301280",
-      "tipo": "cliente_ativo",
-      "cliente": "Miguel Hanna",
-      "doc": "70182543102",
-      "wpp": "5562992903232",
-      "desc": 20,
-      "dg": 20,
-      "acao": "luzi_boleto_e_png",
-      "usina": "escola",
-      "metodo": "planilha_injecao",
-      "contrato": "contratos/firma_marrula.pdf",
-      "obs": "Mesmo contato que Casa Marrula."
+      "tipo_uc": "cliente_ativo",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "70182543102",
+      "whatsapp_contato": "Miguel Hanna Marrula",
+      "whatsapp_numero": "5562992903232",
+      "desconto_pct": 20,
+      "metodo_calculo": "planilha_injecao",
+      "fonte_energia": "usina_escola",
+      "consumo_medio_kwh": 300,
+      "dia_geracao_fatura": 20,
+      "acao_boleto": "luzi_boleto_e_png",
+      "observacoes": "Mesmo contato que Casa Marrula (CPF e WhatsApp iguais). Histórico de não receber email da Equatorial — checar site manualmente."
     },
     {
       "nome": "Sobreloja",
+      "nome_painel": null,
+      "nome_cliente": "Luiz (próprio)",
       "uc": "78431901209",
-      "tipo": "proprio",
-      "cliente": "Luiz (próprio)",
-      "doc": "",
-      "wpp": "",
-      "desc": null,
-      "dg": 24,
-      "acao": "equatorial_direto",
-      "usina": null,
-      "metodo": "sem_rateio",
-      "contrato": null,
-      "obs": "Desocupado."
+      "tipo_uc": "proprio",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "",
+      "whatsapp_contato": "Eu",
+      "whatsapp_numero": "",
+      "desconto_pct": null,
+      "metodo_calculo": "sem_rateio",
+      "fonte_energia": null,
+      "consumo_medio_kwh": null,
+      "dia_geracao_fatura": 24,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Imóvel de Luiz desocupado. Luiz paga a fatura."
     },
     {
       "nome": "Térreo",
+      "nome_painel": null,
+      "nome_cliente": "Luiz (próprio)",
       "uc": "79163601288",
-      "tipo": "proprio",
-      "cliente": "Luiz (próprio)",
-      "doc": "",
-      "wpp": "",
-      "desc": null,
-      "dg": 14,
-      "acao": "equatorial_direto",
-      "usina": "cartorio",
-      "metodo": "planilha_injecao",
-      "contrato": null,
-      "obs": "Térreo do prédio familiar."
+      "tipo_uc": "proprio",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "",
+      "whatsapp_contato": "Eu",
+      "whatsapp_numero": "",
+      "desconto_pct": null,
+      "metodo_calculo": "planilha_injecao",
+      "fonte_energia": "usina_cartorio",
+      "consumo_medio_kwh": 300,
+      "dia_geracao_fatura": 14,
+      "acao_boleto": "equatorial_direto",
+      "observacoes": "Imóvel de Luiz (térreo do prédio familiar). Luiz mesmo paga."
     }
   ],
   "status_ucs": {},
-  "ultima_verificacao_btg": "2026-08-05T08:10:17.727339",
+  "ultima_verificacao_btg": "2026-08-06T08:02:28.945612",
   "faturas": {
     "02790574000136": {
       "nome": "Cartório",
@@ -276,6 +277,14 @@
       "doc": "02790574000136",
       "desconto": 15,
       "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 999.47,
+          "comDesc": 849.55,
+          "venc": "2026-08-03",
+          "status": "vencido"
+        },
         {
           "mes": "06/2026",
           "ref": "jun/26",
@@ -311,10 +320,10 @@
         {
           "mes": "07/2026",
           "ref": "jul/26",
-          "semDesc": 1336.56,
-          "comDesc": 1069.25,
-          "venc": "2026-07-23",
-          "status": "vencer"
+          "semDesc": 1178.64,
+          "comDesc": 942.91,
+          "venc": "2026-08-13",
+          "status": "em_aberto"
         },
         {
           "mes": "06/2026",
@@ -365,6 +374,14 @@
       "desconto": 20,
       "faturas": [
         {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 678.68,
+          "comDesc": 542.94,
+          "venc": "2026-08-20",
+          "status": "em_aberto"
+        },
+        {
           "mes": "06/2026",
           "ref": "jun/26",
           "semDesc": 835.48,
@@ -402,7 +419,7 @@
           "semDesc": 284.86,
           "comDesc": 227.89,
           "venc": "2026-07-28",
-          "status": "vencer"
+          "status": "vencido"
         },
         {
           "mes": "06/2026",
@@ -419,6 +436,38 @@
           "comDesc": 359.29,
           "venc": "2026-05-29",
           "status": "pago"
+        }
+      ]
+    },
+    "03774987181": {
+      "nome": "Térreo",
+      "uc": "79163601288",
+      "doc": "03774987181",
+      "desconto": 20,
+      "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 916.88,
+          "comDesc": 916.88,
+          "venc": "2026-07-21",
+          "status": "vencido"
+        }
+      ]
+    },
+    "62432594000167": {
+      "nome": "Casa Neneto",
+      "uc": "77762501286",
+      "doc": "62432594000167",
+      "desconto": 20,
+      "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 764.42,
+          "comDesc": 611.54,
+          "venc": "2026-08-04",
+          "status": "vencido"
         }
       ]
     }

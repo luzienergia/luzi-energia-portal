@@ -39,6 +39,34 @@ def atualizar_status(data: dict, status_ucs: dict) -> dict:
     data["atualizado"]  = datetime.now().isoformat()
     return data
 
+# ─── GIT HELPERS ──────────────────────────────────────────────────────────────
+# Nota (08/08/2026): no sandbox Cowork, a pasta do projeto roda sobre um mount
+# que bloqueia delete/rename de arquivos já escritos. Isso quebra o mecanismo
+# normal de lockfile do git (escreve .lock, depois faz rename pro arquivo
+# final) e deixa .git/index.lock, .git/HEAD.lock e .git/objects/*/tmp_obj_*
+# órfãos toda vez que um comando git roda — travando o próximo add/commit.
+# Isso já causou dezenas de falhas manuais (ver memória feedback-btg-git-push-
+# sandbox). A função abaixo limpa esses órfãos antes de cada tentativa, e o
+# publicar() sincroniza com origin/main via reset --mixed (não mexe na working
+# tree) em vez de git pull --rebase, evitando os rebases travados do passado.
+
+def _git(repo_path: Path, *args, check=True):
+    return subprocess.run(
+        ["git", "-C", str(repo_path), *args],
+        capture_output=True, text=True, check=check
+    )
+
+
+def _limpar_locks_orfaos(repo_path: Path):
+    git_dir = repo_path / ".git"
+    for pattern in ("*.lock", "*.lock.*", "*.lock*bak*", "*.lock.old*", "tmp_obj_*"):
+        for f in git_dir.rglob(pattern):
+            try:
+                f.unlink()
+            except Exception:
+                pass  # sem allow_cowork_file_delete aprovado ainda; segue e deixa o git tentar mesmo assim
+
+
 # ─── SALVAR E PUBLICAR ───────────────────────────────────────────────────────
 def publicar(data: dict):
     # Salva data.json
@@ -46,16 +74,51 @@ def publicar(data: dict):
         json.dump(data, f, ensure_ascii=False, indent=2)
     print(f"✅ data.json salvo em {DATA_JSON}")
 
-    # Git add + commit + push
+    # Git add + commit + push (com limpeza de locks órfãos e retry via reset --mixed)
+    _limpar_locks_orfaos(GIT_REPO_PATH)
+    msg = f"[auto] Atualiza data.json — {datetime.now().strftime('%d/%m/%Y %H:%M')}"
+
     try:
-        subprocess.run(["git", "-C", str(GIT_REPO_PATH), "add", "portal/data.json"], check=True)
-        msg = f"[auto] Atualiza data.json — {datetime.now().strftime('%d/%m/%Y %H:%M')}"
-        subprocess.run(["git", "-C", str(GIT_REPO_PATH), "commit", "-m", msg], check=True)
-        subprocess.run(["git", "-C", str(GIT_REPO_PATH), "push"], check=True)
-        print("🚀 Publicado no GitHub! Netlify atualizará em ~30 segundos.")
+        _git(GIT_REPO_PATH, "add", "portal/data.json")
+        status = _git(GIT_REPO_PATH, "status", "--porcelain", "--", "portal/data.json").stdout
+        if not status.strip():
+            print("ℹ️  portal/data.json sem mudanças — nada para publicar.")
+            return
+        _git(GIT_REPO_PATH, "commit", "-m", msg)
     except subprocess.CalledProcessError as e:
-        print(f"⚠️  Git push falhou: {e}")
+        print(f"⚠️  Git add/commit falhou: {e.stderr.strip()[:300] if e.stderr else e}")
         print("   O data.json foi salvo localmente. Faça push manualmente.")
+        return
+
+    for _tentativa in range(2):
+        push = subprocess.run(
+            ["git", "-C", str(GIT_REPO_PATH), "push", "origin", "main"],
+            capture_output=True, text=True
+        )
+        if push.returncode == 0:
+            print("🚀 Publicado no GitHub! Netlify atualizará em ~30 segundos.")
+            return
+        if "rejected" in push.stderr or "fetch first" in push.stderr or "non-fast-forward" in push.stderr:
+            try:
+                _limpar_locks_orfaos(GIT_REPO_PATH)
+                _git(GIT_REPO_PATH, "fetch", "origin", "main")
+                _git(GIT_REPO_PATH, "reset", "--mixed", "origin/main")
+                _git(GIT_REPO_PATH, "add", "portal/data.json")
+                status = _git(GIT_REPO_PATH, "status", "--porcelain", "--", "portal/data.json").stdout
+                if status.strip():
+                    _git(GIT_REPO_PATH, "commit", "-m", msg)
+                    continue
+                print("ℹ️  portal/data.json já estava atualizado no remoto.")
+                return
+            except subprocess.CalledProcessError as e:
+                print(f"⚠️  Falha ao sincronizar com origin/main: {e.stderr.strip()[:300] if e.stderr else e}")
+                return
+        else:
+            print(f"⚠️  Git push falhou: {push.stderr.strip()[:300]}")
+            print("   O data.json foi salvo localmente. Faça push manualmente.")
+            return
+
+    print("⚠️  Git push falhou após retry — verifique o repositório manualmente.")
 
 # ─── INTERFACE PÚBLICA ───────────────────────────────────────────────────────
 def atualizar_e_publicar(status_ucs: dict | None = None):

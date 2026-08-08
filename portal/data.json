@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-07T22:02:16.690891",
+  "atualizado": "2026-08-08T19:17:10.252249",
   "usinas": [
     {
       "id": "cartorio",
@@ -90,9 +90,8 @@
       "nome": "Cartório",
       "nome_painel": "Cartório 2 Ofício de Notas",
       "nome_cliente": "Kenia",
-      "razao_social": "Anapolis Cartorio Segundo Oficio de Nota",
-      "endereco": "RUA BARAO DE COTEGIPE 341",
-      "cep": "75025010",
+      "razao_social": "Anapolis Cartorio Segundo Oficio de Notas",
+      "endereco": "Rua Barao de Cotegipe, 355 - Anapolis/GO",
       "uc": "70296501229",
       "tipo_uc": "cliente_ativo",
       "tipo_pessoa": "J",
@@ -112,10 +111,7 @@
     {
       "nome": "Casa Leandro",
       "nome_painel": "Casa Leandro Ribeiro",
-      "nome_cliente": "Leandro Ribeiro da Silva",
-      "razao_social": "Leandro Ribeiro da Silva",
-      "endereco": "RUA AV-8 0 QD 15 LT 17 RESIDENCIAL AN",
-      "cep": "75102040",
+      "nome_cliente": "Leandro Ribeiro",
       "uc": "365716101232",
       "tipo_uc": "cliente_ativo",
       "tipo_pessoa": "F",
@@ -152,14 +148,10 @@
       "nome": "Casa Neneto",
       "nome_painel": "Apartamento Wagner Neto",
       "nome_cliente": "Wagner Neto",
-      "razao_social": "Fortelo Distribuicao LTDA",
-      "endereco": "AV BRASILIA 0 QD2 LT5 SAO JORGE",
-      "cep": "75133060",
       "uc": "77762501286",
       "tipo_uc": "cliente_ativo",
-      "tipo_pessoa": "J",
-      "cpf_cnpj": "62432594000167",
-      "cpf_wagner": "02109687100",
+      "tipo_pessoa": "F",
+      "cpf_cnpj": "02109687100",
       "whatsapp_contato": "Neneto",
       "whatsapp_numero": "5562999797036",
       "desconto_pct": 20,
@@ -193,8 +185,6 @@
       "nome_painel": "Mendes e Flor Educacional LTDA",
       "nome_cliente": "Cleyton",
       "razao_social": "Mendes e Flor Educacional LTDA",
-      "endereco": "RUA BARAO DE COTEGIPE 333 CENTRO",
-      "cep": "75025010",
       "uc": "73940201205",
       "tipo_uc": "cliente_ativo",
       "tipo_pessoa": "J",
@@ -215,8 +205,6 @@
       "nome": "Firma Marrula",
       "nome_painel": null,
       "nome_cliente": "Miguel Hanna",
-      "endereco": "RUA RG-5 0 QD 09 LT 06 COND GAUDI",
-      "cep": "75102614",
       "uc": "430857301280",
       "tipo_uc": "cliente_ativo",
       "tipo_pessoa": "J",
@@ -278,20 +266,20 @@
       "desconto": 15,
       "faturas": [
         {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 1212.44,
+          "comDesc": 1030.57,
+          "venc": "2026-07-10",
+          "status": "vencido"
+        },
+        {
           "mes": "07/2026",
           "ref": "jul/26",
           "semDesc": 999.47,
           "comDesc": 849.55,
           "venc": "2026-08-03",
           "status": "vencido"
-        },
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 1212.44,
-          "comDesc": 1030.57,
-          "venc": "2026-07-10",
-          "status": "vencer"
         },
         {
           "mes": "05/2026",
@@ -318,20 +306,20 @@
       "desconto": 20,
       "faturas": [
         {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 1336.56,
+          "comDesc": 1069.25,
+          "venc": "2026-07-23",
+          "status": "vencido"
+        },
+        {
           "mes": "07/2026",
           "ref": "jul/26",
           "semDesc": 1178.64,
           "comDesc": 942.91,
           "venc": "2026-08-13",
           "status": "em_aberto"
-        },
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 1557.24,
-          "comDesc": 1245.79,
-          "venc": "2026-06-17",
-          "status": "pago"
         },
         {
           "mes": "05/2026",
@@ -374,20 +362,20 @@
       "desconto": 20,
       "faturas": [
         {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 835.47,
+          "comDesc": 668.38,
+          "venc": "2026-07-13",
+          "status": "vencido"
+        },
+        {
           "mes": "07/2026",
           "ref": "jul/26",
           "semDesc": 678.68,
           "comDesc": 542.94,
           "venc": "2026-08-20",
           "status": "em_aberto"
-        },
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 835.48,
-          "comDesc": 668.38,
-          "venc": "2026-07-20",
-          "status": "pago"
         },
         {
           "mes": "05/2026",
@@ -461,6 +449,14 @@
       "doc": "62432594000167",
       "desconto": 20,
       "faturas": [
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 636.3,
+          "comDesc": 509.04,
+          "venc": "2026-07-13",
+          "status": "vencido"
+        },
         {
           "mes": "07/2026",
           "ref": "jul/26",

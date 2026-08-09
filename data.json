@@ -1,0 +1,20 @@
+{
+  "faturas": [
+    {
+      "txid": "1dd90fd35e024ab387cba3b16eb08dec",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/822d8c6495884219ab627f4d4378e1965204000053039865802BR5903PIX6006Cidade62070503***63047FA4",
+      "linhaDigitavel": "74891160090000230914414401181020515390000010000",
+      "codigoBarras": "74895153900000100001160000002309141440118102",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000023",
+      "seuNumero": "CART0826",
+      "valor": 100.0,
+      "dataVencimento": "2026-08-15",
+      "nomePagador": "Anapolis Cartorio Segundo Oficio de Notas",
+      "emitidoEm": "2026-08-09T17:42:43.617345",
+      "_doc": "02790574000136",
+      "_mesReferencia": "08/2026"
+    }
+  ]
+}

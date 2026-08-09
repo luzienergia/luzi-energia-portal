@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-09T17:21:38.998923",
+  "atualizado": "2026-08-09T17:42:43.629442",
   "usinas": [
     {
       "id": "cartorio",
@@ -91,7 +91,10 @@
       "nome_painel": "Cartório 2 Ofício de Notas",
       "nome_cliente": "Kenia",
       "razao_social": "Anapolis Cartorio Segundo Oficio de Notas",
-      "endereco": "Rua Barao de Cotegipe, 355 - Anapolis/GO",
+      "endereco": "Rua Barao de Cotegipe, 341",
+      "cep": "75025010",
+      "cidade": "ANAPOLIS",
+      "uf": "GO",
       "uc": "70296501229",
       "tipo_uc": "cliente_ativo",
       "tipo_pessoa": "J",
@@ -264,7 +267,20 @@
       "uc": "70296501229",
       "doc": "02790574000136",
       "desconto": 15,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 117.65,
+          "comDesc": 100.0,
+          "venc": "2026-08-15",
+          "status": "em_aberto",
+          "uc": "70296501229",
+          "linhaDigitavel": "74891160090000230914414401181020515390000010000",
+          "nossoNumero": "600000023",
+          "seuNumero": "CART0826"
+        }
+      ]
     },
     "80372422187": {
       "nome": "Casa Leandro",

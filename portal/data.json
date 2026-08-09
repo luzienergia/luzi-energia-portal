@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-09T08:02:24.415891",
+  "atualizado": "2026-08-09T15:58:18.176665",
   "usinas": [
     {
       "id": "cartorio",
@@ -271,31 +271,8 @@
           "semDesc": 1212.44,
           "comDesc": 1030.57,
           "venc": "2026-07-10",
-          "status": "vencido"
-        },
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 999.47,
-          "comDesc": 849.55,
-          "venc": "2026-08-03",
-          "status": "vencido"
-        },
-        {
-          "mes": "05/2026",
-          "ref": "mai/26",
-          "semDesc": 1240.82,
-          "comDesc": 1054.7,
-          "venc": "2026-06-03",
-          "status": "vencer"
-        },
-        {
-          "mes": "04/2026",
-          "ref": "abr/26",
-          "semDesc": 1294,
-          "comDesc": 1099.9,
-          "venc": "2026-05-06",
-          "status": "pago"
+          "status": "vencido",
+          "uc": "70296501229"
         }
       ]
     },
@@ -311,135 +288,8 @@
           "semDesc": 1336.56,
           "comDesc": 1069.25,
           "venc": "2026-07-23",
-          "status": "vencido"
-        },
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 1178.64,
-          "comDesc": 942.91,
-          "venc": "2026-08-13",
-          "status": "em_aberto"
-        },
-        {
-          "mes": "05/2026",
-          "ref": "mai/26",
-          "semDesc": 1679.48,
-          "comDesc": 1343.58,
-          "venc": "2026-05-19",
-          "status": "pago"
-        }
-      ]
-    },
-    "02109687100": {
-      "nome": "Casa Neneto",
-      "uc": "77762501286",
-      "doc": "02109687100",
-      "desconto": 20,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 636.3,
-          "comDesc": 509.04,
-          "venc": "2026-06-30",
-          "status": "pago"
-        },
-        {
-          "mes": "05/2026",
-          "ref": "mai/26",
-          "semDesc": 861.21,
-          "comDesc": 688.97,
-          "venc": "2026-06-05",
-          "status": "pago"
-        }
-      ]
-    },
-    "50802328000108": {
-      "nome": "Escola",
-      "uc": "73940201205",
-      "doc": "50802328000108",
-      "desconto": 20,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 835.47,
-          "comDesc": 668.38,
-          "venc": "2026-07-13",
-          "status": "vencido"
-        },
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 678.68,
-          "comDesc": 542.94,
-          "venc": "2026-08-20",
-          "status": "em_aberto"
-        },
-        {
-          "mes": "05/2026",
-          "ref": "mai/26",
-          "semDesc": 995.39,
-          "comDesc": 796.31,
-          "venc": "2026-06-20",
-          "status": "pago"
-        },
-        {
-          "mes": "04/2026",
-          "ref": "abr/26",
-          "semDesc": 426.23,
-          "comDesc": 340.98,
-          "venc": "2026-05-20",
-          "status": "pago"
-        }
-      ]
-    },
-    "70182543102": {
-      "nome": "Firma Marrula",
-      "uc": "430857301280",
-      "doc": "70182543102",
-      "desconto": 20,
-      "faturas": [
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 284.86,
-          "comDesc": 227.89,
-          "venc": "2026-07-28",
-          "status": "vencido"
-        },
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 455.25,
-          "comDesc": 364.2,
-          "venc": "2026-06-30",
-          "status": "pago"
-        },
-        {
-          "mes": "05/2026",
-          "ref": "mai/26",
-          "semDesc": 449.11,
-          "comDesc": 359.29,
-          "venc": "2026-05-29",
-          "status": "pago"
-        }
-      ]
-    },
-    "03774987181": {
-      "nome": "Térreo",
-      "uc": "79163601288",
-      "doc": "03774987181",
-      "desconto": 20,
-      "faturas": [
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 916.88,
-          "comDesc": 916.88,
-          "venc": "2026-07-21",
-          "status": "vencido"
+          "status": "vencido",
+          "uc": "365716101232"
         }
       ]
     },
@@ -455,15 +305,76 @@
           "semDesc": 636.3,
           "comDesc": 509.04,
           "venc": "2026-07-13",
-          "status": "vencido"
-        },
+          "status": "vencido",
+          "uc": "77762501286"
+        }
+      ]
+    },
+    "50802328000108": {
+      "nome": "Escola",
+      "uc": "73940201205",
+      "doc": "50802328000108",
+      "desconto": 20,
+      "faturas": [
+        {
+          "mes": "06/2026",
+          "ref": "jun/26",
+          "semDesc": 835.47,
+          "comDesc": 668.38,
+          "venc": "2026-07-13",
+          "status": "vencido",
+          "uc": "73940201205"
+        }
+      ]
+    },
+    "70182543102": {
+      "nome": "Firma Marrula",
+      "uc": "430857301280",
+      "doc": "70182543102",
+      "desconto": 20,
+      "faturas": [
         {
           "mes": "07/2026",
           "ref": "jul/26",
-          "semDesc": 764.42,
-          "comDesc": 611.54,
-          "venc": "2026-08-04",
-          "status": "vencido"
+          "semDesc": 284.86,
+          "comDesc": 227.89,
+          "venc": "2026-07-28",
+          "status": "vencido",
+          "uc": "430857301280"
+        }
+      ]
+    },
+    "03774987181_apto100": {
+      "nome": "Apto 100",
+      "uc": "371372701262",
+      "doc": "03774987181",
+      "desconto": 0,
+      "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 916.88,
+          "comDesc": 916.88,
+          "venc": "2026-07-21",
+          "status": "vencido",
+          "uc": "371372701262"
+        }
+      ]
+    },
+    "03774987181_terreo": {
+      "nome": "Térreo",
+      "uc": "79163601288",
+      "doc": "03774987181",
+      "desconto": 20,
+      "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 944.98,
+          "comDesc": 755.98,
+          "venc": "2026-07-21",
+          "status": "vencido",
+          "uc": "79163601288"
         }
       ]
     }

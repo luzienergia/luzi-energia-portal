@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-09T15:58:18.176665",
+  "atualizado": "2026-08-09T17:21:38.998923",
   "usinas": [
     {
       "id": "cartorio",
@@ -264,119 +264,49 @@
       "uc": "70296501229",
       "doc": "02790574000136",
       "desconto": 15,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 1212.44,
-          "comDesc": 1030.57,
-          "venc": "2026-07-10",
-          "status": "vencido",
-          "uc": "70296501229"
-        }
-      ]
+      "faturas": []
     },
     "80372422187": {
       "nome": "Casa Leandro",
       "uc": "365716101232",
       "doc": "80372422187",
       "desconto": 20,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 1336.56,
-          "comDesc": 1069.25,
-          "venc": "2026-07-23",
-          "status": "vencido",
-          "uc": "365716101232"
-        }
-      ]
+      "faturas": []
     },
     "62432594000167": {
       "nome": "Casa Neneto",
       "uc": "77762501286",
       "doc": "62432594000167",
       "desconto": 20,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 636.3,
-          "comDesc": 509.04,
-          "venc": "2026-07-13",
-          "status": "vencido",
-          "uc": "77762501286"
-        }
-      ]
+      "faturas": []
     },
     "50802328000108": {
       "nome": "Escola",
       "uc": "73940201205",
       "doc": "50802328000108",
       "desconto": 20,
-      "faturas": [
-        {
-          "mes": "06/2026",
-          "ref": "jun/26",
-          "semDesc": 835.47,
-          "comDesc": 668.38,
-          "venc": "2026-07-13",
-          "status": "vencido",
-          "uc": "73940201205"
-        }
-      ]
+      "faturas": []
     },
     "70182543102": {
       "nome": "Firma Marrula",
       "uc": "430857301280",
       "doc": "70182543102",
       "desconto": 20,
-      "faturas": [
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 284.86,
-          "comDesc": 227.89,
-          "venc": "2026-07-28",
-          "status": "vencido",
-          "uc": "430857301280"
-        }
-      ]
+      "faturas": []
     },
     "03774987181_apto100": {
       "nome": "Apto 100",
       "uc": "371372701262",
       "doc": "03774987181",
       "desconto": 0,
-      "faturas": [
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 916.88,
-          "comDesc": 916.88,
-          "venc": "2026-07-21",
-          "status": "vencido",
-          "uc": "371372701262"
-        }
-      ]
+      "faturas": []
     },
     "03774987181_terreo": {
       "nome": "Térreo",
       "uc": "79163601288",
       "doc": "03774987181",
       "desconto": 20,
-      "faturas": [
-        {
-          "mes": "07/2026",
-          "ref": "jul/26",
-          "semDesc": 944.98,
-          "comDesc": 755.98,
-          "venc": "2026-07-21",
-          "status": "vencido",
-          "uc": "79163601288"
-        }
-      ]
+      "faturas": []
     }
   }
 }

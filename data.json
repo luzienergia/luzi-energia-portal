@@ -1,6 +1,22 @@
 {
   "faturas": [
     {
+      "txid": "3466982bbde1410cb3520919d5bf15cf",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/761341a7ab2d476098a285f4daa9db565204000053039865802BR5903PIX6006Cidade62070503***63049165",
+      "linhaDigitavel": "74891160090000310914714401181087415380000061154",
+      "codigoBarras": "74894153800000611541160000003109141440118108",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000031",
+      "seuNumero": "NETO0826",
+      "valor": 611.54,
+      "dataVencimento": "2026-08-14",
+      "nomePagador": "FORTELO DISTRIBUICAO LTDA",
+      "emitidoEm": "2026-08-09T23:46:36.149502",
+      "_doc": "62432594000167",
+      "_mesReferencia": "07/2026"
+    },
+    {
       "txid": "1dd90fd35e024ab387cba3b16eb08dec",
       "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/822d8c6495884219ab627f4d4378e1965204000053039865802BR5903PIX6006Cidade62070503***63047FA4",
       "linhaDigitavel": "74891160090000230914414401181020515390000010000",
@@ -17,22 +33,6 @@
       "_mesReferencia": "08/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
       "_verificadoEm": "2026-08-09T21:53:42.256261"
-    },
-    {
-      "txid": "3466982bbde1410cb3520919d5bf15cf",
-      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/761341a7ab2d476098a285f4daa9db565204000053039865802BR5903PIX6006Cidade62070503***63049165",
-      "linhaDigitavel": "74891160090000310914714401181087415380000061154",
-      "codigoBarras": "74894153800000611541160000003109141440118108",
-      "cooperativa": "0914",
-      "posto": "14",
-      "nossoNumero": "600000031",
-      "seuNumero": "NETO0826",
-      "valor": 611.54,
-      "dataVencimento": "2026-08-14",
-      "nomePagador": "FORTELO DISTRIBUICAO LTDA",
-      "emitidoEm": "2026-08-09T23:46:36.149502",
-      "_doc": "62432594000167",
-      "_mesReferencia": "07/2026"
     }
   ],
   "notas_fiscais": [

@@ -6,13 +6,6 @@
       "vencimento": "2026-08-15",
       "mes_referencia": "08/2026",
       "valor_boleto": 100.0
-    },
-    {
-      "nome": "Casa Neneto",
-      "uc": "77762501286",
-      "vencimento": "2026-08-14",
-      "mes_referencia": "07/2026",
-      "valor_boleto": 611.54
     }
   ]
 }

@@ -218,6 +218,7 @@ a{color:inherit;text-decoration:none}
 .cb-pago{background:rgba(34,197,94,.12);color:var(--green)}
 .cb-aberto{background:rgba(234,179,8,.12);color:var(--yellow)}
 .cb-vencido{background:rgba(239,68,68,.12);color:var(--red)}
+.cb-cancelado{background:rgba(148,163,184,.12);color:var(--muted)}
 .cob-empty{text-align:center;padding:48px 24px;color:var(--muted);font-size:14px}
 .cob-group-hdr{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;
   letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;
@@ -869,8 +870,15 @@ async function loadData(){
         D = JSON.parse(decodeURIComponent(escape(atob(j.content))));
       }
     } else {
-      const r = await fetch('data.json?t='+Date.now());
-      if (r.ok) { D = await r.json(); }
+      // Tenta GitHub raw (sempre atualizado após cada push, sem esperar deploy)
+      try {
+        const raw = await fetch('https://raw.githubusercontent.com/luzienergia/luzi-energia-portal/main/portal/data.json?t='+Date.now());
+        if (raw.ok) { D = await raw.json(); }
+        else throw new Error('raw fallback');
+      } catch {
+        const r = await fetch('data.json?t='+Date.now());
+        if (r.ok) { D = await r.json(); }
+      }
     }
   } catch(e) { /* usa DATA_BASE */ }
   D.usinas     = (D.usinas    && D.usinas.length)    ? D.usinas    : DATA_BASE.usinas;
@@ -982,7 +990,7 @@ function renderCobrancas(filtro){
   if(cobFiltro==='aberto')     all=all.filter(f=>computeStatus(f)==='vencer');
   else if(cobFiltro==='pago')      all=all.filter(f=>computeStatus(f)==='pago');
   else if(cobFiltro==='vencido')   all=all.filter(f=>computeStatus(f)==='vencido');
-  else if(cobFiltro==='cancelado') all=[];
+  else if(cobFiltro==='cancelado') all=all.filter(f=>computeStatus(f)==='cancelado');
 
   all.sort((a,b)=>b.venc.localeCompare(a.venc));
 
@@ -1006,8 +1014,8 @@ function renderCobrancas(filtro){
     html+=`<div class="cob-group-hdr">${meses[+m]} ${y}</div>`;
     groups[k].forEach(f=>{
       const cs=computeStatus(f);
-      const sLabel=cs==='pago'?'Pago':cs==='vencer'?'Em aberto':'Vencido';
-      const sCls=cs==='pago'?'cb-pago':cs==='vencer'?'cb-aberto':'cb-vencido';
+      const sLabel=cs==='pago'?'Pago':cs==='cancelado'?'Cancelado':cs==='vencer'?'Em aberto':'Vencido';
+      const sCls=cs==='pago'?'cb-pago':cs==='cancelado'?'cb-cancelado':cs==='vencer'?'cb-aberto':'cb-vencido';
       html+=`<div class="cob-row">
         <div class="cob-ico">📄</div>
         <div class="cob-info">
@@ -1386,8 +1394,8 @@ function renderDetailPanel(){
     totalCom=fdb.faturas.reduce((s,f)=>s+f.comDesc,0);
     fatRows=fdb.faturas.map(f=>{
       const cs=computeStatus(f);
-      const sCls=cs==='pago'?'cb-pago':cs==='vencer'?'cb-aberto':'cb-vencido';
-      const sLbl=cs==='pago'?'Pago':cs==='vencer'?'Em aberto':'Vencido';
+      const sCls=cs==='pago'?'cb-pago':cs==='cancelado'?'cb-cancelado':cs==='vencer'?'cb-aberto':'cb-vencido';
+      const sLbl=cs==='pago'?'Pago':cs==='cancelado'?'Cancelado':cs==='vencer'?'Em aberto':'Vencido';
       return `<div class="fat-row-adm">
         <span class="fat-mes-adm">${f.mes}</span>
         <span class="fat-status-adm ${sCls}">${sLbl}</span>

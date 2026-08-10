@@ -14,7 +14,9 @@
       "nomePagador": "FORTELO DISTRIBUICAO LTDA",
       "emitidoEm": "2026-08-09T23:46:36.149502",
       "_doc": "62432594000167",
-      "_mesReferencia": "07/2026"
+      "_mesReferencia": "07/2026",
+      "situacao": "BAIXADO POR SOLICITACAO",
+      "_verificadoEm": "2026-08-10T02:49:01.489582"
     },
     {
       "txid": "1dd90fd35e024ab387cba3b16eb08dec",

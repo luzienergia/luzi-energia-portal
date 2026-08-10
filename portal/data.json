@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-09T23:46:36.160928",
+  "atualizado": "2026-08-09T23:46:41.574229",
   "usinas": [
     {
       "id": "cartorio",
@@ -294,7 +294,20 @@
       "uc": "77762501286",
       "doc": "62432594000167",
       "desconto": 20,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "07/2026",
+          "ref": "jul/26",
+          "semDesc": 764.42,
+          "comDesc": 611.54,
+          "venc": "2026-08-14",
+          "status": "em_aberto",
+          "uc": "77762501286",
+          "linhaDigitavel": "74891160090000310914714401181087415380000061154",
+          "nossoNumero": "600000031",
+          "seuNumero": "NETO0826"
+        }
+      ]
     },
     "50802328000108": {
       "nome": "Escola",

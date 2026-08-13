@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-13T07:14:58.338647",
+  "atualizado": "2026-08-13T08:39:21.416891",
   "usinas": [
     {
       "id": "cartorio",
@@ -315,14 +315,34 @@
       "uc": "371372701262",
       "doc": "03774987181",
       "desconto": 0,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 885.4,
+          "comDesc": 885.4,
+          "venc": "2026-08-20",
+          "status": "em_aberto",
+          "uc": "371372701262"
+        }
+      ]
     },
     "03774987181_terreo": {
       "nome": "Térreo",
       "uc": "79163601288",
       "doc": "03774987181",
       "desconto": 20,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 959.69,
+          "comDesc": 767.75,
+          "venc": "2026-08-20",
+          "status": "em_aberto",
+          "uc": "79163601288"
+        }
+      ]
     }
   }
 }

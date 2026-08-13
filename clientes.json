@@ -72,14 +72,14 @@
       "tipo_pessoa": "F",
       "cpf_cnpj": "",
       "whatsapp_contato": "Dindinho",
-      "whatsapp_numero": "",
+      "whatsapp_numero": "556299741933",
       "desconto_pct": null,
       "metodo_calculo": "sem_rateio",
       "fonte_energia": null,
       "consumo_medio_kwh": 750,
       "dia_geracao_fatura": 14,
       "acao_boleto": "equatorial_direto",
-      "observacoes": "Tio de Luiz. Prédio familiar, 3º andar. Sem rateio — envia boleto Equatorial direto."
+      "observacoes": "Tio de Luiz. Prédio familiar, 3º andar. Sem rateio — quando chegar fatura, enviar o PDF da Equatorial + linha digitável direto ao Dindinho no WhatsApp Web da Luzi (NUNCA pelo app WhatsApp do Mac, que é a conta pessoal do Luiz). Legenda padrão: 'Energia 300 - MM/AA'. Confirmado 13/08/2026."
     },
     {
       "nome": "Cartório",

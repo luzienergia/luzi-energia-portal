@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-13T10:00:10.894673",
+  "atualizado": "2026-08-13T10:16:48.942491",
   "usinas": [
     {
       "id": "cartorio",
@@ -307,20 +307,6 @@
       "nome": "Firma Marrula",
       "uc": "430857301280",
       "doc": "70182543102",
-      "desconto": 20,
-      "faturas": []
-    },
-    "03774987181_apto100": {
-      "nome": "Apto 100",
-      "uc": "371372701262",
-      "doc": "03774987181",
-      "desconto": 0,
-      "faturas": []
-    },
-    "03774987181_terreo": {
-      "nome": "Térreo",
-      "uc": "79163601288",
-      "doc": "03774987181",
       "desconto": 20,
       "faturas": []
     }

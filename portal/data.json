@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-19T14:34:10.042261",
+  "atualizado": "2026-08-19T15:30:08.748820",
   "usinas": [
     {
       "id": "cartorio",
@@ -317,9 +317,9 @@
           "venc": "2026-08-23",
           "status": "em_aberto",
           "uc": "430857301280",
-          "linhaDigitavel": "74891160090000400914814401181079815470000015852",
-          "nossoNumero": "600000040",
-          "seuNumero": "FIRM0826"
+          "linhaDigitavel": "74891160090000580914014401181095315520000024148",
+          "nossoNumero": "600000058",
+          "seuNumero": "FIRM0826R"
         }
       ]
     }

@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-18T20:53:53.360962",
+  "atualizado": "2026-08-18T21:56:53.523803",
   "usinas": [
     {
       "id": "cartorio",
@@ -308,7 +308,20 @@
       "uc": "430857301280",
       "doc": "70182543102",
       "desconto": 20,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 198.15,
+          "comDesc": 158.52,
+          "venc": "2026-08-23",
+          "status": "em_aberto",
+          "uc": "430857301280",
+          "linhaDigitavel": "74891160090000400914814401181079815470000015852",
+          "nossoNumero": "600000040",
+          "seuNumero": "FIRM0826"
+        }
+      ]
     }
   }
 }

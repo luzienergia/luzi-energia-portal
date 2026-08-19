@@ -35,6 +35,22 @@
       "_mesReferencia": "08/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
       "_verificadoEm": "2026-08-09T21:53:42.256261"
+    },
+    {
+      "txid": "9f235a5ace9641a0a86b5313416eaadd",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/9a0453e6a4ad4e53ad9f7a6574b033255204000053039865802BR5903PIX6006Cidade62070503***63049134",
+      "linhaDigitavel": "74891160090000400914814401181079815470000015852",
+      "codigoBarras": "74898154700000158521160000004009141440118107",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000040",
+      "seuNumero": "FIRM0826",
+      "valor": 158.52,
+      "dataVencimento": "2026-08-23",
+      "nomePagador": "MIGUEL HANNA",
+      "emitidoEm": "2026-08-18T21:56:51.572318",
+      "_doc": "70182543102",
+      "_mesReferencia": "08/2026"
     }
   ],
   "notas_fiscais": [

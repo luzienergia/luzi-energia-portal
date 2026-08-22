@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-22T08:02:13.254171",
+  "atualizado": "2026-08-22T08:07:40.433749",
   "usinas": [
     {
       "id": "cartorio",
@@ -267,20 +267,7 @@
       "uc": "70296501229",
       "doc": "02790574000136",
       "desconto": 15,
-      "faturas": [
-        {
-          "mes": "08/2026",
-          "ref": "ago/26",
-          "semDesc": 117.65,
-          "comDesc": 100.0,
-          "venc": "2026-08-15",
-          "status": "cancelado",
-          "uc": "70296501229",
-          "linhaDigitavel": "74891160090000230914414401181020515390000010000",
-          "nossoNumero": "600000023",
-          "seuNumero": "CART0826"
-        }
-      ]
+      "faturas": []
     },
     "80372422187": {
       "nome": "Casa Leandro",

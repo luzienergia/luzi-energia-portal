@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-24T14:11:36.128803",
+  "atualizado": "2026-08-24T16:11:45.402745",
   "usinas": [
     {
       "id": "cartorio",
@@ -11,7 +11,13 @@
         "371372701262",
         "77762501286",
         "79163601288"
-      ]
+      ],
+      "_comentario_rateio": "Percentual dos créditos da usina destinado a cada UC, conforme cadastro de rateio na Equatorial. Informado por Luiz em 24/08/2026. Soma = 100%.",
+      "rateio_pct": {
+        "371372701262": 44,
+        "79163601288": 20,
+        "77762501286": 36
+      }
     },
     {
       "id": "escola",
@@ -22,7 +28,12 @@
       "clientes_rateio": [
         "365716101232",
         "430857301280"
-      ]
+      ],
+      "_comentario_rateio": "Percentual dos créditos da usina destinado a cada UC, conforme cadastro de rateio na Equatorial. Informado por Luiz em 24/08/2026. Soma = 100%.",
+      "rateio_pct": {
+        "365716101232": 75,
+        "430857301280": 25
+      }
     },
     {
       "id": "predio",
@@ -47,6 +58,28 @@
       "localizacao": "GO",
       "status": "em montagem — autoconsumo próprio de Luiz",
       "clientes_rateio": []
+    },
+    {
+      "id": "gama_1",
+      "nome": "Usina 2 Gama",
+      "uc": null,
+      "localizacao": "Gama - DF",
+      "status": "operando — comercializada por terceiro",
+      "inversor_plataforma": "saj_elekeeper",
+      "comercializacao": "terceiros",
+      "clientes_rateio": [],
+      "observacoes": "Nome confirmado no elekeeper em 24/08/2026: a planta SAJ chama-se 'Usina 2 Gama'. O id interno é gama_1 por razões históricas — não renomear sem migrar as chaves de historico_geracao.json. Rateio é feito pela comercializadora; a Luzi só acompanha a geração."
+    },
+    {
+      "id": "gama_2",
+      "nome": "Usina 1 Gama",
+      "uc": null,
+      "localizacao": "Gama - DF",
+      "status": "operando — comercializada por terceiro",
+      "inversor_plataforma": "sungrow_isolarcloud",
+      "comercializacao": "terceiros",
+      "clientes_rateio": [],
+      "observacoes": "Planta no Sungrow/iSolarCloud. NOME A CONFIRMAR com Luiz — deduzido por exclusão, já que a do elekeeper é a 'Usina 2 Gama'. Rateio é feito pela comercializadora; a Luzi só acompanha a geração."
     }
   ],
   "clientes": [
@@ -60,13 +93,13 @@
       "cpf_cnpj": "",
       "whatsapp_contato": "Eu",
       "whatsapp_numero": "",
-      "desconto_pct": null,
+      "desconto_pct": 0,
       "metodo_calculo": "planilha_injecao",
       "fonte_energia": "usina_cartorio",
       "consumo_medio_kwh": 850,
       "dia_geracao_fatura": 14,
       "acao_boleto": "equatorial_direto",
-      "observacoes": "Apartamento onde Luiz mora (1º andar do prédio familiar). Agosto/2026: usina própria do prédio entra em operação."
+      "observacoes": "Apartamento onde Luiz mora (1º andar do prédio familiar). Calcular o demonstrativo SEM desconto (0%) — Luiz cobra direto do pai. Não gerar boleto, PNG, PDF, NFS-e nem WhatsApp: só apresentar os números no chat. Confirmado 24/08/2026."
     },
     {
       "nome": "Apto 300",
@@ -255,13 +288,13 @@
       "cpf_cnpj": "",
       "whatsapp_contato": "Eu",
       "whatsapp_numero": "",
-      "desconto_pct": null,
+      "desconto_pct": 0,
       "metodo_calculo": "planilha_injecao",
       "fonte_energia": "usina_cartorio",
       "consumo_medio_kwh": 300,
       "dia_geracao_fatura": 14,
       "acao_boleto": "equatorial_direto",
-      "observacoes": "Imóvel de Luiz (térreo do prédio familiar). Luiz mesmo paga."
+      "observacoes": "Imóvel de Luiz (térreo do prédio familiar). Calcular o demonstrativo SEM desconto (0%) — Luiz cobra direto do pai. Não gerar boleto, PNG, PDF, NFS-e nem WhatsApp: só apresentar os números no chat. Confirmado 24/08/2026."
     }
   ],
   "status_ucs": {},

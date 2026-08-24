@@ -52,6 +52,28 @@
       "localizacao": "GO",
       "status": "em montagem — autoconsumo próprio de Luiz",
       "clientes_rateio": []
+    },
+    {
+      "id": "gama_1",
+      "nome": "Usina 2 Gama",
+      "uc": null,
+      "localizacao": "Gama - DF",
+      "status": "operando — comercializada por terceiro",
+      "inversor_plataforma": "saj_elekeeper",
+      "comercializacao": "terceiros",
+      "clientes_rateio": [],
+      "observacoes": "Nome confirmado no elekeeper em 24/08/2026: a planta SAJ chama-se 'Usina 2 Gama'. O id interno é gama_1 por razões históricas — não renomear sem migrar as chaves de historico_geracao.json. Rateio é feito pela comercializadora; a Luzi só acompanha a geração."
+    },
+    {
+      "id": "gama_2",
+      "nome": "Usina 1 Gama",
+      "uc": null,
+      "localizacao": "Gama - DF",
+      "status": "operando — comercializada por terceiro",
+      "inversor_plataforma": "sungrow_isolarcloud",
+      "comercializacao": "terceiros",
+      "clientes_rateio": [],
+      "observacoes": "Planta no Sungrow/iSolarCloud. NOME A CONFIRMAR com Luiz — deduzido por exclusão, já que a do elekeeper é a 'Usina 2 Gama'. Rateio é feito pela comercializadora; a Luzi só acompanha a geração."
     }
   ],
 

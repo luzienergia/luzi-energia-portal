@@ -66,13 +66,13 @@
       "cpf_cnpj": "",
       "whatsapp_contato": "Eu",
       "whatsapp_numero": "",
-      "desconto_pct": null,
+      "desconto_pct": 0,
       "metodo_calculo": "planilha_injecao",
       "fonte_energia": "usina_cartorio",
       "consumo_medio_kwh": 850,
       "dia_geracao_fatura": 14,
       "acao_boleto": "equatorial_direto",
-      "observacoes": "Apartamento onde Luiz mora (1º andar do prédio familiar). Agosto/2026: usina própria do prédio entra em operação."
+      "observacoes": "Apartamento onde Luiz mora (1º andar do prédio familiar). Calcular o demonstrativo SEM desconto (0%) — Luiz cobra direto do pai. Não gerar boleto, PNG, PDF, NFS-e nem WhatsApp: só apresentar os números no chat. Confirmado 24/08/2026."
     },
     {
       "nome": "Apto 300",
@@ -261,13 +261,13 @@
       "cpf_cnpj": "",
       "whatsapp_contato": "Eu",
       "whatsapp_numero": "",
-      "desconto_pct": null,
+      "desconto_pct": 0,
       "metodo_calculo": "planilha_injecao",
       "fonte_energia": "usina_cartorio",
       "consumo_medio_kwh": 300,
       "dia_geracao_fatura": 14,
       "acao_boleto": "equatorial_direto",
-      "observacoes": "Imóvel de Luiz (térreo do prédio familiar). Luiz mesmo paga."
+      "observacoes": "Imóvel de Luiz (térreo do prédio familiar). Calcular o demonstrativo SEM desconto (0%) — Luiz cobra direto do pai. Não gerar boleto, PNG, PDF, NFS-e nem WhatsApp: só apresentar os números no chat. Confirmado 24/08/2026."
     }
   ]
 }

@@ -53,6 +53,38 @@
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
       "_verificadoEm": "2026-08-19T18:38:31.671785"
+    },
+    {
+      "txid": "278d94f4515943a0b870e06a8d7a32e0",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/d5d64171594447fbaa6456df7a43e4845204000053039865802BR5903PIX6006Cidade62070503***6304017A",
+      "linhaDigitavel": "74891160090000660914314401181046415750000039266",
+      "codigoBarras": "74894157500000392661160000006609141440118104",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000066",
+      "seuNumero": "ESC0826",
+      "valor": 392.66,
+      "dataVencimento": "2026-09-20",
+      "nomePagador": "MENDES E FLOR EDUCACIONAL LTDA",
+      "emitidoEm": "2026-08-24T16:37:04.206586",
+      "_doc": "50802328000108",
+      "_mesReferencia": "08/2026"
+    },
+    {
+      "txid": "33dfa57a371540a09b1095bfd9c4e595",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/54f853533f964383879e3ea82536a3b55204000053039865802BR5903PIX6006Cidade62070503***63044F9E",
+      "linhaDigitavel": "74891160090000740914714401181004315580000104280",
+      "codigoBarras": "74893155800001042801160000007409141440118100",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000074",
+      "seuNumero": "CART0926",
+      "valor": 1042.8,
+      "dataVencimento": "2026-09-03",
+      "nomePagador": "ANAPOLIS CARTORIO SEGUNDO OFICIO DE NOTA",
+      "emitidoEm": "2026-08-24T16:37:42.038804",
+      "_doc": "02790574000136",
+      "_mesReferencia": "08/2026"
     }
   ],
   "notas_fiscais": [

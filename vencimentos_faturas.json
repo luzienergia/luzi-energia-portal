@@ -4,7 +4,8 @@
       "nome": "Cartório",
       "uc": "70296501229",
       "vencimento": "2026-09-03",
-      "mes_referencia": "08/2026"
+      "mes_referencia": "08/2026",
+      "valor_boleto": 1042.8
     },
     {
       "nome": "Apto 300",
@@ -41,7 +42,8 @@
       "nome": "Escola",
       "uc": "73940201205",
       "vencimento": "2026-09-20",
-      "mes_referencia": "08/2026"
+      "mes_referencia": "08/2026",
+      "valor_boleto": 392.66
     }
   ]
 }

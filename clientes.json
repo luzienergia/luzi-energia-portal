@@ -8,7 +8,13 @@
       "uc": "70296501229",
       "localizacao": "Anápolis - GO",
       "status": "operando",
-      "clientes_rateio": ["371372701262", "77762501286", "79163601288"]
+      "clientes_rateio": ["371372701262", "77762501286", "79163601288"],
+      "_comentario_rateio": "Percentual dos créditos da usina destinado a cada UC, conforme cadastro de rateio na Equatorial. Informado por Luiz em 24/08/2026. Soma = 100%.",
+      "rateio_pct": {
+        "371372701262": 44,
+        "79163601288": 20,
+        "77762501286": 36
+      }
     },
     {
       "id": "escola",
@@ -16,7 +22,12 @@
       "uc": "73940201205",
       "localizacao": "Anápolis - GO",
       "status": "operando",
-      "clientes_rateio": ["365716101232", "430857301280"]
+      "clientes_rateio": ["365716101232", "430857301280"],
+      "_comentario_rateio": "Percentual dos créditos da usina destinado a cada UC, conforme cadastro de rateio na Equatorial. Informado por Luiz em 24/08/2026. Soma = 100%.",
+      "rateio_pct": {
+        "365716101232": 75,
+        "430857301280": 25
+      }
     },
     {
       "id": "predio",

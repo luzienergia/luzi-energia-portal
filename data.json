@@ -68,7 +68,9 @@
       "nomePagador": "MENDES E FLOR EDUCACIONAL LTDA",
       "emitidoEm": "2026-08-24T16:37:04.206586",
       "_doc": "50802328000108",
-      "_mesReferencia": "08/2026"
+      "_mesReferencia": "08/2026",
+      "situacao": "EM CARTEIRA PIX",
+      "_verificadoEm": "2026-08-24T17:00:19.836619"
     },
     {
       "txid": "33dfa57a371540a09b1095bfd9c4e595",
@@ -84,6 +86,24 @@
       "nomePagador": "ANAPOLIS CARTORIO SEGUNDO OFICIO DE NOTA",
       "emitidoEm": "2026-08-24T16:37:42.038804",
       "_doc": "02790574000136",
+      "_mesReferencia": "08/2026",
+      "situacao": "EM CARTEIRA PIX",
+      "_verificadoEm": "2026-08-24T17:00:20.173566"
+    },
+    {
+      "txid": "144f726c6dff44fbb08d5b24c490ebff",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/9881f195715c4291b2370f1a815469f65204000053039865802BR5903PIX6006Cidade62070503***6304FCAC",
+      "linhaDigitavel": "74891160090000900914314401181004915590000069409",
+      "codigoBarras": "74899155900000694091160000009009141440118100",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000090",
+      "seuNumero": "NETO0926",
+      "valor": 694.09,
+      "dataVencimento": "2026-09-04",
+      "nomePagador": "FORTELO DISTRIBUICAO LTDA",
+      "emitidoEm": "2026-08-24T17:13:21.081318",
+      "_doc": "62432594000167",
       "_mesReferencia": "08/2026"
     }
   ],
@@ -94,6 +114,27 @@
       "valor": 611.54,
       "mes": "07/2026",
       "emitida_em": "2026-08-09T23:46:41.565174"
+    },
+    {
+      "cliente": "Escola",
+      "numero_nota": "40459c2d-3093-4d81-b7d5-8552a2bbf34e",
+      "valor": 392.66,
+      "mes": "08/2026",
+      "emitida_em": "2026-08-24T17:01:02.816930"
+    },
+    {
+      "cliente": "Cartório",
+      "numero_nota": "675361da-c1a5-48fd-8dd3-cb7f2ad517bb",
+      "valor": 1042.8,
+      "mes": "08/2026",
+      "emitida_em": "2026-08-24T17:01:06.173738"
+    },
+    {
+      "cliente": "Casa Neneto",
+      "numero_nota": "9760ed00-dc99-40d1-baa9-a249beb7fc5a",
+      "valor": 694.09,
+      "mes": "08/2026",
+      "emitida_em": "2026-08-24T17:13:28.334139"
     }
   ]
 }

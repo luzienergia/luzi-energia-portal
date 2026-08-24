@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-24T13:00:15.270490",
+  "atualizado": "2026-08-24T14:11:36.128803",
   "usinas": [
     {
       "id": "cartorio",
@@ -150,11 +150,16 @@
     {
       "nome": "Casa Neneto",
       "nome_painel": "Apartamento Wagner Neto",
-      "nome_cliente": "Wagner Neto",
+      "nome_cliente": "Neneto",
+      "razao_social": "FORTELO DISTRIBUICAO LTDA",
+      "endereco": "AV BRASILIA 0 QD2 LT5 SAO JORGE",
+      "cep": "75133060",
+      "cidade": "ANAPOLIS",
+      "uf": "GO",
       "uc": "77762501286",
       "tipo_uc": "cliente_ativo",
-      "tipo_pessoa": "F",
-      "cpf_cnpj": "02109687100",
+      "tipo_pessoa": "J",
+      "cpf_cnpj": "62432594000167",
       "whatsapp_contato": "Neneto",
       "whatsapp_numero": "5562999797036",
       "desconto_pct": 20,
@@ -163,7 +168,7 @@
       "consumo_medio_kwh": 1000,
       "dia_geracao_fatura": 23,
       "acao_boleto": "luzi_boleto_e_png",
-      "observacoes": ""
+      "observacoes": "Boleto e NFS-e emitidos no CNPJ da empresa dele (FORTELO DISTRIBUICAO LTDA) — confirmado por Luiz. Responsável/contato: Neneto."
     },
     {
       "nome": "Chácara",

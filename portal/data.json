@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-08-24T16:37:05.819192",
+  "atualizado": "2026-08-24T16:37:43.223565",
   "usinas": [
     {
       "id": "cartorio",
@@ -326,7 +326,20 @@
       "uc": "73940201205",
       "doc": "50802328000108",
       "desconto": 20,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 490.82,
+          "comDesc": 392.66,
+          "venc": "2026-09-20",
+          "status": "em_aberto",
+          "uc": "73940201205",
+          "linhaDigitavel": "74891160090000660914314401181046415750000039266",
+          "nossoNumero": "600000066",
+          "seuNumero": "ESC0826"
+        }
+      ]
     },
     "70182543102": {
       "nome": "Firma Marrula",

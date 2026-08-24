@@ -116,25 +116,25 @@
       "emitida_em": "2026-08-09T23:46:41.565174"
     },
     {
-      "cliente": "Escola",
-      "numero_nota": "40459c2d-3093-4d81-b7d5-8552a2bbf34e",
-      "valor": 392.66,
-      "mes": "08/2026",
-      "emitida_em": "2026-08-24T17:01:02.816930"
-    },
-    {
-      "cliente": "Cartório",
-      "numero_nota": "675361da-c1a5-48fd-8dd3-cb7f2ad517bb",
-      "valor": 1042.8,
-      "mes": "08/2026",
-      "emitida_em": "2026-08-24T17:01:06.173738"
-    },
-    {
       "cliente": "Casa Neneto",
       "numero_nota": "9760ed00-dc99-40d1-baa9-a249beb7fc5a",
       "valor": 694.09,
       "mes": "08/2026",
       "emitida_em": "2026-08-24T17:13:28.334139"
+    },
+    {
+      "cliente": "Escola",
+      "numero_nota": "d376c11f-a9d4-4219-b5a2-651bf5dcfdb2",
+      "valor": 392.66,
+      "mes": "08/2026",
+      "emitida_em": "2026-08-24T17:13:57.012209"
+    },
+    {
+      "cliente": "Cartório",
+      "numero_nota": "8ec8c0eb-2566-48d6-9ee2-9494d338d1d4",
+      "valor": 1042.8,
+      "mes": "08/2026",
+      "emitida_em": "2026-08-24T17:14:00.505039"
     }
   ]
 }

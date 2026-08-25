@@ -83,13 +83,13 @@ nav.scrolled{border-bottom-color:var(--line-soft);background:rgba(5,11,22,.9)}
 @keyframes paneIn{from{opacity:0}to{opacity:1}}
 
 /* ── Reveal on scroll ──────────────────────────────────────────── */
-.rv{opacity:0;transform:translateY(34px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .55s var(--ease),transform .55s var(--ease)}
 .rv.in{opacity:1;transform:none}
-.rv[data-d="1"]{transition-delay:.08s}
-.rv[data-d="2"]{transition-delay:.16s}
-.rv[data-d="3"]{transition-delay:.24s}
-.rv[data-d="4"]{transition-delay:.32s}
-.rv[data-d="5"]{transition-delay:.4s}
+.rv[data-d="1"]{transition-delay:.05s}
+.rv[data-d="2"]{transition-delay:.1s}
+.rv[data-d="3"]{transition-delay:.15s}
+.rv[data-d="4"]{transition-delay:.2s}
+.rv[data-d="5"]{transition-delay:.25s}
 @media(prefers-reduced-motion:reduce){
   .rv{opacity:1;transform:none;transition:none}
   html{scroll-behavior:auto}
@@ -787,10 +787,20 @@ const io=new IntersectionObserver((es)=>{
       setTimeout(()=>{b.style.width=b.dataset.w+'%'},180);
     });
   });
-},{threshold:.14,rootMargin:'0px 0px -60px 0px'});
+/* threshold baixo + rootMargin positivo: dispara ANTES de entrar na tela,
+   para o conteúdo já chegar visível em vez de deixar a área em branco */
+},{threshold:.01,rootMargin:'0px 0px 120px 0px'});
 
 function observar(){
   document.querySelectorAll('.pane.on .rv:not(.in)').forEach(el=>io.observe(el));
+  // rede de segurança: o que já está na tela aparece na hora, sem esperar
+  // o observer — evita bloco em branco ao trocar de aba ou ao carregar
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('.pane.on .rv:not(.in)').forEach(el=>{
+      const r=el.getBoundingClientRect();
+      if(r.top < innerHeight && r.bottom > 0) el.classList.add('in');
+    });
+  });
 }
 observar();
 

@@ -104,7 +104,9 @@
       "nomePagador": "FORTELO DISTRIBUICAO LTDA",
       "emitidoEm": "2026-08-24T17:13:21.081318",
       "_doc": "62432594000167",
-      "_mesReferencia": "08/2026"
+      "_mesReferencia": "08/2026",
+      "situacao": "EM CARTEIRA PIX",
+      "_verificadoEm": "2026-08-24T21:43:21.675660"
     }
   ],
   "notas_fiscais": [

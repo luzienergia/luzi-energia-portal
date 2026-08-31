@@ -16,7 +16,7 @@
       "_doc": "62432594000167",
       "_mesReferencia": "07/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
-      "_verificadoEm": "2026-08-10T02:49:01.489582"
+      "_verificadoEm": "2026-08-31T17:26:21.506635"
     },
     {
       "txid": "1dd90fd35e024ab387cba3b16eb08dec",
@@ -34,7 +34,7 @@
       "_doc": "02790574000136",
       "_mesReferencia": "08/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
-      "_verificadoEm": "2026-08-09T21:53:42.256261"
+      "_verificadoEm": "2026-08-31T17:26:21.506617"
     },
     {
       "txid": "018826f06be14f29a3ac2f8229718e64",
@@ -52,7 +52,7 @@
       "_doc": "70182543102",
       "_mesReferencia": "08/2026",
       "situacao": "VENCIDO",
-      "_verificadoEm": "2026-08-29T18:08:50.685083"
+      "_verificadoEm": "2026-08-31T17:26:21.506639"
     },
     {
       "txid": "278d94f4515943a0b870e06a8d7a32e0",
@@ -70,7 +70,7 @@
       "_doc": "50802328000108",
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
-      "_verificadoEm": "2026-08-24T17:00:19.836619"
+      "_verificadoEm": "2026-08-31T17:26:21.506646"
     },
     {
       "txid": "33dfa57a371540a09b1095bfd9c4e595",
@@ -88,7 +88,7 @@
       "_doc": "02790574000136",
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
-      "_verificadoEm": "2026-08-24T17:00:20.173566"
+      "_verificadoEm": "2026-08-31T17:26:21.506650"
     },
     {
       "txid": "144f726c6dff44fbb08d5b24c490ebff",
@@ -106,7 +106,20 @@
       "_doc": "62432594000167",
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
-      "_verificadoEm": "2026-08-24T21:43:21.675660"
+      "_verificadoEm": "2026-08-31T17:26:21.506657"
+    },
+    {
+      "nossoNumero": "600000082",
+      "seuNumero": "NETO0926",
+      "valor": 694.09,
+      "dataVencimento": "2026-09-04",
+      "nomePagador": "FORTELO DISTRIBUICAO LTDA",
+      "_doc": "62432594000167",
+      "_mesReferencia": "08/2026",
+      "situacao": "BAIXADO POR SOLICITACAO",
+      "linhaDigitavel": "74891160090000820914014401181053315590000069409",
+      "_obs": "duplicata da emissão de 24/08/2026 — baixada em 25/08",
+      "_verificadoEm": "2026-08-31T17:26:21.506653"
     }
   ],
   "notas_fiscais": [

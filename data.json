@@ -120,6 +120,22 @@
       "linhaDigitavel": "74891160090000820914014401181053315590000069409",
       "_obs": "duplicata da emissão de 24/08/2026 — baixada em 25/08",
       "_verificadoEm": "2026-09-01T15:41:01.972141"
+    },
+    {
+      "txid": "5ee1f86593934eada10cd71248ce07c4",
+      "qrCode": "00020126910014br.gov.bcb.pix2569pix-qrcode.sicredi.com.br/qr/v2/cobv/ed827d18b6914bfe829ecb1dfec4a4ca5204000053039865802BR5903PIX6006Cidade62070503***6304CCBA",
+      "linhaDigitavel": "74891160090001040914214401181020115710000130381",
+      "codigoBarras": "74891157100001303811160000010409141440118102",
+      "cooperativa": "0914",
+      "posto": "14",
+      "nossoNumero": "600000104",
+      "seuNumero": "LEND0826",
+      "valor": 1303.81,
+      "dataVencimento": "2026-09-16",
+      "nomePagador": "LEANDRO RIBEIRO DA SILVA",
+      "emitidoEm": "2026-09-01T18:47:30.215571",
+      "_doc": "80372422187",
+      "_mesReferencia": "08/2026"
     }
   ],
   "notas_fiscais": [
@@ -150,6 +166,13 @@
       "valor": 1042.8,
       "mes": "08/2026",
       "emitida_em": "2026-08-24T17:14:00.505039"
+    },
+    {
+      "cliente": "Casa Leandro",
+      "numero_nota": "936dd9d7-baa2-4156-83e1-73d11f02bfcb",
+      "valor": 1303.81,
+      "mes": "08/2026",
+      "emitida_em": "2026-09-01T18:47:36.550990"
     }
   ]
 }

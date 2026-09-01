@@ -68,7 +68,8 @@
       "nome": "Casa Leandro",
       "uc": "365716101232",
       "vencimento": "2026-09-16",
-      "mes_referencia": "08/2026"
+      "mes_referencia": "08/2026",
+      "valor_boleto": 1303.81
     }
   ]
 }

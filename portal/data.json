@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-09-01T18:39:20.084823",
+  "atualizado": "2026-09-01T18:47:30.277297",
   "usinas": [
     {
       "id": "cartorio",
@@ -325,7 +325,20 @@
       "uc": "365716101232",
       "doc": "80372422187",
       "desconto": 20,
-      "faturas": []
+      "faturas": [
+        {
+          "mes": "08/2026",
+          "ref": "ago/26",
+          "semDesc": 1629.76,
+          "comDesc": 1303.81,
+          "venc": "2026-09-16",
+          "status": "em_aberto",
+          "uc": "365716101232",
+          "linhaDigitavel": "74891160090001040914214401181020115710000130381",
+          "nossoNumero": "600000104",
+          "seuNumero": "LEND0826"
+        }
+      ]
     },
     "62432594000167": {
       "nome": "Casa Neneto",

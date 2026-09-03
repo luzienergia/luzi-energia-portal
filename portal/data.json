@@ -1,5 +1,5 @@
 {
-  "atualizado": "2026-09-03T13:20:53.570806",
+  "atualizado": "2026-09-03T19:00:28.179356",
   "usinas": [
     {
       "id": "cartorio",
@@ -352,7 +352,7 @@
           "semDesc": 867.61,
           "comDesc": 694.09,
           "venc": "2026-09-04",
-          "status": "em_aberto",
+          "status": "pago",
           "uc": "77762501286",
           "linhaDigitavel": "74891160090000900914314401181004915590000069409",
           "nossoNumero": "600000090",

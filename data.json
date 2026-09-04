@@ -16,7 +16,7 @@
       "_doc": "62432594000167",
       "_mesReferencia": "07/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
-      "_verificadoEm": "2026-09-04T07:13:49.822319"
+      "_verificadoEm": "2026-09-04T08:14:00.780154"
     },
     {
       "txid": "1dd90fd35e024ab387cba3b16eb08dec",
@@ -34,7 +34,7 @@
       "_doc": "02790574000136",
       "_mesReferencia": "08/2026",
       "situacao": "BAIXADO POR SOLICITACAO",
-      "_verificadoEm": "2026-09-04T07:13:49.822298"
+      "_verificadoEm": "2026-09-04T08:14:00.780131"
     },
     {
       "txid": "018826f06be14f29a3ac2f8229718e64",
@@ -52,7 +52,7 @@
       "_doc": "70182543102",
       "_mesReferencia": "08/2026",
       "situacao": "VENCIDO",
-      "_verificadoEm": "2026-09-04T07:13:49.822326"
+      "_verificadoEm": "2026-09-04T08:14:00.780161"
     },
     {
       "txid": "278d94f4515943a0b870e06a8d7a32e0",
@@ -70,7 +70,7 @@
       "_doc": "50802328000108",
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
-      "_verificadoEm": "2026-09-04T07:13:49.822334"
+      "_verificadoEm": "2026-09-04T08:14:00.780170"
     },
     {
       "txid": "33dfa57a371540a09b1095bfd9c4e595",
@@ -88,7 +88,7 @@
       "_doc": "02790574000136",
       "_mesReferencia": "08/2026",
       "situacao": "VENCIDO",
-      "_verificadoEm": "2026-09-04T07:13:49.822342"
+      "_verificadoEm": "2026-09-04T08:14:00.780177"
     },
     {
       "txid": "144f726c6dff44fbb08d5b24c490ebff",
@@ -106,7 +106,7 @@
       "_doc": "62432594000167",
       "_mesReferencia": "08/2026",
       "situacao": "LIQUIDADO REDE",
-      "_verificadoEm": "2026-09-04T07:13:49.822358"
+      "_verificadoEm": "2026-09-04T08:14:00.780191"
     },
     {
       "nossoNumero": "600000082",
@@ -119,7 +119,7 @@
       "situacao": "BAIXADO POR SOLICITACAO",
       "linhaDigitavel": "74891160090000820914014401181053315590000069409",
       "_obs": "duplicata da emissão de 24/08/2026 — baixada em 25/08",
-      "_verificadoEm": "2026-09-04T07:13:49.822349"
+      "_verificadoEm": "2026-09-04T08:14:00.780183"
     },
     {
       "txid": "5ee1f86593934eada10cd71248ce07c4",
@@ -137,7 +137,7 @@
       "_doc": "80372422187",
       "_mesReferencia": "08/2026",
       "situacao": "EM CARTEIRA PIX",
-      "_verificadoEm": "2026-09-04T07:13:49.822365"
+      "_verificadoEm": "2026-09-04T08:14:00.780199"
     }
   ],
   "notas_fiscais": [
